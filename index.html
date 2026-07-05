@@ -1413,6 +1413,22 @@
       gap: 12px;
     }
     .calc-question-grid .calc-field { gap: 5px; }
+
+    .calc-complexity-group {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .calc-complexity-group > .calc-section-intro {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px dashed #bfdbfe;
+    }
+    .calc-nested-complexity-section {
+      margin-top: 0;
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 76%);
+    }
     .calc-readiness-note {
       color: #475569;
       font-size: 11px;
@@ -2156,42 +2172,6 @@
             <span id="calcOperationalAssuranceOut" class="calc-output calculated">Calculated from questions</span>
             <span id="calcOperationalAssuranceNote" class="calc-readiness-note">Answer the operational assurance questions below. N/A answers are excluded.</span>
           </div>
-          <div class="calc-field">
-            <label for="calcGateFailures">Mandatory gate failures</label>
-            <input id="calcGateFailures" type="number" min="0" max="20" value="0" />
-          </div>
-          <div class="calc-field">
-            <label for="calcCustomRequired">Custom solution required</label>
-            <select id="calcCustomRequired"><option>No</option><option>Yes</option><option>Unknown</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcCustomType">Custom / integration type</label>
-            <select id="calcCustomType"><option>None required</option><option>Supported add-on or API input</option><option>Custom REST/API polling script</option><option>Custom technology add-on or parser</option><option>Custom routing or processor logic</option><option>To be confirmed</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcDocumentation">Documentation availability</label>
-            <select id="calcDocumentation"><option>Strong</option><option>Moderate</option><option>Limited</option><option>Unknown</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcSchemaDiscovery">Schema discovery required</label>
-            <select id="calcSchemaDiscovery"><option>No</option><option>Partial</option><option>Yes</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcFieldDiscovery">Field discovery required</label>
-            <select id="calcFieldDiscovery"><option>No</option><option>Partial</option><option>Yes</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcCollectionDiscovery">Collection mechanism discovery</label>
-            <select id="calcCollectionDiscovery"><option>No</option><option>Partial</option><option>Yes</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcSampleEvents">Sample events available</label>
-            <select id="calcSampleEvents"><option>Yes</option><option>Partial</option><option>No</option></select>
-          </div>
-          <div class="calc-field">
-            <label for="calcVolumeKnown">Volume known</label>
-            <select id="calcVolumeKnown"><option>Known</option><option selected>Estimate</option><option>Unknown</option></select>
-          </div>
           <details class="calc-section calc-question-section">
             <summary><span>Security value questions</span><span class="calc-section-summary-meta">15 scored questions</span></summary>
             <fieldset class="calc-section-body">
@@ -2216,12 +2196,45 @@
           </fieldset>
           </details>
           <details class="calc-section calc-question-section">
-            <summary><span>Technical readiness questions</span><span class="calc-section-summary-meta">21 scored questions</span></summary>
+            <summary><span>Technical readiness questions</span><span class="calc-section-summary-meta">19 scored + complexity factors</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">These answers calculate the Technical Readiness percentage. Use Confirmed/ready only when evidence is available; use Partial when a design assumption still needs validation.</p>
             <div class="calc-question-grid">
+              <div class="calc-field">
+            <label for="calcCustomRequired">Custom solution required</label>
+            <select id="calcCustomRequired"><option>No</option><option>Yes</option><option>Unknown</option></select>
+          </div>
+              <div class="calc-field">
+            <label for="calcCustomType">Custom / integration type</label>
+            <select id="calcCustomType"><option>None required</option><option>Supported add-on or API input</option><option>Custom REST/API polling script</option><option>Custom technology add-on or parser</option><option>Custom routing or processor logic</option><option>To be confirmed</option></select>
+          </div>
+              <div class="calc-field"><label for="calcDocumentation">Documentation availability &amp; accessibility</label><select id="calcDocumentation" class="technical-readiness-question">
+                <option value="Exceptional">Exceptional: Publicly hosted or instant SSO access. 24/7 uptime. Fully searchable index.</option>
+                <option value="Good">Good: Access requires a quick login portal. Minor downtime or slow search indexing. Formats are standard.</option>
+                <option value="Fair">Fair: Kept behind a manual gate. Must email an account manager for copies. Documents are heavily restricted.</option>
+                <option value="Poor">Poor: Outdated links, dead portals, or paper-only files. Severe lack of digital accessibility options.</option>
+                <option value="Fail">Fail: No documentation available. Total absence of manuals, APIs, or portals. Requests go unanswered.</option>
+              </select></div>
+              <div class="calc-field">
+            <label for="calcSchemaDiscovery">Data Schema Availability &amp; Accessibility</label>
+            <select id="calcSchemaDiscovery">
+              <option value="Exceptional">Exceptional: Publicly hosted or instant SSO access. 24/7 uptime. Complete, live, machine-readable schemas (Swagger/GraphQL). Every table, field, data type, relationship, and constraint is fully documented in a data dictionary.</option>
+              <option value="Good">Good: Mostly complete with fast access. Minor gaps in edge-case fields, but core objects and tables are fully mapped. Available via static documentation portals with standard formatting.</option>
+              <option value="Fair">Fair: Partially complete and gated access. Must request diagrams manually. Core fields exist, but metadata (data types, lengths, nullability rules) is missing or vague.</option>
+              <option value="Poor">Poor: Incomplete and fragmented access. Missing critical table maps and obsolete field listings. No documentation on data relationships, keys, or validation rules.</option>
+              <option value="Fail">Fail: No data schema available. Total absence of data models, dictionaries, fields, or definitions. Layout requests are completely ignored.</option>
+            </select>
+          </div>
+              <div class="calc-field">
+            <label for="calcSampleEvents">Sample events available</label>
+            <select id="calcSampleEvents"><option>Yes</option><option>Partial</option><option>No</option></select>
+          </div>
+              <div class="calc-field">
+            <label for="calcVolumeKnown">Volume known</label>
+            <select id="calcVolumeKnown"><option>Known</option><option selected>Estimate</option><option>Unknown</option></select>
+          </div>
               <div class="calc-field"><label for="calcTechIntegrationPath">Integration / export path</label><select id="calcTechIntegrationPath" class="technical-readiness-question"><option value="3">Confirmed supported path</option><option value="2" selected>Viable path identified</option><option value="1">Candidate path, needs validation</option><option value="0">Unknown or no viable path</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechSupportPath">Splunk / vendor support</label><select id="calcTechSupportPath" class="technical-readiness-question"><option value="3">Supported add-on or vendor integration</option><option value="2" selected>Supported API/export, design required</option><option value="1">Custom-only support path</option><option value="0">Unsupported or unknown</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcTechSupportPath">Splunk / vendor support path</label><select id="calcTechSupportPath" class="technical-readiness-question"><option value="3">Certified TA available</option><option value="2" selected>API/export ingest — build required</option><option value="1">Custom integration only</option><option value="0">No supported path / unknown</option><option value="na">N/A</option></select></div>
               <div class="calc-field"><label for="calcTechLogLocation">Log location / access</label><select id="calcTechLogLocation" class="technical-readiness-question"><option value="3">Confirmed and accessible</option><option value="2" selected>Known, access pending</option><option value="1">Likely, not proven</option><option value="0">Unknown or inaccessible</option><option value="na">N/A</option></select></div>
               <div class="calc-field"><label for="calcTechEnablement">Log enablement / licensing</label><select id="calcTechEnablement" class="technical-readiness-question"><option value="3">Already enabled or no change needed</option><option value="2" selected>Config/licence available</option><option value="1">Dependency or approval required</option><option value="0">Unavailable or unknown</option><option value="na">N/A</option></select></div>
               <div class="calc-field"><label for="calcTechPrerequisites">Source prerequisites</label><select id="calcTechPrerequisites" class="technical-readiness-question"><option value="3">Tenant/endpoints/IDs complete</option><option value="2" selected>Mostly known</option><option value="1">Partially known</option><option value="0">Unknown</option><option value="na">N/A</option></select></div>
@@ -2236,36 +2249,10 @@
               <div class="calc-field"><label for="calcTechCapacity">Capacity / cost impact</label><select id="calcTechCapacity" class="technical-readiness-question"><option value="3">Capacity and cost accepted</option><option value="2" selected>Estimate available</option><option value="1">Incomplete estimate</option><option value="0">Unknown or unacceptable</option><option value="na">N/A</option></select></div>
               <div class="calc-field"><label for="calcTechRouting">Routing / architecture fit</label><select id="calcTechRouting" class="technical-readiness-question"><option value="3">Architecture selected</option><option value="2" selected>Candidate architecture identified</option><option value="1">Intermediary/route unclear</option><option value="0">No approved route</option><option value="na">N/A</option></select></div>
             </div>
-          </fieldset>
-          </details>
-          <details class="calc-section calc-question-section">
-            <summary><span>Operational assurance questions</span><span class="calc-section-summary-meta">15 scored questions</span></summary>
-            <fieldset class="calc-section-body">
-            <p class="calc-section-intro">These answers calculate the Operational Assurance percentage. Use Confirmed/ready only when ownership, support and operating evidence are known; use Partial when a support assumption still needs validation.</p>
-            <div class="calc-question-grid">
-              <div class="calc-field"><label for="calcOpsBusinessOwner">Business / platform owner</label><select id="calcOpsBusinessOwner" class="operational-assurance-question"><option value="3">Named owner accountable</option><option value="2" selected>Owner identified, confirmation pending</option><option value="1">Candidate owner only</option><option value="0">Unknown or disputed</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsTechnicalOwner">Technical owner</label><select id="calcOpsTechnicalOwner" class="operational-assurance-question"><option value="3">Named technical owner/team</option><option value="2" selected>Likely team identified</option><option value="1">Shared/unclear responsibility</option><option value="0">No technical owner</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsSupportModel">Support model</label><select id="calcOpsSupportModel" class="operational-assurance-question"><option value="3">Support model and SLA confirmed</option><option value="2" selected>Support path identified</option><option value="1">Ad-hoc support only</option><option value="0">No support model</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsCustomSupport">Custom-solution support ownership</label><select id="calcOpsCustomSupport" class="operational-assurance-question"><option value="3">Custom owner, repo and maintenance confirmed</option><option value="2" selected>Owner likely; handover required</option><option value="1">Temporary / consultant-owned</option><option value="0">No owner for custom solution</option><option value="na">N/A / no custom solution</option></select></div>
-              <div class="calc-field"><label for="calcOpsRunbook">Runbook / operating procedure</label><select id="calcOpsRunbook" class="operational-assurance-question"><option value="3">Runbook exists and is current</option><option value="2" selected>Runbook can be produced</option><option value="1">Partial notes only</option><option value="0">No runbook path</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsMonitoring">Failure monitoring</label><select id="calcOpsMonitoring" class="operational-assurance-question"><option value="3">Health checks and alerts defined</option><option value="2" selected>Monitoring approach identified</option><option value="1">Manual checking only</option><option value="0">No failure monitoring</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsDataQuality">Data-quality monitoring</label><select id="calcOpsDataQuality" class="operational-assurance-question"><option value="3">Freshness, volume, parsing and field checks defined</option><option value="2" selected>Core checks identified</option><option value="1">Limited checks only</option><option value="0">No data-quality checks</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsCredentialRotation">Credential / certificate rotation</label><select id="calcOpsCredentialRotation" class="operational-assurance-question"><option value="3">Rotation owner and process confirmed</option><option value="2" selected>Process known; owner pending</option><option value="1">Manual / undocumented process</option><option value="0">Unknown or unsupported</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsPrivacyCompliance">Privacy / compliance handling</label><select id="calcOpsPrivacyCompliance" class="operational-assurance-question"><option value="3">Approved handling and access controls</option><option value="2" selected>Requirements known, approval pending</option><option value="1">Sensitive data possible; review required</option><option value="0">Unresolved compliance blocker</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsIndexRetention">Index / retention ownership</label><select id="calcOpsIndexRetention" class="operational-assurance-question"><option value="3">Index, retention and access agreed</option><option value="2" selected>Candidate index/retention identified</option><option value="1">Retention/access unclear</option><option value="0">No destination ownership</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsChangeManagement">Change-management path</label><select id="calcOpsChangeManagement" class="operational-assurance-question"><option value="3">Change process and approvers confirmed</option><option value="2" selected>Change path identified</option><option value="1">Informal change path</option><option value="0">Unknown change process</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsSchemaChange">Schema / API change notification</label><select id="calcOpsSchemaChange" class="operational-assurance-question"><option value="3">Vendor/source change notifications confirmed</option><option value="2" selected>Likely notification path</option><option value="1">Manual monitoring needed</option><option value="0">No schema/API change visibility</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsTestingAcceptance">Testing / acceptance criteria</label><select id="calcOpsTestingAcceptance" class="operational-assurance-question"><option value="3">Acceptance criteria and test owner confirmed</option><option value="2" selected>Core criteria identified</option><option value="1">Partial testing only</option><option value="0">No acceptance criteria</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsEscalation">Escalation path</label><select id="calcOpsEscalation" class="operational-assurance-question"><option value="3">Escalation path confirmed</option><option value="2" selected>Likely path identified</option><option value="1">Unclear / informal path</option><option value="0">No escalation path</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcOpsOperationalHandover">Operational handover</label><select id="calcOpsOperationalHandover" class="operational-assurance-question"><option value="3">Handover plan and accepting team confirmed</option><option value="2" selected>Handover required and planned</option><option value="1">Handover not yet planned</option><option value="0">No accepting operations team</option><option value="na">N/A</option></select></div>
-            </div>
-          </fieldset>
-          </details>
-          <div class="calc-field">
-            <label for="calcDifficulty">Difficulty rating</label>
-            <select id="calcDifficulty"><option value="1">1 - Low</option><option value="2">2 - Minor</option><option value="3" selected>3 - Moderate</option><option value="4">4 - High</option><option value="5">5 - Very high</option></select>
-          </div>
-          <details class="calc-section calc-question-section">
+          
+            <div class="calc-complexity-group">
+              <p class="calc-section-intro"><strong>Technical complexity factors.</strong> These answers sit under Technical readiness but remain separate from the Technical Readiness percentage. They continue to calculate transport, parsing, volume/EPS, analytics, engineering complexity and overall implementation effort.</p>
+<details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Transport &amp; ingestion method complexity</span><span class="calc-section-summary-meta">1 complexity input</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">This answer calculates the transport part of implementation complexity. Low = native/cloud connector or standard vendor API. Medium = standard syslog or a lightweight pre-configured agent. High = custom REST/script/webhook, database polling/JDBC, or air-gapped collection.</p>
@@ -2291,7 +2278,7 @@
             </div>
           </fieldset>
           </details>
-          <details class="calc-section calc-question-section">
+<details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Data formatting &amp; parsing complexity</span><span class="calc-section-summary-meta">1 complexity input</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">This answer calculates the parsing part of implementation complexity. Low = natively supported vendor formats or structured JSON/CEF where a parser exists. Medium = semi-structured logs or custom apps needing parser modifications. High = unstructured raw text, multi-line logs or proprietary formats requiring complex regex from scratch.</p>
@@ -2317,7 +2304,7 @@
             </div>
           </fieldset>
           </details>
-          <details class="calc-section calc-question-section">
+<details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Log volume &amp; EPS complexity</span><span class="calc-section-summary-meta">1 complexity input</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">This answer calculates the size part of implementation complexity. Low = low EPS and predictable volume. Medium = moderate or fluctuating volume needing basic load balancing or edge filtering. High = massive, noisy streams such as firewall traffic, DNS query logs or endpoint EDR telemetry that need dedicated forwarders, heavy filtering and storage planning.</p>
@@ -2341,7 +2328,7 @@
             </div>
           </fieldset>
           </details>
-          <details class="calc-section calc-question-section">
+<details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Analytics / use case &amp; value mapping complexity</span><span class="calc-section-summary-meta">1 complexity input</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">This answer calculates the analytics part of implementation complexity. Low = compliance-only storage or out-of-the-box vendor detection rules. Medium = mapping custom fields to a standard schema such as Splunk CIM, Elastic ECS or Microsoft Sentinel ASIM. High = brand-new multi-source correlation rules or behavior/anomaly analytics.</p>
@@ -2368,7 +2355,7 @@
             </div>
           </fieldset>
           </details>
-          <details class="calc-section calc-question-section">
+<details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Engineering complexity</span><span class="calc-section-summary-meta">calculated from existing answers</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">Engineering complexity is calculated from existing viability answers across ingestion architecture, parsing &amp; normalisation, and maintenance &amp; technical debt. It uses a 1–3 matrix: 1 = low, 2 = medium, 3 = high. The equivalent implementation rating is also considered in the combined complexity calculation.</p>
@@ -2396,11 +2383,16 @@
             </div>
           </fieldset>
           </details>
-          <details class="calc-section calc-question-section">
+<details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Combined implementation complexity</span><span class="calc-section-summary-meta">calculated summary</span></summary>
             <fieldset class="calc-section-body">
             <p class="calc-section-intro">Implementation complexity uses the highest rating across transport/ingestion, data formatting/parsing, log volume/EPS, analytics/use-case mapping, and the engineering-complexity equivalent rating.</p>
             <div class="calc-question-grid">
+              <div class="calc-field">
+                <label>Calculated difficulty</label>
+                <span id="calcDifficultyOut" class="calc-output calculated">Calculated from answered questions</span>
+                <span id="calcDifficultyNote" class="calc-readiness-note">Difficulty is derived from readiness blockers, discovery gaps, supportability, sample evidence and operational maturity.</span>
+              </div>
               <div class="calc-field">
                 <label>Combined calculated complexity</label>
                 <span id="calcComplexityOut" class="calc-output calculated">Calculated from transport, parsing, volume/EPS, analytics and engineering</span>
@@ -2409,10 +2401,32 @@
             </div>
           </fieldset>
           </details>
-          <div class="calc-field">
-            <label for="calcTimeRating">Time-to-implement rating</label>
-            <select id="calcTimeRating"><option value="1">1 - Under 1 week</option><option value="2">2 - 1–2 weeks</option><option value="3" selected>3 - 2–4 weeks</option><option value="4">4 - 4–8 weeks</option><option value="5">5 - 8+ weeks</option></select>
-          </div>
+            </div>
+          </fieldset>
+          </details>
+          <details class="calc-section calc-question-section">
+            <summary><span>Operational assurance questions</span><span class="calc-section-summary-meta">15 scored questions</span></summary>
+            <fieldset class="calc-section-body">
+            <p class="calc-section-intro">These answers calculate the Operational Assurance percentage. Use Confirmed/ready only when ownership, support and operating evidence are known; use Partial when a support assumption still needs validation.</p>
+            <div class="calc-question-grid">
+              <div class="calc-field"><label for="calcOpsBusinessOwner">Business / platform owner</label><select id="calcOpsBusinessOwner" class="operational-assurance-question"><option value="3">Named owner accountable</option><option value="2" selected>Owner identified, confirmation pending</option><option value="1">Candidate owner only</option><option value="0">Unknown or disputed</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsTechnicalOwner">Technical owner</label><select id="calcOpsTechnicalOwner" class="operational-assurance-question"><option value="3">Named technical owner/team</option><option value="2" selected>Likely team identified</option><option value="1">Shared/unclear responsibility</option><option value="0">No technical owner</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsSupportModel">Support model</label><select id="calcOpsSupportModel" class="operational-assurance-question"><option value="3">Support model and SLA confirmed</option><option value="2" selected>Support path identified</option><option value="1">Ad-hoc support only</option><option value="0">No support model</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsCustomSupport">Custom-solution support ownership</label><select id="calcOpsCustomSupport" class="operational-assurance-question"><option value="3">Custom owner, repo and maintenance confirmed</option><option value="2" selected>Owner likely; handover required</option><option value="1">Temporary / consultant-owned</option><option value="0">No owner for custom solution</option><option value="na">N/A / no custom solution</option></select></div>
+              <div class="calc-field"><label for="calcOpsRunbook">Runbook / operating procedure</label><select id="calcOpsRunbook" class="operational-assurance-question"><option value="3">Runbook exists and is current</option><option value="2" selected>Runbook can be produced</option><option value="1">Partial notes only</option><option value="0">No runbook path</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsMonitoring">Failure monitoring</label><select id="calcOpsMonitoring" class="operational-assurance-question"><option value="3">Health checks and alerts defined</option><option value="2" selected>Monitoring approach identified</option><option value="1">Manual checking only</option><option value="0">No failure monitoring</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsDataQuality">Data-quality monitoring</label><select id="calcOpsDataQuality" class="operational-assurance-question"><option value="3">Freshness, volume, parsing and field checks defined</option><option value="2" selected>Core checks identified</option><option value="1">Limited checks only</option><option value="0">No data-quality checks</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsCredentialRotation">Credential / certificate rotation</label><select id="calcOpsCredentialRotation" class="operational-assurance-question"><option value="3">Rotation owner and process confirmed</option><option value="2" selected>Process known; owner pending</option><option value="1">Manual / undocumented process</option><option value="0">Unknown or unsupported</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsPrivacyCompliance">Privacy / compliance handling</label><select id="calcOpsPrivacyCompliance" class="operational-assurance-question"><option value="3">Approved handling and access controls</option><option value="2" selected>Requirements known, approval pending</option><option value="1">Sensitive data possible; review required</option><option value="0">Unresolved compliance blocker</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsIndexRetention">Index / retention ownership</label><select id="calcOpsIndexRetention" class="operational-assurance-question"><option value="3">Index, retention and access agreed</option><option value="2" selected>Candidate index/retention identified</option><option value="1">Retention/access unclear</option><option value="0">No destination ownership</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsChangeManagement">Change-management path</label><select id="calcOpsChangeManagement" class="operational-assurance-question"><option value="3">Change process and approvers confirmed</option><option value="2" selected>Change path identified</option><option value="1">Informal change path</option><option value="0">Unknown change process</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsSchemaChange">Schema / API change notification</label><select id="calcOpsSchemaChange" class="operational-assurance-question"><option value="3">Vendor/source change notifications confirmed</option><option value="2" selected>Likely notification path</option><option value="1">Manual monitoring needed</option><option value="0">No schema/API change visibility</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsTestingAcceptance">Testing / acceptance criteria</label><select id="calcOpsTestingAcceptance" class="operational-assurance-question"><option value="3">Acceptance criteria and test owner confirmed</option><option value="2" selected>Core criteria identified</option><option value="1">Partial testing only</option><option value="0">No acceptance criteria</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsEscalation">Escalation path</label><select id="calcOpsEscalation" class="operational-assurance-question"><option value="3">Escalation path confirmed</option><option value="2" selected>Likely path identified</option><option value="1">Unclear / informal path</option><option value="0">No escalation path</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcOpsOperationalHandover">Operational handover</label><select id="calcOpsOperationalHandover" class="operational-assurance-question"><option value="3">Handover plan and accepting team confirmed</option><option value="2" selected>Handover required and planned</option><option value="1">Handover not yet planned</option><option value="0">No accepting operations team</option><option value="na">N/A</option></select></div>
+            </div>
+          </fieldset>
+          </details>
         </form>
         <aside id="viabilityCalculatorResult" class="viability-calculator-result" aria-live="polite"></aside>
       </div>
@@ -2835,7 +2849,7 @@ const state = {
   expanded: new Set()
 };
 
-nodes.push(...[{"code": "TAX-06.07", "parentCode": "TAX-06", "level": 2, "domain": "Lifecycle & Dependency", "term": "Log Onboarding Viability Assessment", "definition": "Phase 1 assessment that determines whether a platform or data source is valuable, technically feasible, supportable and viable to onboard before detailed design and build.", "entityType": "Lifecycle Entity", "idPrefix": "VIA", "primaryKey": "Viability Assessment ID", "mandatoryAttributes": "Platform ID; Data Source ID; Onboarding ID; phase; decision; value score; readiness score; assurance score; effort rating; supportability modifier; next action", "allowedParent": "TAX-06", "relationshipRule": "Platform or Data Source 1:M Viability Assessments; Viability Assessment M:1 Onboarding Record", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Pre-onboarding gate; operational assurance starts after onboarding acceptance.", "nodeType": "taxonomy", "entryCount": 5, "fields": {}}, {"code": "TAX-06.07.01", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Viability Rating", "definition": "Overall Phase 1 result used to decide whether onboarding proceeds, proceeds with conditions, requires further investigation, is not currently viable or is not justified.", "entityType": "Controlled Attribute", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Viable; Viable with Conditions; Further Investigation Required; Not Currently Viable; Not Justified", "allowedParent": "TAX-06.07", "relationshipRule": "One current decision per assessment", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Decision is modified by mandatory gate failures, custom solution supportability, reverse engineering and discovery gaps.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.02", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Security Value Score", "definition": "Business, compliance, detection and incident-response value of the proposed source.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Security use cases; compliance requirement; incident-response value; platform criticality", "allowedParent": "TAX-06.07", "relationshipRule": "One score per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Detection Engineering", "status": "Active", "notes": "Keeps value separate from difficulty so high-value but difficult sources are visible.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.03", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Technical Readiness Score", "definition": "Readiness of documentation, schema, integration path, authentication, network, data format, samples, volume and collection prerequisites.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Documentation; log schema; integration path; authentication; network; sample events; volume estimate", "allowedParent": "TAX-06.07", "relationshipRule": "One score per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Data Engineering", "status": "Active", "notes": "Major discovery gaps should hold progression into detailed design.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.04", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Operational Assurance Score", "definition": "Initial support, ownership, monitoring and operational acceptance readiness before build starts.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Owner; support team; runbook expectation; monitoring approach; escalation path", "allowedParent": "TAX-06.07", "relationshipRule": "One score per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Platform Assurance", "status": "Active", "notes": "Custom collection or parsing should reduce supportability unless ownership and maintenance model are confirmed.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.05", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Implementation Effort Rating", "definition": "Combined difficulty, complexity and time-to-implement rating used to size the onboarding effort.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Difficulty rating; complexity rating; time rating; effort index; duration band", "allowedParent": "TAX-06.07", "relationshipRule": "One effort rating per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Effort is intentionally separate from viability and value.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.06", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Custom Solution Dependency", "definition": "Identifies whether the source requires a custom script, custom technology add-on, custom parser, custom routing or unsupported integration path.", "entityType": "Risk Modifier", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Custom required; custom type; owner; supportability rating", "allowedParent": "TAX-06.07", "relationshipRule": "Zero or one custom-solution modifier per assessment", "sourceWorksheet": "Viability Assessments", "owner": "Data Engineering", "status": "Active", "notes": "Custom solution dependency reduces supportability unless ownership, monitoring and lifecycle management are confirmed.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.07", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Reverse Engineering Requirement", "definition": "Identifies where weak documentation and a custom or unsupported integration require manual discovery of API behaviour, schema, fields, timestamps or collection mechanics.", "entityType": "Risk Modifier", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Documentation availability; reverse-engineering required; discovery scope; evidence required", "allowedParent": "TAX-06.07", "relationshipRule": "Triggered when documentation is limited and custom or unsupported integration is required", "sourceWorksheet": "Viability Assessments", "owner": "Data Engineering", "status": "Active", "notes": "Should normally result in Further Investigation Required before detailed design.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.08", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Discovery Requirement", "definition": "Tracks whether schema, field list, sample events, volume, authentication and collection mechanisms still need to be defined.", "entityType": "Risk Modifier", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Schema discovery; field discovery; collection mechanism discovery; sample events; volume estimate", "allowedParent": "TAX-06.07", "relationshipRule": "Unresolved mandatory discovery items block progression into detailed design", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Discovery tasks become prerequisites or remediation actions on the onboarding record.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.09", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Viability Gate Decision", "definition": "Formal decision gate that moves a proposed source to detailed technical design, holds it for investigation, defers it or rejects it.", "entityType": "Lifecycle Gate", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Decision; gate failures; conditions; required next action; assessor; assessment date", "allowedParent": "TAX-06.07", "relationshipRule": "Controls transition from Phase 1 to Phase 2", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Gate should link to evidence and an onboarding record.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "CUR::TAX-06.07", "displayCode": "", "parentCode": "TAX-06.07", "level": 99, "domain": "Lifecycle & Dependency", "term": "Current entries (5)", "definition": "Current populated records from Viability Assessments.", "entityType": "Current Entries", "idPrefix": "", "primaryKey": "", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Viability Assessments records classified by TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "", "status": "Current", "notes": "", "nodeType": "group", "entryCount": 5, "fields": {"Source worksheet": "Viability Assessments", "Record count": 5}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-001::1", "displayCode": "VIA-001", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Okta / SaaS Authentication Logs", "definition": "Viable with Conditions • Splunk Cloud • Low Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-001", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "IAM", "status": "Further Investigation Required", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-001", "Platform ID": "PLT-003", "Platform": "Splunk Cloud", "Data Source ID": "SRC-005", "Data Source": "Okta / SaaS Authentication Logs", "Onboarding ID": "ONB-001", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Viable with Conditions", "Security Value Score": 88, "Technical Readiness Score": 72, "Operational Assurance Score": 68, "Viability Score": 76, "Mandatory Gate Failures": 0, "Custom Solution Required": "No", "Custom Solution Type": "Supported vendor or Splunk add-on / API input", "Supportability Rating": "Low Risk", "Documentation Availability": "Strong", "Reverse Engineering Required": "No", "Schema Discovery Required": "Partial", "Field Discovery Required": "Partial", "Collection Mechanism Discovery Required": "No", "Sample Events Available": "Yes", "Volume Known": "Estimate", "Difficulty Rating": 2, "Complexity Rating": 2, "Time Rating": 2, "Implementation Effort Rating": "Low", "Indicative Duration": "1–2 weeks", "Recommended Logging Pattern ID": "LP-007-SC", "Required Next Action": "Confirm API permissions, required event types, tenant details and sample event coverage before detailed design.", "Evidence": "Public vendor API documentation; sample authentication event; preliminary volume estimate; identity owner confirmation.", "Owner": "IAM", "Status": "Further Investigation Required"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-002::2", "displayCode": "VIA-002", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Custom API Health Telemetry", "definition": "Further Investigation Required • Heavy Forwarder Pool • High Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-002", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "Integration", "status": "Discovery Required", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-002", "Platform ID": "PLT-004", "Platform": "Heavy Forwarder Pool", "Data Source ID": "DS-CUSTOM-API", "Data Source": "Custom API Health Telemetry", "Onboarding ID": "ONB-CUSTOM-API", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Further Investigation Required", "Security Value Score": 61, "Technical Readiness Score": 38, "Operational Assurance Score": 35, "Viability Score": 44, "Mandatory Gate Failures": 0, "Custom Solution Required": "Yes", "Custom Solution Type": "On-premises custom polling script and custom parser", "Supportability Rating": "High Risk", "Documentation Availability": "Limited", "Reverse Engineering Required": "Yes", "Schema Discovery Required": "Yes", "Field Discovery Required": "Yes", "Collection Mechanism Discovery Required": "Partial", "Sample Events Available": "Partial", "Volume Known": "Unknown", "Difficulty Rating": 4, "Complexity Rating": 4, "Time Rating": 3, "Implementation Effort Rating": "High", "Indicative Duration": "4–8 weeks", "Recommended Logging Pattern ID": "LP-017-OPS-OP", "Required Next Action": "Run schema, field and pagination discovery; define ownership for the custom script, credentials, retries, checkpointing and monitoring.", "Evidence": "Existing script stanza warning; limited API notes; no stable schema document supplied.", "Owner": "Integration", "Status": "Discovery Required"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-003::3", "displayCode": "VIA-003", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Salesforce Audit / Cloud Service Activity", "definition": "Viable with Conditions • Splunk Cloud • Medium Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-003", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "Cloud Ops", "status": "Onboarding", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-003", "Platform ID": "PLT-003", "Platform": "Splunk Cloud", "Data Source ID": "SRC-012", "Data Source": "Salesforce Audit / Cloud Service Activity", "Onboarding ID": "ONB-004", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Viable with Conditions", "Security Value Score": 82, "Technical Readiness Score": 66, "Operational Assurance Score": 62, "Viability Score": 70, "Mandatory Gate Failures": 0, "Custom Solution Required": "No", "Custom Solution Type": "Vendor-supported API input or approved Splunk add-on", "Supportability Rating": "Medium Risk", "Documentation Availability": "Moderate", "Reverse Engineering Required": "No", "Schema Discovery Required": "Partial", "Field Discovery Required": "Partial", "Collection Mechanism Discovery Required": "No", "Sample Events Available": "Partial", "Volume Known": "Estimate", "Difficulty Rating": 3, "Complexity Rating": 3, "Time Rating": 3, "Implementation Effort Rating": "Medium", "Indicative Duration": "2–4 weeks", "Recommended Logging Pattern ID": "LP-007-SC", "Required Next Action": "Validate event coverage, API limits, token rotation and sourcetype/CIM mapping before build approval.", "Evidence": "Cloud services coverage gap; onboarding record; vendor API documentation; initial sample event request.", "Owner": "Cloud Ops", "Status": "Onboarding"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-004::4", "displayCode": "VIA-004", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Backup and Recovery Logs", "definition": "Not Currently Viable • Backup Platform • Unknown", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-004", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "IT Operations", "status": "Blocked", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-004", "Platform ID": "PLT-TBC", "Platform": "Backup Platform", "Data Source ID": "SRC-016", "Data Source": "Backup and Recovery Logs", "Onboarding ID": "ONB-TBC", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Not Currently Viable", "Security Value Score": 55, "Technical Readiness Score": 18, "Operational Assurance Score": 30, "Viability Score": 33, "Mandatory Gate Failures": 2, "Custom Solution Required": "Unknown", "Custom Solution Type": "To be confirmed", "Supportability Rating": "Unknown", "Documentation Availability": "Unknown", "Reverse Engineering Required": "Unknown", "Schema Discovery Required": "Yes", "Field Discovery Required": "Yes", "Collection Mechanism Discovery Required": "Yes", "Sample Events Available": "No", "Volume Known": "Unknown", "Difficulty Rating": 5, "Complexity Rating": 4, "Time Rating": 5, "Implementation Effort Rating": "Very High", "Indicative Duration": "8+ weeks", "Recommended Logging Pattern ID": "", "Required Next Action": "Identify product owner, export capability, sample events, schema, authentication method and expected volume before a pattern can be selected.", "Evidence": "Reference catalogue gap only; no mapped component, onboarding record or vendor evidence yet.", "Owner": "IT Operations", "Status": "Blocked"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-005::5", "displayCode": "VIA-005", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Splunk Internal / SIEM Platform Telemetry", "definition": "Viable – Proceed • Splunk Cloud • Low Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-005", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "SOC Ops", "status": "Ready for Design", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-005", "Platform ID": "PLT-003", "Platform": "Splunk Cloud", "Data Source ID": "SRC-014", "Data Source": "Splunk Internal / SIEM Platform Telemetry", "Onboarding ID": "ONB-SIEM-INT", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Viable – Proceed", "Security Value Score": 76, "Technical Readiness Score": 84, "Operational Assurance Score": 78, "Viability Score": 80, "Mandatory Gate Failures": 0, "Custom Solution Required": "No", "Custom Solution Type": "Native Splunk internal logs and supported monitoring searches", "Supportability Rating": "Low Risk", "Documentation Availability": "Strong", "Reverse Engineering Required": "No", "Schema Discovery Required": "No", "Field Discovery Required": "No", "Collection Mechanism Discovery Required": "No", "Sample Events Available": "Yes", "Volume Known": "Known", "Difficulty Rating": 1, "Complexity Rating": 2, "Time Rating": 1, "Implementation Effort Rating": "Low", "Indicative Duration": "Under 1 week", "Recommended Logging Pattern ID": "LP-001-SC", "Required Next Action": "Create the onboarding record, define health checks and map required internal sourcetypes to SIEM platform use cases.", "Evidence": "Registered Splunk platforms; existing internal telemetry; platform ownership confirmed.", "Owner": "SOC Ops", "Status": "Ready for Design"}}]);
+nodes.push(...[{"code": "TAX-06.07", "parentCode": "TAX-06", "level": 2, "domain": "Lifecycle & Dependency", "term": "Log Onboarding Viability Assessment", "definition": "Phase 1 assessment that determines whether a platform or data source is valuable, technically feasible, supportable and viable to onboard before detailed design and build.", "entityType": "Lifecycle Entity", "idPrefix": "VIA", "primaryKey": "Viability Assessment ID", "mandatoryAttributes": "Platform ID; Data Source ID; Onboarding ID; phase; decision; value score; readiness score; assurance score; effort rating; supportability modifier; next action", "allowedParent": "TAX-06", "relationshipRule": "Platform or Data Source 1:M Viability Assessments; Viability Assessment M:1 Onboarding Record", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Pre-onboarding gate; operational assurance starts after onboarding acceptance.", "nodeType": "taxonomy", "entryCount": 5, "fields": {}}, {"code": "TAX-06.07.01", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Viability Rating", "definition": "Overall Phase 1 result used to decide whether onboarding proceeds, proceeds with conditions, requires further investigation, is not currently viable or is not justified.", "entityType": "Controlled Attribute", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Viable; Viable with Conditions; Further Investigation Required; Not Currently Viable; Not Justified", "allowedParent": "TAX-06.07", "relationshipRule": "One current decision per assessment", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Decision is modified by mandatory gate failures, custom solution supportability, reverse engineering and discovery gaps.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.02", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Security Value Score", "definition": "Business, compliance, detection and incident-response value of the proposed source.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Security use cases; compliance requirement; incident-response value; platform criticality", "allowedParent": "TAX-06.07", "relationshipRule": "One score per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Detection Engineering", "status": "Active", "notes": "Keeps value separate from difficulty so high-value but difficult sources are visible.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.03", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Technical Readiness Score", "definition": "Readiness of documentation, schema, integration path, authentication, network, data format, samples, volume and collection prerequisites.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Documentation; log schema; integration path; authentication; network; sample events; volume estimate", "allowedParent": "TAX-06.07", "relationshipRule": "One score per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Data Engineering", "status": "Active", "notes": "Major discovery gaps should hold progression into detailed design.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.04", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Operational Assurance Score", "definition": "Initial support, ownership, monitoring and operational acceptance readiness before build starts.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Owner; support team; runbook expectation; monitoring approach; escalation path", "allowedParent": "TAX-06.07", "relationshipRule": "One score per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Platform Assurance", "status": "Active", "notes": "Custom collection or parsing should reduce supportability unless ownership and maintenance model are confirmed.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.05", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Implementation Effort Rating", "definition": "Combined difficulty, complexity and time-to-implement rating used to size the onboarding effort.", "entityType": "Score Dimension", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Difficulty rating; complexity rating; time rating; effort index; duration band", "allowedParent": "TAX-06.07", "relationshipRule": "One effort rating per viability assessment", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Effort is intentionally separate from viability and value.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.06", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Custom Solution Dependency", "definition": "Identifies whether the source requires a custom script, custom technology add-on, custom parser, custom routing or unsupported integration path.", "entityType": "Risk Modifier", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Custom required; custom type; owner; supportability rating", "allowedParent": "TAX-06.07", "relationshipRule": "Zero or one custom-solution modifier per assessment", "sourceWorksheet": "Viability Assessments", "owner": "Data Engineering", "status": "Active", "notes": "Custom solution dependency reduces supportability unless ownership, monitoring and lifecycle management are confirmed.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.07", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Reverse Engineering Requirement", "definition": "Identifies where weak documentation and a custom or unsupported integration require manual discovery of API behaviour, schema, fields, timestamps or collection mechanics.", "entityType": "Risk Modifier", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Documentation availability; reverse-engineering required; discovery scope; evidence required", "allowedParent": "TAX-06.07", "relationshipRule": "Triggered when documentation is limited and custom or unsupported integration is required", "sourceWorksheet": "Viability Assessments", "owner": "Data Engineering", "status": "Active", "notes": "Should normally result in Further Investigation Required before detailed design.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.08", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Discovery Requirement", "definition": "Tracks whether schema, field list, sample events, volume, authentication and collection mechanisms still need to be defined.", "entityType": "Risk Modifier", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Schema discovery; field discovery; collection mechanism discovery; sample events; volume estimate", "allowedParent": "TAX-06.07", "relationshipRule": "Unresolved mandatory discovery items block progression into detailed design", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Discovery tasks become prerequisites or remediation actions on the onboarding record.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "TAX-06.07.09", "parentCode": "TAX-06.07", "level": 3, "domain": "Lifecycle & Dependency", "term": "Viability Gate Decision", "definition": "Formal decision gate that moves a proposed source to detailed technical design, holds it for investigation, defers it or rejects it.", "entityType": "Lifecycle Gate", "idPrefix": "VIA", "primaryKey": "", "mandatoryAttributes": "Decision; gate failures; conditions; required next action; assessor; assessment date", "allowedParent": "TAX-06.07", "relationshipRule": "Controls transition from Phase 1 to Phase 2", "sourceWorksheet": "Viability Assessments", "owner": "Onboarding Owner", "status": "Active", "notes": "Gate should link to evidence and an onboarding record.", "nodeType": "taxonomy", "entryCount": 0, "fields": {}}, {"code": "CUR::TAX-06.07", "displayCode": "", "parentCode": "TAX-06.07", "level": 99, "domain": "Lifecycle & Dependency", "term": "Current entries (5)", "definition": "Current populated records from Viability Assessments.", "entityType": "Current Entries", "idPrefix": "", "primaryKey": "", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Viability Assessments records classified by TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "", "status": "Current", "notes": "", "nodeType": "group", "entryCount": 5, "fields": {"Source worksheet": "Viability Assessments", "Record count": 5}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-001::1", "displayCode": "VIA-001", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Okta / SaaS Authentication Logs", "definition": "Viable with Conditions • Splunk Cloud • Low Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-001", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "IAM", "status": "Further Investigation Required", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-001", "Platform ID": "PLT-003", "Platform": "Splunk Cloud", "Data Source ID": "SRC-005", "Data Source": "Okta / SaaS Authentication Logs", "Onboarding ID": "ONB-001", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Viable with Conditions", "Security Value Score": 88, "Technical Readiness Score": 72, "Operational Assurance Score": 68, "Viability Score": 76, "Mandatory Gate Failures": 0, "Custom Solution Required": "No", "Custom Solution Type": "Supported vendor or Splunk add-on / API input", "Supportability Rating": "Low Risk", "Documentation Availability": "Strong", "Reverse Engineering Required": "No", "Data Schema Availability & Accessibility": "Partial", "Field Discovery Required": "Partial", "Collection Mechanism Discovery Required": "No", "Sample Events Available": "Yes", "Volume Known": "Estimate", "Difficulty Rating": 2, "Complexity Rating": 2, "Time Rating": 2, "Implementation Effort Rating": "Low", "Indicative Duration": "1–2 weeks", "Recommended Logging Pattern ID": "LP-007-SC", "Required Next Action": "Confirm API permissions, required event types, tenant details and sample event coverage before detailed design.", "Evidence": "Public vendor API documentation; sample authentication event; preliminary volume estimate; identity owner confirmation.", "Owner": "IAM", "Status": "Further Investigation Required"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-002::2", "displayCode": "VIA-002", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Custom API Health Telemetry", "definition": "Further Investigation Required • Heavy Forwarder Pool • High Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-002", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "Integration", "status": "Discovery Required", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-002", "Platform ID": "PLT-004", "Platform": "Heavy Forwarder Pool", "Data Source ID": "DS-CUSTOM-API", "Data Source": "Custom API Health Telemetry", "Onboarding ID": "ONB-CUSTOM-API", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Further Investigation Required", "Security Value Score": 61, "Technical Readiness Score": 38, "Operational Assurance Score": 35, "Viability Score": 44, "Mandatory Gate Failures": 0, "Custom Solution Required": "Yes", "Custom Solution Type": "On-premises custom polling script and custom parser", "Supportability Rating": "High Risk", "Documentation Availability": "Limited", "Reverse Engineering Required": "Yes", "Data Schema Availability & Accessibility": "Yes", "Field Discovery Required": "Yes", "Collection Mechanism Discovery Required": "Partial", "Sample Events Available": "Partial", "Volume Known": "Unknown", "Difficulty Rating": 4, "Complexity Rating": 4, "Time Rating": 3, "Implementation Effort Rating": "High", "Indicative Duration": "4–8 weeks", "Recommended Logging Pattern ID": "LP-017-OPS-OP", "Required Next Action": "Run schema, field and pagination discovery; define ownership for the custom script, credentials, retries, checkpointing and monitoring.", "Evidence": "Existing script stanza warning; limited API notes; no stable schema document supplied.", "Owner": "Integration", "Status": "Discovery Required"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-003::3", "displayCode": "VIA-003", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Salesforce Audit / Cloud Service Activity", "definition": "Viable with Conditions • Splunk Cloud • Medium Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-003", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "Cloud Ops", "status": "Onboarding", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-003", "Platform ID": "PLT-003", "Platform": "Splunk Cloud", "Data Source ID": "SRC-012", "Data Source": "Salesforce Audit / Cloud Service Activity", "Onboarding ID": "ONB-004", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Viable with Conditions", "Security Value Score": 82, "Technical Readiness Score": 66, "Operational Assurance Score": 62, "Viability Score": 70, "Mandatory Gate Failures": 0, "Custom Solution Required": "No", "Custom Solution Type": "Vendor-supported API input or approved Splunk add-on", "Supportability Rating": "Medium Risk", "Documentation Availability": "Moderate", "Reverse Engineering Required": "No", "Data Schema Availability & Accessibility": "Partial", "Field Discovery Required": "Partial", "Collection Mechanism Discovery Required": "No", "Sample Events Available": "Partial", "Volume Known": "Estimate", "Difficulty Rating": 3, "Complexity Rating": 3, "Time Rating": 3, "Implementation Effort Rating": "Medium", "Indicative Duration": "2–4 weeks", "Recommended Logging Pattern ID": "LP-007-SC", "Required Next Action": "Validate event coverage, API limits, token rotation and sourcetype/CIM mapping before build approval.", "Evidence": "Cloud services coverage gap; onboarding record; vendor API documentation; initial sample event request.", "Owner": "Cloud Ops", "Status": "Onboarding"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-004::4", "displayCode": "VIA-004", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Backup and Recovery Logs", "definition": "Not Currently Viable • Backup Platform • Unknown", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-004", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "IT Operations", "status": "Blocked", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-004", "Platform ID": "PLT-TBC", "Platform": "Backup Platform", "Data Source ID": "SRC-016", "Data Source": "Backup and Recovery Logs", "Onboarding ID": "ONB-TBC", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Not Currently Viable", "Security Value Score": 55, "Technical Readiness Score": 18, "Operational Assurance Score": 30, "Viability Score": 33, "Mandatory Gate Failures": 2, "Custom Solution Required": "Unknown", "Custom Solution Type": "To be confirmed", "Supportability Rating": "Unknown", "Documentation Availability": "Unknown", "Reverse Engineering Required": "Unknown", "Data Schema Availability & Accessibility": "Yes", "Field Discovery Required": "Yes", "Collection Mechanism Discovery Required": "Yes", "Sample Events Available": "No", "Volume Known": "Unknown", "Difficulty Rating": 5, "Complexity Rating": 4, "Time Rating": 5, "Implementation Effort Rating": "Very High", "Indicative Duration": "8+ weeks", "Recommended Logging Pattern ID": "", "Required Next Action": "Identify product owner, export capability, sample events, schema, authentication method and expected volume before a pattern can be selected.", "Evidence": "Reference catalogue gap only; no mapped component, onboarding record or vendor evidence yet.", "Owner": "IT Operations", "Status": "Blocked"}}, {"code": "INST::TAX-06.07::Viability-Assessments::VIA-005::5", "displayCode": "VIA-005", "parentCode": "CUR::TAX-06.07", "level": 100, "domain": "Lifecycle & Dependency", "term": "Splunk Internal / SIEM Platform Telemetry", "definition": "Viable – Proceed • Splunk Cloud • Low Risk", "entityType": "Viability Assessment", "idPrefix": "VIA", "primaryKey": "VIA-005", "mandatoryAttributes": "", "allowedParent": "TAX-06.07", "relationshipRule": "Current viability assessment classified under TAX-06.07", "sourceWorksheet": "Viability Assessments", "owner": "SOC Ops", "status": "Ready for Design", "notes": "Phase 1 initial consultation and viability gate record.", "nodeType": "instance", "entryCount": 0, "fields": {"Viability Assessment ID": "VIA-005", "Platform ID": "PLT-003", "Platform": "Splunk Cloud", "Data Source ID": "SRC-014", "Data Source": "Splunk Internal / SIEM Platform Telemetry", "Onboarding ID": "ONB-SIEM-INT", "Phase": "Phase 1 – Initial Consultation & Viability", "Decision": "Viable – Proceed", "Security Value Score": 76, "Technical Readiness Score": 84, "Operational Assurance Score": 78, "Viability Score": 80, "Mandatory Gate Failures": 0, "Custom Solution Required": "No", "Custom Solution Type": "Native Splunk internal logs and supported monitoring searches", "Supportability Rating": "Low Risk", "Documentation Availability": "Strong", "Reverse Engineering Required": "No", "Data Schema Availability & Accessibility": "No", "Field Discovery Required": "No", "Collection Mechanism Discovery Required": "No", "Sample Events Available": "Yes", "Volume Known": "Known", "Difficulty Rating": 1, "Complexity Rating": 2, "Time Rating": 1, "Implementation Effort Rating": "Low", "Indicative Duration": "Under 1 week", "Recommended Logging Pattern ID": "LP-001-SC", "Required Next Action": "Create the onboarding record, define health checks and map required internal sourcetypes to SIEM platform use cases.", "Evidence": "Registered Splunk platforms; existing internal telemetry; platform ownership confirmed.", "Owner": "SOC Ops", "Status": "Ready for Design"}}]);
 
 function buildTree(items) {
   const byCode = new Map(items.map(item => [item.code, { ...item, children: [] }]));
@@ -5171,7 +5185,7 @@ function renderViabilityDetail() {
   const score = viabilityScore(row);
   const effortIndex = implementationEffortIndex(row).toFixed(1);
   const discoveryItems = [
-    ["Schema discovery", row.schemaDiscoveryRequired],
+    ["Data schema availability & accessibility", row.schemaDiscoveryRequired],
     ["Field discovery", row.fieldDiscoveryRequired],
     ["Collection mechanism discovery", row.collectionMechanismDiscoveryRequired],
     ["Sample events available", row.sampleEventsAvailable],
@@ -5207,7 +5221,7 @@ function renderViabilityDetail() {
         <div class="viability-risk-list">
           <div class="viability-risk-item"><strong>Custom solution required</strong><span>${escapeHtml(row.customSolutionRequired)} — ${escapeHtml(row.customSolutionType)}</span></div>
           <div class="viability-risk-item"><strong>Supportability rating</strong><span>${escapeHtml(row.supportabilityRating)}</span></div>
-          <div class="viability-risk-item"><strong>Documentation availability</strong><span>${escapeHtml(row.documentationAvailability)}</span></div>
+          <div class="viability-risk-item"><strong>Documentation availability &amp; accessibility</strong><span>${escapeHtml(row.documentationAvailability)}</span></div>
           <div class="viability-risk-item"><strong>Reverse engineering required</strong><span>${escapeHtml(row.reverseEngineeringRequired)}</span></div>
           <div class="viability-risk-item"><strong>Difficulty / complexity / time</strong><span>${escapeHtml(row.difficulty)} / ${escapeHtml(row.complexity)} / ${escapeHtml(row.timeRating)} · effort index ${escapeHtml(effortIndex)} · ${escapeHtml(row.duration)}</span></div>
         </div>
@@ -5288,14 +5302,12 @@ const securityValueQuestions = [
   { id: "calcSecStakeholderPriority", label: "Stakeholder priority" }
 ];
 const technicalReadinessQuestions = [
-  { id: "calcDocumentation", label: "Documentation availability", type: "documentation" },
-  { id: "calcSchemaDiscovery", label: "Schema discovery", type: "inverseDiscovery", critical: true },
-  { id: "calcFieldDiscovery", label: "Field discovery", type: "inverseDiscovery" },
-  { id: "calcCollectionDiscovery", label: "Collection mechanism discovery", type: "inverseDiscovery", critical: true },
-  { id: "calcSampleEvents", label: "Sample events", type: "sampleEvents", critical: true },
+  { id: "calcDocumentation", label: "Documentation availability & accessibility", type: "documentation" },
+  { id: "calcSchemaDiscovery", label: "Data Schema Availability & Accessibility", type: "schemaAccessibility", critical: true },
+  { id: "calcSampleEvents", label: "Sample events available", type: "sampleEvents", critical: true },
   { id: "calcVolumeKnown", label: "Volume known", type: "volume" },
   { id: "calcTechIntegrationPath", label: "Integration/export path", critical: true },
-  { id: "calcTechSupportPath", label: "Splunk/vendor support" },
+  { id: "calcTechSupportPath", label: "Splunk/vendor support path" },
   { id: "calcTechLogLocation", label: "Log location/access", critical: true },
   { id: "calcTechEnablement", label: "Log enablement/licensing" },
   { id: "calcTechPrerequisites", label: "Source prerequisites" },
@@ -5320,7 +5332,10 @@ function calcNumberValue(id) {
 function readinessQuestionScore(question, rawValue) {
   if (rawValue === "na") return null;
   if (question.type === "documentation") {
-    return { Strong: 3, Moderate: 2, Limited: 1, Unknown: 0 }[rawValue] ?? 0;
+    return { Exceptional: 3, Good: 2.5, Fair: 1.5, Poor: 0.75, Fail: 0, Strong: 3, Moderate: 2, Limited: 1, Unknown: 0 }[rawValue] ?? 0;
+  }
+  if (question.type === "schemaAccessibility") {
+    return { Exceptional: 3, Good: 2.5, Fair: 1.5, Poor: 0.75, Fail: 0, No: 3, Partial: 1.5, Yes: 0, Unknown: 0 }[rawValue] ?? 0;
   }
   if (question.type === "inverseDiscovery") {
     return { No: 3, Partial: 1.5, Yes: 0 }[rawValue] ?? 0;
@@ -5378,9 +5393,17 @@ function calculateTechnicalReadiness() {
 function calculateOperationalAssurance() {
   return calculateQuestionScoreSet(operationalAssuranceQuestions);
 }
+
+function calculateGateFailureItems(securityValueDetails, technicalReadinessDetails, operationalAssuranceDetails) {
+  return [
+    ...(securityValueDetails.blockers || []).map(item => ({ ...item, area: "Security Value" })),
+    ...(technicalReadinessDetails.blockers || []).map(item => ({ ...item, area: "Technical Readiness" })),
+    ...(operationalAssuranceDetails.blockers || []).map(item => ({ ...item, area: "Operational Assurance" }))
+  ];
+}
 function calcDiscoveryWeight(value) {
-  if (value === "Yes") return 1;
-  if (value === "Partial") return 0.5;
+  if (["Yes", "Poor", "Fail", "Unknown"].includes(value)) return 1;
+  if (["Partial", "Fair"].includes(value)) return 0.5;
   return 0;
 }
 function complexityBandFromRating(rating) {
@@ -5656,11 +5679,9 @@ function engineeringDimensionFromItems(items) {
 }
 function calculateCurrentDiscoveryScore() {
   const schemaDiscovery = calcInputValue("calcSchemaDiscovery");
-  const fieldDiscovery = calcInputValue("calcFieldDiscovery");
-  const collectionDiscovery = calcInputValue("calcCollectionDiscovery");
   const sampleEvents = calcInputValue("calcSampleEvents");
   const volumeKnown = calcInputValue("calcVolumeKnown");
-  return [schemaDiscovery, fieldDiscovery, collectionDiscovery].reduce((sum, value) => sum + calcDiscoveryWeight(value), 0)
+  return calcDiscoveryWeight(schemaDiscovery)
     + (sampleEvents === "No" ? 1 : sampleEvents === "Partial" ? 0.5 : 0)
     + (volumeKnown === "Unknown" ? 1 : volumeKnown === "Estimate" ? 0.5 : 0);
 }
@@ -5707,13 +5728,13 @@ function calculateEngineeringComplexity() {
   const reverseEngineeringRequired = calculateReverseEngineering(customRequired, documentationAvailability);
   const supportabilityRating = calculateSupportabilityRating(customRequired, documentationAvailability, reverseEngineeringRequired, calculateCurrentDiscoveryScore());
   const customScore = customRequired === "No" ? 1 : customRequired === "Unknown" ? 2 : 3;
-  const documentationScore = documentationAvailability === "Strong" ? 1 : documentationAvailability === "Moderate" ? 2 : 3;
+  const documentationScore = documentationEngineeringDebtScore(documentationAvailability);
   const reverseEngineeringScore = reverseEngineeringRequired === "No" ? 1 : reverseEngineeringRequired === "Partial" || reverseEngineeringRequired === "Unknown" ? 2 : 3;
   const supportabilityScore = supportabilityRating === "Low Risk" ? 1 : supportabilityRating === "Medium Risk" || supportabilityRating === "Unknown" ? 2 : 3;
   const maintenanceItems = [
     engineeringScoreItem("Custom solution", customScore, customRequired === "No" ? "no custom solution means low technical-debt exposure" : customRequired === "Unknown" ? "custom-solution need is not yet confirmed" : "custom code or custom collection increases ownership and maintenance debt"),
     engineeringScoreItem("Supportability", supportabilityScore, `current supportability result is ${supportabilityRating}`),
-    engineeringScoreItem("Documentation", documentationScore, `documentation availability is ${documentationAvailability || "Unknown"}`),
+    engineeringScoreItem("Documentation", documentationScore, `documentation availability & accessibility is ${documentationAvailability || "Unknown"}`),
     engineeringScoreItem("Reverse engineering", reverseEngineeringScore, `reverse engineering requirement is ${reverseEngineeringRequired}`),
     engineeringScoreItem("Custom support ownership", engineeringReadinessScore(calcInputValue("calcOpsCustomSupport")), "derived from the custom-solution support ownership question"),
     engineeringScoreItem("Runbook", engineeringReadinessScore(calcInputValue("calcOpsRunbook")), "derived from the runbook/operating procedure question"),
@@ -5764,20 +5785,164 @@ function calculatedDuration(timeRating) {
     5: "8+ weeks"
   }[Number(timeRating)] || "To be confirmed";
 }
+function calculatedTimeItem(label, rating, reason) {
+  return { label, rating: Number(rating) || 3, reason };
+}
+function calculateTimeFromAnsweredQuestions(details) {
+  const items = [];
+  const difficulty = Number(details.difficulty) || 3;
+  const complexity = Number(details.complexity) || 3;
+  const engineeringEquivalent = Number(details.engineeringEquivalentRating) || 3;
+  const blockerCount = Number(details.gateFailures) || 0;
+
+  items.push(calculatedTimeItem("Calculated difficulty", difficulty, `difficulty is ${difficulty}/5 from answered viability questions.`));
+  items.push(calculatedTimeItem("Calculated complexity", complexity, `combined implementation complexity is ${complexity}/5.`));
+  items.push(calculatedTimeItem("Engineering complexity", engineeringEquivalent, `engineering complexity maps to implementation rating ${engineeringEquivalent}/5.`));
+
+  if (blockerCount >= 3) items.push(calculatedTimeItem("Gate blockers", 5, `${blockerCount} calculated gate blocker(s) usually require discovery or remediation before delivery.`));
+  else if (blockerCount > 0) items.push(calculatedTimeItem("Gate blockers", 4, `${blockerCount} calculated gate blocker(s) add pre-build investigation time.`));
+  else items.push(calculatedTimeItem("Gate blockers", 1, "no calculated gate blockers are present."));
+
+  if (details.customRequired === "Yes" && details.reverseEngineeringRequired === "Yes") {
+    items.push(calculatedTimeItem("Custom solution and reverse engineering", 5, "custom build plus reverse engineering usually extends delivery beyond a standard onboarding cycle."));
+  } else if (details.customRequired === "Yes") {
+    items.push(calculatedTimeItem("Custom solution", 4, "custom build, testing and operational handover increase delivery time."));
+  } else if (details.customRequired === "Unknown") {
+    items.push(calculatedTimeItem("Custom solution unknown", 3, "unknown custom-solution requirement adds estimation uncertainty."));
+  } else {
+    items.push(calculatedTimeItem("Custom solution", 1, "no custom solution is expected."));
+  }
+
+  if (details.supportabilityRating === "High Risk") items.push(calculatedTimeItem("Supportability", 4, "high supportability risk usually needs ownership, runbook and monitoring work before onboarding."));
+  else if (details.supportabilityRating === "Unknown") items.push(calculatedTimeItem("Supportability", 3, "unknown supportability adds planning time."));
+  else if (details.supportabilityRating === "Medium Risk") items.push(calculatedTimeItem("Supportability", 2, "medium supportability risk adds minor coordination time."));
+  else items.push(calculatedTimeItem("Supportability", 1, "supportability is low risk."));
+
+  if ((Number(details.logVolumeEpsComplexityRating) || 0) >= 5) {
+    items.push(calculatedTimeItem("Log volume / EPS", 5, "massive or noisy datasets usually require filtering, forwarder and storage design."));
+  } else if ((Number(details.logVolumeEpsComplexityRating) || 0) >= 4) {
+    items.push(calculatedTimeItem("Log volume / EPS", 4, "unknown or high-volume data adds sizing and validation time."));
+  }
+
+  const topRating = Math.max(...items.map(item => item.rating));
+  const topDrivers = items.filter(item => item.rating === topRating);
+  return {
+    rating: topRating,
+    band: difficultyBandFromRating(topRating),
+    duration: calculatedDuration(topRating),
+    reason: `Time-to-implement is calculated from answered questions and complexity results. Highest driver(s): ${topDrivers.map(item => item.label).join(", ")}.`,
+    drivers: topDrivers
+  };
+}
+function difficultyBandFromRating(rating) {
+  return {
+    1: "Low",
+    2: "Minor",
+    3: "Moderate",
+    4: "High",
+    5: "Very high"
+  }[Number(rating)] || "To be confirmed";
+}
+function difficultyScoreItem(label, rating, reason) {
+  return { label, rating: Number(rating) || 3, reason };
+}
+function difficultyScoreFromPercent(label, percent) {
+  const value = Number(percent) || 0;
+  if (value >= 85) return difficultyScoreItem(label, 1, `${value}% indicates strong readiness with minimal delivery friction.`);
+  if (value >= 70) return difficultyScoreItem(label, 2, `${value}% indicates minor unresolved actions.`);
+  if (value >= 50) return difficultyScoreItem(label, 3, `${value}% indicates moderate delivery effort and validation work.`);
+  if (value >= 30) return difficultyScoreItem(label, 4, `${value}% indicates major readiness gaps.`);
+  return difficultyScoreItem(label, 5, `${value}% indicates severe readiness gaps that materially increase onboarding difficulty.`);
+}
+function calculateDifficultyFromAnsweredQuestions(details) {
+  const items = [];
+  items.push(difficultyScoreFromPercent("Technical readiness", details.technicalReadiness));
+  items.push(difficultyScoreFromPercent("Operational assurance", details.operationalAssurance));
+  if (details.securityValue < 40) {
+    items.push(difficultyScoreItem("Security value justification", 3, "low security value makes prioritisation and acceptance harder even if the technical path exists."));
+  }
+  const blockerCount = (details.securityBlockers || 0) + (details.technicalBlockers || 0) + (details.operationalBlockers || 0);
+  if (blockerCount >= 3) items.push(difficultyScoreItem("Critical blockers", 5, `${blockerCount} critical blocker(s) were calculated from answered questions.`));
+  else if (blockerCount > 0) items.push(difficultyScoreItem("Critical blockers", 4, `${blockerCount} critical blocker(s) were calculated from answered questions.`));
+  if (details.discoveryScore >= 2.5) items.push(difficultyScoreItem("Discovery gaps", 5, `discovery score ${details.discoveryScore}/3 means major schema, sample event or volume unknowns remain.`));
+  else if (details.discoveryScore >= 1.75) items.push(difficultyScoreItem("Discovery gaps", 4, `discovery score ${details.discoveryScore}/3 means several important discovery tasks remain.`));
+  else if (details.discoveryScore >= 1) items.push(difficultyScoreItem("Discovery gaps", 3, `discovery score ${details.discoveryScore}/3 means moderate discovery work remains.`));
+  else if (details.discoveryScore > 0) items.push(difficultyScoreItem("Discovery gaps", 2, `discovery score ${details.discoveryScore}/3 means minor discovery work remains.`));
+  else items.push(difficultyScoreItem("Discovery gaps", 1, "schema, sample event and volume evidence are sufficiently known."));
+  if (details.customRequired === "Yes" && details.reverseEngineeringRequired === "Yes") items.push(difficultyScoreItem("Custom solution and reverse engineering", 5, "custom solution and reverse engineering are both required."));
+  else if (details.customRequired === "Yes" && ["Partial", "Unknown"].includes(details.reverseEngineeringRequired)) items.push(difficultyScoreItem("Custom solution and reverse engineering", 4, `custom solution is required and reverse engineering is ${details.reverseEngineeringRequired}.`));
+  else if (details.customRequired === "Yes") items.push(difficultyScoreItem("Custom solution", 3, "custom collection or parsing increases delivery coordination and validation effort."));
+  else if (details.customRequired === "Unknown") items.push(difficultyScoreItem("Custom solution", 3, "custom-solution requirement is still unknown."));
+  else items.push(difficultyScoreItem("Custom solution", 1, "no custom solution is expected."));
+  if (details.supportabilityRating === "High Risk") items.push(difficultyScoreItem("Supportability", 4, "supportability is high risk."));
+  else if (details.supportabilityRating === "Unknown") items.push(difficultyScoreItem("Supportability", 3, "supportability is unknown."));
+  else if (details.supportabilityRating === "Medium Risk") items.push(difficultyScoreItem("Supportability", 2, "supportability is medium risk."));
+  else items.push(difficultyScoreItem("Supportability", 1, "supportability is low risk."));
+  if (details.sampleEvents === "No") items.push(difficultyScoreItem("Sample events", 4, "no sample events are available for parser, timestamp or field validation."));
+  else if (details.sampleEvents === "Partial") items.push(difficultyScoreItem("Sample events", 2, "only partial sample events are available."));
+  else items.push(difficultyScoreItem("Sample events", 1, "sample events are available."));
+  if (details.volumeKnown === "Unknown") items.push(difficultyScoreItem("Volume / EPS", 4, "volume and EPS are unknown, increasing sizing and cost uncertainty."));
+  else if (details.volumeKnown === "Estimate") items.push(difficultyScoreItem("Volume / EPS", 2, "volume and EPS are estimated but not yet measured."));
+  else items.push(difficultyScoreItem("Volume / EPS", 1, "volume and EPS are known."));
+  const rating = Math.max(...items.map(item => item.rating));
+  const band = difficultyBandFromRating(rating);
+  const drivers = items.filter(item => item.rating === rating);
+  return {
+    rating,
+    band,
+    drivers,
+    reason: `Calculated difficulty uses the highest rating from readiness, blockers, discovery, supportability, sample evidence and volume/EPS. Highest driver(s): ${drivers.map(item => item.label).join(", ")}.`
+  };
+}
+function calculateCurrentDifficultyDetails(securityValueDetails, technicalReadinessDetails, operationalAssuranceDetails) {
+  const customRequired = calcInputValue("calcCustomRequired");
+  const documentationAvailability = calcInputValue("calcDocumentation");
+  const reverseEngineeringRequired = calculateReverseEngineering(customRequired, documentationAvailability);
+  const discoveryScore = calculateCurrentDiscoveryScore();
+  const supportabilityRating = calculateSupportabilityRating(customRequired, documentationAvailability, reverseEngineeringRequired, discoveryScore);
+  return calculateDifficultyFromAnsweredQuestions({
+    securityValue: securityValueDetails.percent,
+    technicalReadiness: technicalReadinessDetails.percent,
+    operationalAssurance: operationalAssuranceDetails.percent,
+    securityBlockers: securityValueDetails.blockers.length,
+    technicalBlockers: technicalReadinessDetails.blockers.length,
+    operationalBlockers: operationalAssuranceDetails.blockers.length,
+    customRequired,
+    reverseEngineeringRequired,
+    discoveryScore,
+    supportabilityRating,
+    sampleEvents: calcInputValue("calcSampleEvents"),
+    volumeKnown: calcInputValue("calcVolumeKnown")
+  });
+}
+function documentationAccessibilityBand(documentationAvailability) {
+  if (["Exceptional", "Strong"].includes(documentationAvailability)) return "excellent";
+  if (["Good", "Moderate"].includes(documentationAvailability)) return "good";
+  if (["Fair", "Limited"].includes(documentationAvailability)) return "fair";
+  if (["Poor"].includes(documentationAvailability)) return "poor";
+  return "fail";
+}
+function documentationEngineeringDebtScore(documentationAvailability) {
+  const band = documentationAccessibilityBand(documentationAvailability);
+  if (band === "excellent" || band === "good") return 1;
+  if (band === "fair") return 2;
+  return 3;
+}
 function calculateReverseEngineering(customRequired, documentationAvailability) {
-  if (customRequired === "Yes" && ["Limited", "Unknown"].includes(documentationAvailability)) return "Yes";
-  if (customRequired === "Yes" && documentationAvailability === "Moderate") return "Partial";
-  if (customRequired === "Unknown" && ["Limited", "Unknown"].includes(documentationAvailability)) return "Unknown";
+  const docBand = documentationAccessibilityBand(documentationAvailability);
+  if (customRequired === "Yes" && ["poor", "fail"].includes(docBand)) return "Yes";
+  if (customRequired === "Yes" && docBand === "fair") return "Partial";
+  if (customRequired === "Unknown" && ["fair", "poor", "fail"].includes(docBand)) return "Unknown";
   return "No";
 }
 function calculateSupportabilityRating(customRequired, documentationAvailability, reverseEngineeringRequired, discoveryScore) {
+  const docBand = documentationAccessibilityBand(documentationAvailability);
   if (customRequired === "No") return "Low Risk";
   if (customRequired === "Unknown") return "Unknown";
-  if (reverseEngineeringRequired === "Yes" || ["Limited", "Unknown"].includes(documentationAvailability) || discoveryScore >= 2) return "High Risk";
+  if (reverseEngineeringRequired === "Yes" || ["poor", "fail"].includes(docBand) || discoveryScore >= 2) return "High Risk";
   return "Medium Risk";
 }
 function calculateViabilityDecision(result) {
-  if (result.gateFailures > 0) return "Not Currently Viable";
   if (result.securityValue < 30) return "Not Justified";
   if (result.technicalReadiness < 30) return "Not Currently Viable";
   if (result.operationalAssurance < 30) return "Not Currently Viable";
@@ -5793,7 +5958,6 @@ function calculateViabilityDecision(result) {
   return "Not Currently Viable";
 }
 function calculateNextAction(result) {
-  if (result.gateFailures > 0) return "Resolve mandatory gate failures before detailed design. Confirm owner, integration path, authentication, network access, sample events, volume and privacy approval as required.";
   if (result.securityValue < 30) return "Do not proceed to technical design yet. Confirm the security, compliance, detection, incident-response or business value for this source.";
   if (result.technicalReadiness < 30) return "Do not proceed to design yet. Resolve the core technical readiness gaps and confirm that a collection path, authentication, network path and sample events exist.";
   if (result.operationalAssurance < 30) return "Do not proceed to design yet. Confirm ownership, support model, monitoring, privacy handling, handover and operational acceptance responsibilities.";
@@ -5820,15 +5984,13 @@ function buildCalculatorResult() {
   const technicalReadiness = technicalReadinessDetails.percent;
   const operationalAssuranceDetails = calculateOperationalAssurance();
   const operationalAssurance = operationalAssuranceDetails.percent;
-  const gateFailures = calcNumberValue("calcGateFailures");
+  const gateFailureItems = calculateGateFailureItems(securityValueDetails, technicalReadinessDetails, operationalAssuranceDetails);
+  const gateFailures = gateFailureItems.length;
   const customRequired = calcInputValue("calcCustomRequired");
   const documentationAvailability = calcInputValue("calcDocumentation");
   const schemaDiscovery = calcInputValue("calcSchemaDiscovery");
-  const fieldDiscovery = calcInputValue("calcFieldDiscovery");
-  const collectionDiscovery = calcInputValue("calcCollectionDiscovery");
   const sampleEvents = calcInputValue("calcSampleEvents");
   const volumeKnown = calcInputValue("calcVolumeKnown");
-  const difficulty = calcNumberValue("calcDifficulty");
   const transportIngestionComplexity = calculateTransportIngestionComplexity();
   const dataFormattingParsingComplexity = calculateDataFormattingParsingComplexity();
   const logVolumeEpsComplexity = calculateLogVolumeEpsComplexity();
@@ -5837,18 +5999,43 @@ function buildCalculatorResult() {
   const complexity = Math.max(transportIngestionComplexity.rating, dataFormattingParsingComplexity.rating, logVolumeEpsComplexity.rating, analyticsUseCaseMappingComplexity.rating, engineeringComplexity.equivalentImplementationRating);
   const complexityBand = complexityBandFromRating(complexity);
   const complexityReason = `Combined complexity uses the highest rating across transport/ingestion (${transportIngestionComplexity.rating}), data formatting/parsing (${dataFormattingParsingComplexity.rating}), log volume/EPS (${logVolumeEpsComplexity.rating}), analytics/use-case mapping (${analyticsUseCaseMappingComplexity.rating}) and engineering complexity (${engineeringComplexity.rating}/3, equivalent ${engineeringComplexity.equivalentImplementationRating}).`;
-  const timeRating = calcNumberValue("calcTimeRating");
   const baseScore = Math.round((securityValue * 0.3) + (technicalReadiness * 0.4) + (operationalAssurance * 0.3));
-  const effortIndex = Number(((difficulty + complexity + timeRating) / 3).toFixed(1));
-  const effortRating = calculatedEffortRating(effortIndex);
-  const duration = calculatedDuration(timeRating);
   const reverseEngineeringRequired = calculateReverseEngineering(customRequired, documentationAvailability);
-  const discoveryValues = [schemaDiscovery, fieldDiscovery, collectionDiscovery];
+  const discoveryValues = [schemaDiscovery];
   const discoveryScore = discoveryValues.reduce((sum, value) => sum + calcDiscoveryWeight(value), 0)
     + (sampleEvents === "No" ? 1 : sampleEvents === "Partial" ? 0.5 : 0)
     + (volumeKnown === "Unknown" ? 1 : volumeKnown === "Estimate" ? 0.5 : 0);
-  const discoveryYesCount = discoveryValues.filter(value => value === "Yes").length;
+  const discoveryYesCount = discoveryValues.filter(value => calcDiscoveryWeight(value) >= 1).length;
   const supportabilityRating = calculateSupportabilityRating(customRequired, documentationAvailability, reverseEngineeringRequired, discoveryScore);
+  const difficultyDetails = calculateDifficultyFromAnsweredQuestions({
+    securityValue,
+    technicalReadiness,
+    operationalAssurance,
+    securityBlockers: securityValueDetails.blockers.length,
+    technicalBlockers: technicalReadinessDetails.blockers.length,
+    operationalBlockers: operationalAssuranceDetails.blockers.length,
+    customRequired,
+    reverseEngineeringRequired,
+    discoveryScore,
+    supportabilityRating,
+    sampleEvents,
+    volumeKnown
+  });
+  const difficulty = difficultyDetails.rating;
+  const timeDetails = calculateTimeFromAnsweredQuestions({
+    difficulty,
+    complexity,
+    engineeringEquivalentRating: engineeringComplexity.equivalentImplementationRating,
+    gateFailures,
+    customRequired,
+    reverseEngineeringRequired,
+    supportabilityRating,
+    logVolumeEpsComplexityRating: logVolumeEpsComplexity.rating
+  });
+  const timeRating = timeDetails.rating;
+  const effortIndex = Number(((difficulty + complexity + timeRating) / 3).toFixed(1));
+  const effortRating = calculatedEffortRating(effortIndex);
+  const duration = timeDetails.duration;
   const result = {
     assessmentId: "VIA-CALC",
     platform: calcInputValue("calcPlatform") || "New platform / source",
@@ -5908,16 +6095,21 @@ function buildCalculatorResult() {
     operationalAssuranceRawScore: operationalAssuranceDetails.score,
     operationalAssuranceBlockers: operationalAssuranceDetails.blockers,
     gateFailures,
+    gateFailureItems,
     customRequired,
     documentationAvailability,
     schemaDiscovery,
-    fieldDiscovery,
-    collectionDiscovery,
     sampleEvents,
     volumeKnown,
     difficulty,
+    difficultyBand: difficultyDetails.band,
+    difficultyReason: difficultyDetails.reason,
+    difficultyDrivers: difficultyDetails.drivers,
     complexity,
     timeRating,
+    timeRatingBand: timeDetails.band,
+    timeRatingReason: timeDetails.reason,
+    timeRatingDrivers: timeDetails.drivers,
     baseScore,
     effortIndex,
     effortRating,
@@ -5931,9 +6123,12 @@ function buildCalculatorResult() {
   result.nextAction = calculateNextAction(result);
   return result;
 }
+function schemaAccessibilityNeedsAttention(value) {
+  return !["No", "Exceptional", "Good"].includes(value);
+}
 function calculatorConditions(result) {
   const conditions = [];
-  if (result.gateFailures > 0) conditions.push(`${result.gateFailures} mandatory gate failure(s) recorded`);
+  if (result.gateFailures > 0) conditions.push(`${result.gateFailures} calculated gate blocker(s) from answered questions`);
   if (result.securityValueBlockers && result.securityValueBlockers.length) conditions.push(`Critical security value blockers: ${result.securityValueBlockers.map(item => item.label).join(", ")}`);
   if (result.technicalReadinessBlockers && result.technicalReadinessBlockers.length) conditions.push(`Critical technical readiness blockers: ${result.technicalReadinessBlockers.map(item => item.label).join(", ")}`);
   if (result.operationalAssuranceBlockers && result.operationalAssuranceBlockers.length) conditions.push(`Critical operational assurance blockers: ${result.operationalAssuranceBlockers.map(item => item.label).join(", ")}`);
@@ -5944,9 +6139,7 @@ function calculatorConditions(result) {
   if (result.analyticsUseCaseMappingComplexityRating >= 4) conditions.push(`High analytics/use-case mapping complexity: ${result.analyticsUseCaseMappingProfile}`);
   if (result.engineeringComplexityRating >= 3) conditions.push(`High engineering complexity: ingestion ${result.engineeringIngestionArchitectureScore}/3, parsing ${result.engineeringParsingNormalisationScore}/3, maintenance debt ${result.engineeringMaintenanceTechnicalDebtScore}/3`);
   if (result.reverseEngineeringRequired !== "No") conditions.push(`Reverse engineering requirement: ${result.reverseEngineeringRequired}`);
-  if (result.schemaDiscovery !== "No") conditions.push(`Schema discovery: ${result.schemaDiscovery}`);
-  if (result.fieldDiscovery !== "No") conditions.push(`Field discovery: ${result.fieldDiscovery}`);
-  if (result.collectionDiscovery !== "No") conditions.push(`Collection mechanism discovery: ${result.collectionDiscovery}`);
+  if (schemaAccessibilityNeedsAttention(result.schemaDiscovery)) conditions.push(`Data schema availability & accessibility: ${result.schemaDiscovery}`);
   if (result.sampleEvents !== "Yes") conditions.push(`Sample events available: ${result.sampleEvents}`);
   if (result.volumeKnown !== "Known") conditions.push(`Volume known: ${result.volumeKnown}`);
   if (!conditions.length) conditions.push("No mandatory viability blockers currently identified");
@@ -6007,6 +6200,11 @@ function updateCalculatorOutputs() {
   const engineeringNote = document.getElementById("calcEngineeringComplexityNote");
   if (engineeringOutput) engineeringOutput.textContent = `${engineeringComplexity.rating}/3 - ${engineeringComplexity.band}`;
   if (engineeringNote) engineeringNote.textContent = engineeringComplexity.reason;
+  const difficultyDetails = calculateCurrentDifficultyDetails(securityValueDetails, technicalReadinessDetails, operationalAssuranceDetails);
+  const difficultyOutput = document.getElementById("calcDifficultyOut");
+  const difficultyNote = document.getElementById("calcDifficultyNote");
+  if (difficultyOutput) difficultyOutput.textContent = `${difficultyDetails.rating} - ${difficultyDetails.band}`;
+  if (difficultyNote) difficultyNote.textContent = `${difficultyDetails.reason} ${difficultyDetails.drivers.map(item => `${item.label}: ${item.reason}`).join("; ")}`;
   const complexityOutput = document.getElementById("calcComplexityOut");
   const complexityNote = document.getElementById("calcComplexityNote");
   if (complexityOutput) complexityOutput.textContent = `${combinedRating} - ${combinedBand}`;
@@ -6022,7 +6220,6 @@ function calculatorScoreBand(value) {
 }
 function calculatorPrimaryIssue(result) {
   const issues = [];
-  if (result.gateFailures > 0) issues.push("mandatory gate failure");
   if (result.securityValueBlockers && result.securityValueBlockers.length) issues.push("security value blocker");
   if (result.technicalReadinessBlockers && result.technicalReadinessBlockers.length) issues.push("technical readiness blocker");
   if (result.operationalAssuranceBlockers && result.operationalAssuranceBlockers.length) issues.push("operational assurance blocker");
@@ -6038,7 +6235,6 @@ function calculatorPrimaryIssue(result) {
   return uniqueIssues.slice(0, 3).join(", ");
 }
 function calculatorSummaryNextStep(result) {
-  if (result.gateFailures > 0) return "Resolve mandatory gate failures before moving to detailed design.";
   if (result.securityValueBlockers && result.securityValueBlockers.length) return "Confirm the security use case, SOC actionability and stakeholder priority.";
   if (result.technicalReadinessBlockers && result.technicalReadinessBlockers.length) return "Complete technical discovery for collection path, authentication, routing and sample events.";
   if (result.operationalAssuranceBlockers && result.operationalAssuranceBlockers.length) return "Confirm operational ownership, support model, monitoring and escalation before onboarding approval.";
@@ -6179,7 +6375,7 @@ function renderViabilityCalculator() {
         <div class="calc-details-subhead">Complexity and supportability</div>
         <div class="calc-actions-list">
           <div><strong>Custom solution:</strong> ${escapeHtml(result.customRequired)} — ${escapeHtml(result.customType)}</div>
-          <div><strong>Documentation:</strong> ${escapeHtml(result.documentationAvailability)}</div>
+          <div><strong>Documentation availability &amp; accessibility:</strong> ${escapeHtml(result.documentationAvailability)}</div>
           <div><strong>Supportability:</strong> ${escapeHtml(result.supportabilityRating)} · reverse engineering ${escapeHtml(result.reverseEngineeringRequired)} · discovery score ${escapeHtml(result.discoveryScore)} / 5</div>
           <div><strong>Transport &amp; ingestion method:</strong> ${escapeHtml(result.transportIngestionMethod)} · complexity ${escapeHtml(result.transportIngestionComplexityRating)} - ${escapeHtml(result.transportIngestionComplexityBand)}</div>
           <div><strong>Data formatting &amp; parsing:</strong> ${escapeHtml(result.dataFormattingParsingMethod)} · complexity ${escapeHtml(result.dataFormattingParsingComplexityRating)} - ${escapeHtml(result.dataFormattingParsingComplexityBand)}</div>
@@ -6187,7 +6383,10 @@ function renderViabilityCalculator() {
           <div><strong>Analytics / use case mapping:</strong> ${escapeHtml(result.analyticsUseCaseMappingProfile)} · complexity ${escapeHtml(result.analyticsUseCaseMappingComplexityRating)} - ${escapeHtml(result.analyticsUseCaseMappingComplexityBand)}</div>
           <div><strong>Engineering complexity:</strong> ${escapeHtml(result.engineeringComplexityRating)}/3 - ${escapeHtml(result.engineeringComplexityBand)} · ingestion ${escapeHtml(result.engineeringIngestionArchitectureScore)}/3, parsing ${escapeHtml(result.engineeringParsingNormalisationScore)}/3, maintenance debt ${escapeHtml(result.engineeringMaintenanceTechnicalDebtScore)}/3</div>
           <div><strong>Combined implementation complexity:</strong> ${escapeHtml(result.combinedComplexityRating)} - ${escapeHtml(result.combinedComplexityBand)}</div>
-          <div><strong>Difficulty / calculated complexity / time:</strong> ${escapeHtml(result.difficulty)} / ${escapeHtml(result.complexity)} / ${escapeHtml(result.timeRating)} · effort index ${escapeHtml(result.effortIndex)}</div>
+          <div><strong>Calculated difficulty / complexity / time:</strong> ${escapeHtml(result.difficulty)} - ${escapeHtml(result.difficultyBand)} / ${escapeHtml(result.complexity)} / ${escapeHtml(result.timeRating)} - ${escapeHtml(result.timeRatingBand)} · effort index ${escapeHtml(result.effortIndex)}</div>
+          <div><strong>Calculated time basis:</strong> ${escapeHtml(result.timeRatingReason)}</div>
+          <div><strong>Calculated time driver(s):</strong> ${escapeHtml(result.timeRatingDrivers.map(item => `${item.label}: ${item.reason}`).join("; "))}</div>
+          <div><strong>Calculated difficulty driver(s):</strong> ${escapeHtml(result.difficultyDrivers.map(item => `${item.label}: ${item.reason}`).join("; "))}</div>
           <div><strong>Recommended pattern:</strong> ${patternHtml}</div>
         </div>
         <div class="calc-details-subhead">Decision conditions</div>
@@ -6213,8 +6412,8 @@ function populateCalculatorPatternOptions() {
 function exportViabilityCalculator(event) {
   if (!currentCalculatorResult) renderViabilityCalculator();
   const result = currentCalculatorResult;
-  const columns = ["assessmentId", "platform", "dataSource", "owner", "decision", "baseScore", "securityValue", "securityValueAnswered", "securityValueRawScore", "securityValueBlockers", "technicalReadiness", "technicalReadinessAnswered", "technicalReadinessRawScore", "technicalReadinessBlockers", "operationalAssurance", "operationalAssuranceAnswered", "operationalAssuranceRawScore", "operationalAssuranceBlockers", "gateFailures", "customRequired", "customType", "transportIngestionMethod", "transportIngestionComplexityBand", "transportIngestionComplexityRating", "transportIngestionComplexityReason", "dataFormattingParsingMethod", "dataFormattingParsingComplexityBand", "dataFormattingParsingComplexityRating", "dataFormattingParsingComplexityReason", "logVolumeEpsProfile", "logVolumeEpsComplexityBand", "logVolumeEpsComplexityRating", "logVolumeEpsComplexityReason", "analyticsUseCaseMappingProfile", "analyticsUseCaseMappingComplexityBand", "analyticsUseCaseMappingComplexityRating", "analyticsUseCaseMappingComplexityReason", "engineeringComplexityBand", "engineeringComplexityRating", "engineeringComplexityEquivalentRating", "engineeringIngestionArchitectureScore", "engineeringIngestionArchitectureBand", "engineeringIngestionArchitectureReason", "engineeringParsingNormalisationScore", "engineeringParsingNormalisationBand", "engineeringParsingNormalisationReason", "engineeringMaintenanceTechnicalDebtScore", "engineeringMaintenanceTechnicalDebtBand", "engineeringMaintenanceTechnicalDebtReason", "engineeringComplexityReason", "combinedComplexityBand", "combinedComplexityRating", "combinedComplexityReason", "supportabilityRating", "documentationAvailability", "reverseEngineeringRequired", "schemaDiscovery", "fieldDiscovery", "collectionDiscovery", "sampleEvents", "volumeKnown", "difficulty", "complexity", "timeRating", "effortRating", "duration", "recommendedPatternId", "nextAction"];
-  const lines = [columns.map(csvValue).join(","), columns.map(column => csvValue(column === "securityValueBlockers" ? result.securityValueBlockers.map(item => item.label).join("; ") : column === "technicalReadinessBlockers" ? result.technicalReadinessBlockers.map(item => item.label).join("; ") : column === "operationalAssuranceBlockers" ? result.operationalAssuranceBlockers.map(item => item.label).join("; ") : result[column])).join(",")];
+  const columns = ["assessmentId", "platform", "dataSource", "owner", "decision", "baseScore", "securityValue", "securityValueAnswered", "securityValueRawScore", "securityValueBlockers", "technicalReadiness", "technicalReadinessAnswered", "technicalReadinessRawScore", "technicalReadinessBlockers", "operationalAssurance", "operationalAssuranceAnswered", "operationalAssuranceRawScore", "operationalAssuranceBlockers", "gateFailures", "gateFailureItems", "customRequired", "customType", "transportIngestionMethod", "transportIngestionComplexityBand", "transportIngestionComplexityRating", "transportIngestionComplexityReason", "dataFormattingParsingMethod", "dataFormattingParsingComplexityBand", "dataFormattingParsingComplexityRating", "dataFormattingParsingComplexityReason", "logVolumeEpsProfile", "logVolumeEpsComplexityBand", "logVolumeEpsComplexityRating", "logVolumeEpsComplexityReason", "analyticsUseCaseMappingProfile", "analyticsUseCaseMappingComplexityBand", "analyticsUseCaseMappingComplexityRating", "analyticsUseCaseMappingComplexityReason", "engineeringComplexityBand", "engineeringComplexityRating", "engineeringComplexityEquivalentRating", "engineeringIngestionArchitectureScore", "engineeringIngestionArchitectureBand", "engineeringIngestionArchitectureReason", "engineeringParsingNormalisationScore", "engineeringParsingNormalisationBand", "engineeringParsingNormalisationReason", "engineeringMaintenanceTechnicalDebtScore", "engineeringMaintenanceTechnicalDebtBand", "engineeringMaintenanceTechnicalDebtReason", "engineeringComplexityReason", "combinedComplexityBand", "combinedComplexityRating", "combinedComplexityReason", "supportabilityRating", "documentationAvailability", "reverseEngineeringRequired", "schemaDiscovery", "sampleEvents", "volumeKnown", "difficulty", "difficultyBand", "difficultyReason", "difficultyDrivers", "complexity", "timeRating", "timeRatingBand", "timeRatingReason", "timeRatingDrivers", "effortRating", "duration", "recommendedPatternId", "nextAction"];
+  const lines = [columns.map(csvValue).join(","), columns.map(column => csvValue(column === "securityValueBlockers" ? result.securityValueBlockers.map(item => item.label).join("; ") : column === "technicalReadinessBlockers" ? result.technicalReadinessBlockers.map(item => item.label).join("; ") : column === "operationalAssuranceBlockers" ? result.operationalAssuranceBlockers.map(item => item.label).join("; ") : column === "gateFailureItems" ? result.gateFailureItems.map(item => `${item.area}: ${item.label}`).join("; ") : column === "difficultyDrivers" ? result.difficultyDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : column === "timeRatingDrivers" ? result.timeRatingDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : result[column])).join(",")];
   const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
