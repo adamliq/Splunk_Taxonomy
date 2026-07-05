@@ -33,9 +33,9 @@
     }
     .wrap { width: min(1800px, calc(100% - 24px)); margin: 0 auto; }
     header .wrap {
-      width: 100%;
+      width: min(1760px, calc(100% - 36px));
       max-width: none;
-      margin: 0;
+      margin: 0 auto;
     }
     .eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; opacity: 0.8; }
     h1 { margin: 8px 0 0; font-size: clamp(28px, 4vw, 42px); line-height: 1.15; }
@@ -1434,6 +1434,39 @@
       font-size: 11px;
       line-height: 1.35;
     }
+    .calc-reference-table-wrap {
+      grid-column: 1 / -1;
+      overflow-x: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #ffffff;
+    }
+    .calc-reference-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      min-width: 620px;
+    }
+    .calc-reference-table th,
+    .calc-reference-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+      vertical-align: top;
+    }
+    .calc-reference-table th {
+      color: #1e3a8a;
+      background: #eff6ff;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .calc-reference-table tr:last-child td { border-bottom: 0; }
+    .calc-reference-table tr.is-active td {
+      background: #fffbeb;
+      color: #92400e;
+      font-weight: 800;
+    }
     .viability-calculator-result {
       position: sticky;
       top: 18px;
@@ -1707,15 +1740,16 @@
     }
 
     .brand-heading {
-      margin: 0 0 10px;
+      margin: 8px 0 10px;
+      padding: 0 8px;
     }
     .brand-heading img {
       display: block;
-      width: min(112vw, 2300px);
-      max-width: none;
+      width: min(96%, 1650px);
+      max-width: 100%;
       height: auto;
-      margin-left: 50%;
-      transform: translateX(-50%);
+      margin: 0 auto;
+      transform: none;
       filter: drop-shadow(0 8px 22px rgba(15, 23, 42, .16));
     }
     .info-page { padding-bottom: 42px; }
@@ -1866,6 +1900,8 @@
       text-transform: uppercase;
     }
     @media (max-width: 720px) {
+      header .wrap { width: min(100% - 24px, 1760px); }
+      .brand-heading { padding: 0 4px; }
       .brand-heading img { width: 100%; }
       .brand-caption { font-size: 11px; }
     }
@@ -2467,7 +2503,7 @@
 <details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Engineering complexity</span><span class="calc-section-summary-meta">calculated from existing answers</span></summary>
             <fieldset class="calc-section-body">
-            <p class="calc-section-intro">Engineering complexity is calculated from existing viability answers across ingestion architecture, parsing &amp; normalisation, and maintenance &amp; technical debt. It uses a 1–3 matrix: 1 = low, 2 = medium, 3 = high. The equivalent implementation rating is also considered in the combined complexity calculation.</p>
+            <p class="calc-section-intro">Engineering complexity is calculated from existing viability answers across ingestion architecture, parsing &amp; normalisation, and maintenance &amp; technical debt. It uses a 1–4 matrix: 1 = low, 2 = medium, 3 = high, 4 = very high. The equivalent implementation rating is also considered in the combined complexity calculation.</p>
             <div class="calc-question-grid">
               <div class="calc-field">
                 <label>Ingestion architecture</label>
@@ -2495,7 +2531,7 @@
 <details class="calc-section calc-question-section calc-nested-complexity-section">
             <summary><span>Combined implementation complexity</span><span class="calc-section-summary-meta">calculated summary</span></summary>
             <fieldset class="calc-section-body">
-            <p class="calc-section-intro">Implementation complexity uses the highest rating across transport/ingestion, data formatting/parsing, log volume/EPS, analytics/use-case mapping, and the engineering-complexity equivalent rating.</p>
+            <p class="calc-section-intro">Implementation complexity uses the highest rating across transport/ingestion, data formatting/parsing, log volume/EPS, analytics/use-case mapping, engagement complexity and the engineering-complexity equivalent rating. Engagement complexity uses an evidence score out of 18: higher scores mean lower engagement complexity.</p>
             <div class="calc-question-grid">
               <div class="calc-field">
                 <label>Calculated difficulty</label>
@@ -2503,9 +2539,25 @@
                 <span id="calcDifficultyNote" class="calc-readiness-note">Difficulty is derived from readiness blockers, discovery gaps, supportability, sample evidence and operational maturity.</span>
               </div>
               <div class="calc-field">
+                <label>Engagement complexity</label>
+                <span id="calcEngagementComplexityOut" class="calc-output calculated">Calculated from engagement evidence score</span>
+                <span id="calcEngagementComplexityNote" class="calc-readiness-note">Uses documentation, schema, log location, integration support, parser readiness and custom/reverse-engineering pressure.</span>
+              </div>
+              <div class="calc-field">
                 <label>Combined calculated complexity</label>
-                <span id="calcComplexityOut" class="calc-output calculated">Calculated from transport, parsing, volume/EPS, analytics and engineering</span>
-                <span id="calcComplexityNote" class="calc-readiness-note">The implementation complexity uses the highest rating across transport/ingestion, data formatting/parsing, log volume/EPS, analytics/use-case mapping and engineering complexity.</span>
+                <span id="calcComplexityOut" class="calc-output calculated">Calculated from transport, parsing, volume/EPS, analytics, engagement and engineering</span>
+                <span id="calcComplexityNote" class="calc-readiness-note">The implementation complexity uses the highest rating across transport/ingestion, data formatting/parsing, log volume/EPS, analytics/use-case mapping, engagement complexity and engineering complexity.</span>
+              </div>
+              <div class="calc-reference-table-wrap">
+                <table class="calc-reference-table" aria-label="Engagement complexity rating guide">
+                  <thead><tr><th>Score range</th><th>Rating</th><th>Engagement complexity</th></tr></thead>
+                  <tbody>
+                    <tr><td>15–18</td><td>Low Complexity</td><td>Logs are well documented, locations and schemas are known, and integration is strongly supported.</td></tr>
+                    <tr><td>10–14</td><td>Medium Complexity</td><td>Some documentation or support exists, but validation, parsing, or custom work is required.</td></tr>
+                    <tr><td>5–9</td><td>High Complexity</td><td>Limited documentation, unclear schemas, or weak integration support.</td></tr>
+                    <tr><td>0–4</td><td>Very High Complexity</td><td>Significant discovery, reverse engineering, vendor engagement, or custom development required.</td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </fieldset>
@@ -5516,9 +5568,97 @@ function calcDiscoveryWeight(value) {
   return 0;
 }
 function complexityBandFromRating(rating) {
-  if (rating <= 2) return "Low";
-  if (rating <= 3) return "Medium";
-  return "High";
+  const numeric = Number(rating) || 0;
+  if (numeric <= 2) return "Low Complexity";
+  if (numeric <= 3) return "Medium Complexity";
+  if (numeric <= 4) return "High Complexity";
+  return "Very High Complexity";
+}
+function complexityDescriptionFromRating(rating) {
+  const numeric = Number(rating) || 0;
+  if (numeric <= 2) return "Logs are well documented, locations and schemas are known, and integration is strongly supported.";
+  if (numeric <= 3) return "Some documentation or support exists, but validation, parsing, or custom work is required.";
+  if (numeric <= 4) return "Limited documentation, unclear schemas, or weak integration support.";
+  return "Significant discovery, reverse engineering, vendor engagement, or custom development required.";
+}
+function engagementComplexityReferenceRows() {
+  return [
+    { min: 15, max: 18, range: "15–18", rating: "Low Complexity", equivalentImplementationRating: 2, description: "Logs are well documented, locations and schemas are known, and integration is strongly supported." },
+    { min: 10, max: 14, range: "10–14", rating: "Medium Complexity", equivalentImplementationRating: 3, description: "Some documentation or support exists, but validation, parsing, or custom work is required." },
+    { min: 5, max: 9, range: "5–9", rating: "High Complexity", equivalentImplementationRating: 4, description: "Limited documentation, unclear schemas, or weak integration support." },
+    { min: 0, max: 4, range: "0–4", rating: "Very High Complexity", equivalentImplementationRating: 5, description: "Significant discovery, reverse engineering, vendor engagement, or custom development required." }
+  ];
+}
+function engagementComplexityBandFromScore(score) {
+  const numeric = Math.max(0, Math.min(18, Number(score) || 0));
+  return engagementComplexityReferenceRows().find(row => numeric >= row.min && numeric <= row.max) || engagementComplexityReferenceRows()[3];
+}
+function engagementScoreItem(label, score, reason) {
+  return { label, score: Math.max(0, Math.min(3, Number(score) || 0)), reason };
+}
+function engagementTechnicalScore(rawValue) {
+  if (rawValue === "na") return 3;
+  const value = Number(rawValue);
+  return Number.isFinite(value) ? Math.max(0, Math.min(3, value)) : 0;
+}
+function engagementDocumentationScore(value) {
+  const band = documentationAccessibilityBand(value);
+  if (band === "excellent" || band === "good") return 3;
+  if (band === "fair") return 2;
+  if (band === "poor") return 1;
+  return 0;
+}
+function engagementSchemaScore(value) {
+  if (["Exceptional", "Good", "No"].includes(value)) return 3;
+  if (["Fair", "Partial"].includes(value)) return 2;
+  if (["Poor"].includes(value)) return 1;
+  return 0;
+}
+function calculateEngagementComplexity() {
+  const customRequired = calcInputValue("calcCustomRequired");
+  const documentationAvailability = calcInputValue("calcDocumentation");
+  const reverseEngineeringRequired = calculateReverseEngineering(customRequired, documentationAvailability);
+  const evidenceItems = [
+    engagementScoreItem("Documentation", engagementDocumentationScore(documentationAvailability), `documentation availability & accessibility is ${documentationAvailability || "Unknown"}`),
+    engagementScoreItem("Data schema", engagementSchemaScore(calcInputValue("calcSchemaDiscovery")), `data schema availability & accessibility is ${calcInputValue("calcSchemaDiscovery") || "Unknown"}`),
+    engagementScoreItem("Log location and access", engagementTechnicalScore(calcInputValue("calcTechLogLocation")), "derived from the log location/access readiness question"),
+    engagementScoreItem("Integration/export path", engagementTechnicalScore(calcInputValue("calcTechIntegrationPath")), "derived from the source integration/export path readiness question"),
+    engagementScoreItem("Splunk/vendor support path", engagementTechnicalScore(calcInputValue("calcTechSupportPath")), "derived from the Splunk/vendor support path readiness question"),
+    engagementScoreItem("Parser/sourcetype readiness", engagementTechnicalScore(calcInputValue("calcTechParsing")), "derived from the parser/sourcetype readiness question")
+  ];
+  const penalties = [];
+  if (customRequired === "Yes") penalties.push({ label: "Custom solution required", penalty: 2, reason: "custom development or routing logic is required" });
+  else if (customRequired === "Unknown") penalties.push({ label: "Custom solution unknown", penalty: 1, reason: "custom-solution requirement is not yet known" });
+  if (reverseEngineeringRequired === "Yes") penalties.push({ label: "Reverse engineering required", penalty: 2, reason: "reverse engineering is required due to custom work and weak documentation" });
+  else if (["Partial", "Unknown"].includes(reverseEngineeringRequired)) penalties.push({ label: "Reverse engineering uncertain", penalty: 1, reason: `reverse engineering requirement is ${reverseEngineeringRequired}` });
+  const sampleEvents = calcInputValue("calcSampleEvents");
+  if (sampleEvents === "No") penalties.push({ label: "No sample events", penalty: 1, reason: "sample events are not available for validation" });
+  else if (sampleEvents === "Partial") penalties.push({ label: "Partial sample events", penalty: 0.5, reason: "only partial sample evidence is available" });
+  const rawEvidenceScore = evidenceItems.reduce((sum, item) => sum + item.score, 0);
+  const penaltyScore = penalties.reduce((sum, item) => sum + item.penalty, 0);
+  const score = Math.max(0, Math.min(18, Math.round(rawEvidenceScore - penaltyScore)));
+  const band = engagementComplexityBandFromScore(score);
+  const weakEvidence = evidenceItems.filter(item => item.score <= 1);
+  const drivers = [
+    ...weakEvidence.map(item => ({ label: item.label, reason: `${item.reason}; evidence score ${item.score}/3` })),
+    ...penalties.map(item => ({ label: item.label, reason: `${item.reason}; penalty ${item.penalty}` }))
+  ];
+  return {
+    score,
+    maxScore: 18,
+    rawEvidenceScore,
+    penaltyScore,
+    rating: band.rating,
+    range: band.range,
+    description: band.description,
+    equivalentImplementationRating: band.equivalentImplementationRating,
+    reason: `${band.rating}: ${band.description} Engagement evidence score is ${score}/18 after ${penaltyScore} penalty point(s).`,
+    drivers: drivers.length ? drivers : [{ label: "Evidence strength", reason: "documentation, schema, log location, integration path, vendor support and parser readiness are strong enough for low engagement complexity" }]
+  };
+}
+function renderEngagementComplexityReference(activeRating) {
+  const rows = engagementComplexityReferenceRows().map(row => `<tr class="${row.rating === activeRating ? "is-active" : ""}"><td>${escapeHtml(row.range)}</td><td>${escapeHtml(row.rating)}</td><td>${escapeHtml(row.description)}</td></tr>`).join("");
+  return `<div class="calc-reference-table-wrap"><table class="calc-reference-table" aria-label="Engagement complexity rating guide"><thead><tr><th>Score range</th><th>Rating</th><th>Engagement complexity</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function calculateTransportIngestionComplexity() {
   const options = {
@@ -5560,7 +5700,7 @@ function calculateTransportIngestionComplexity() {
     },
     "air-gapped": {
       label: "Air-gapped, isolated network or manual staging path",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Air-gapped or isolated collection normally has very high complexity due to transfer controls, intermediary systems and operational handoffs."
     },
@@ -5615,13 +5755,13 @@ function calculateDataFormattingParsingComplexity() {
     },
     "multiline": {
       label: "Multi-line logs such as Java stack traces",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Multi-line events are very high parsing complexity because line breaking, event boundaries and field extraction need careful validation."
     },
     "proprietary": {
       label: "Proprietary format requiring complex parsing",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Proprietary formats are very high complexity because schema, field meaning and parser logic often need reverse engineering."
     },
@@ -5664,13 +5804,13 @@ function calculateLogVolumeEpsComplexity() {
     },
     "high-noisy": {
       label: "Massive or noisy dataset, such as firewall traffic, DNS query logs or endpoint EDR telemetry",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Massive or noisy datasets are high complexity because they can drive forwarder scale, queue sizing, filtering, storage, retention and cost planning."
     },
     "high-architecture": {
       label: "Dedicated forwarders, heavy filtering or storage architecture planning required",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Dedicated forwarding, heavy filtering or storage architecture planning indicates high infrastructure complexity even when parsing is simple."
     },
@@ -5731,13 +5871,13 @@ function calculateAnalyticsUseCaseMappingComplexity() {
     },
     "behavior-anomaly-analytics": {
       label: "Behavior-based anomaly analytics or baselining required",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Behavior or anomaly analytics are very high complexity because baselines, model tuning, false-positive controls and validation periods are required."
     },
     "custom-cross-domain": {
       label: "Custom cross-domain analytics, such as application logs linked with badge-reader or physical access data",
-      band: "High",
+      band: "Very High",
       rating: 5,
       reason: "Custom cross-domain analytics are very high complexity because multiple data domains, entity resolution, business logic and validation evidence must align."
     },
@@ -5759,22 +5899,25 @@ function calculateAnalyticsUseCaseMappingComplexity() {
   };
 }
 function engineeringBandFromScore(score) {
-  if (score <= 1) return "Low";
-  if (score <= 2) return "Medium";
-  return "High";
+  const numeric = Number(score) || 0;
+  if (numeric <= 1) return "Low";
+  if (numeric <= 2) return "Medium";
+  if (numeric <= 3) return "High";
+  return "Very High";
 }
 function engineeringEquivalentImplementationRating(score) {
-  return { 1: 1, 2: 3, 3: 5 }[Number(score)] || 5;
+  return { 1: 1, 2: 3, 3: 4, 4: 5 }[Number(score)] || 5;
 }
 function engineeringReadinessScore(rawValue) {
   if (rawValue === "na") return 1;
   const value = Number(rawValue);
   if (value >= 3) return 1;
   if (value >= 2) return 2;
-  return 3;
+  if (value >= 1) return 3;
+  return 4;
 }
 function engineeringScoreItem(label, score, reason) {
-  return { label, score: Number(score) || 3, reason };
+  return { label, score: Number(score) || 4, reason };
 }
 function engineeringDimensionFromItems(items) {
   const score = Math.max(...items.map(item => item.score));
@@ -5803,8 +5946,8 @@ function calculateEngineeringComplexity() {
     "agent": engineeringScoreItem("Transport method", 2, "standard agent requires deployment, routing and lifecycle management"),
     "custom-rest": engineeringScoreItem("Transport method", 3, "custom REST, pull script or webhook introduces custom pipeline engineering"),
     "database-polling": engineeringScoreItem("Transport method", 3, "database/JDBC polling introduces custom query, schedule and state handling"),
-    "air-gapped": engineeringScoreItem("Transport method", 3, "air-gapped or isolated paths require middleware, staging or non-standard transfer design"),
-    "unknown": engineeringScoreItem("Transport method", 3, "transport is unknown and should be treated as custom/high until proven")
+    "air-gapped": engineeringScoreItem("Transport method", 4, "air-gapped or isolated paths require middleware, staging or non-standard transfer design"),
+    "unknown": engineeringScoreItem("Transport method", 4, "transport is unknown and should be treated as custom/high until proven")
   };
   const ingestionItems = [
     transportScores[transportValue] || transportScores.unknown,
@@ -5820,9 +5963,9 @@ function calculateEngineeringComplexity() {
     "semi-structured-modify": engineeringScoreItem("Data format/parser", 2, "pre-built parser likely needs custom regex or field-extension work"),
     "custom-app-modify": engineeringScoreItem("Data format/parser", 2, "custom application logs require existing parser modification"),
     "unstructured-regex": engineeringScoreItem("Data format/parser", 3, "unstructured raw text requires custom parsing from scratch"),
-    "multiline": engineeringScoreItem("Data format/parser", 3, "multi-line logs require complex event breaking and parsing"),
-    "proprietary": engineeringScoreItem("Data format/parser", 3, "proprietary format requires custom parser design or reverse engineering"),
-    "unknown": engineeringScoreItem("Data format/parser", 3, "data format is unknown and should be treated as custom/high until sample events are proven")
+    "multiline": engineeringScoreItem("Data format/parser", 4, "multi-line logs require complex event breaking and parsing"),
+    "proprietary": engineeringScoreItem("Data format/parser", 4, "proprietary format requires custom parser design or reverse engineering"),
+    "unknown": engineeringScoreItem("Data format/parser", 4, "data format is unknown and should be treated as custom/high until sample events are proven")
   };
   const parsingItems = [
     parsingScores[parsingValue] || parsingScores.unknown,
@@ -5836,10 +5979,10 @@ function calculateEngineeringComplexity() {
   const documentationAvailability = calcInputValue("calcDocumentation");
   const reverseEngineeringRequired = calculateReverseEngineering(customRequired, documentationAvailability);
   const supportabilityRating = calculateSupportabilityRating(customRequired, documentationAvailability, reverseEngineeringRequired, calculateCurrentDiscoveryScore());
-  const customScore = customRequired === "No" ? 1 : customRequired === "Unknown" ? 2 : 3;
+  const customScore = customRequired === "No" ? 1 : customRequired === "Unknown" ? 3 : 3;
   const documentationScore = documentationEngineeringDebtScore(documentationAvailability);
-  const reverseEngineeringScore = reverseEngineeringRequired === "No" ? 1 : reverseEngineeringRequired === "Partial" || reverseEngineeringRequired === "Unknown" ? 2 : 3;
-  const supportabilityScore = supportabilityRating === "Low Risk" ? 1 : supportabilityRating === "Medium Risk" || supportabilityRating === "Unknown" ? 2 : 3;
+  const reverseEngineeringScore = reverseEngineeringRequired === "No" ? 1 : reverseEngineeringRequired === "Partial" || reverseEngineeringRequired === "Unknown" ? 3 : 4;
+  const supportabilityScore = supportabilityRating === "Low Risk" ? 1 : supportabilityRating === "Medium Risk" ? 2 : supportabilityRating === "Unknown" ? 3 : 4;
   const maintenanceItems = [
     engineeringScoreItem("Custom solution", customScore, customRequired === "No" ? "no custom solution means low technical-debt exposure" : customRequired === "Unknown" ? "custom-solution need is not yet confirmed" : "custom code or custom collection increases ownership and maintenance debt"),
     engineeringScoreItem("Supportability", supportabilityScore, `current supportability result is ${supportabilityRating}`),
@@ -5876,7 +6019,7 @@ function calculateEngineeringComplexity() {
     maintenanceTechnicalDebtScore: maintenance.score,
     maintenanceTechnicalDebtBand: maintenance.band,
     maintenanceTechnicalDebtReason: maintenance.reason,
-    reason: `Engineering complexity uses the highest score across ingestion architecture (${ingestion.score}), parsing & normalisation (${parsing.score}) and maintenance & technical debt (${maintenance.score}). Highest driver(s): ${topDrivers.map(item => item.label).join(", ")}. Equivalent implementation-complexity rating: ${equivalentImplementationRating}.`
+    reason: `Engineering complexity uses the highest score across ingestion architecture (${ingestion.score}/4), parsing & normalisation (${parsing.score}/4) and maintenance & technical debt (${maintenance.score}/4). Highest driver(s): ${topDrivers.map(item => item.label).join(", ")}. Equivalent implementation-complexity rating: ${equivalentImplementationRating}.`
   };
 }
 function calculatedEffortRating(index) {
@@ -6035,7 +6178,8 @@ function documentationEngineeringDebtScore(documentationAvailability) {
   const band = documentationAccessibilityBand(documentationAvailability);
   if (band === "excellent" || band === "good") return 1;
   if (band === "fair") return 2;
-  return 3;
+  if (band === "poor") return 3;
+  return 4;
 }
 function calculateReverseEngineering(customRequired, documentationAvailability) {
   const docBand = documentationAccessibilityBand(documentationAvailability);
@@ -6105,9 +6249,11 @@ function buildCalculatorResult() {
   const logVolumeEpsComplexity = calculateLogVolumeEpsComplexity();
   const analyticsUseCaseMappingComplexity = calculateAnalyticsUseCaseMappingComplexity();
   const engineeringComplexity = calculateEngineeringComplexity();
-  const complexity = Math.max(transportIngestionComplexity.rating, dataFormattingParsingComplexity.rating, logVolumeEpsComplexity.rating, analyticsUseCaseMappingComplexity.rating, engineeringComplexity.equivalentImplementationRating);
+  const engagementComplexity = calculateEngagementComplexity();
+  const complexity = Math.max(transportIngestionComplexity.rating, dataFormattingParsingComplexity.rating, logVolumeEpsComplexity.rating, analyticsUseCaseMappingComplexity.rating, engagementComplexity.equivalentImplementationRating, engineeringComplexity.equivalentImplementationRating);
   const complexityBand = complexityBandFromRating(complexity);
-  const complexityReason = `Combined complexity uses the highest rating across transport/ingestion (${transportIngestionComplexity.rating}), data formatting/parsing (${dataFormattingParsingComplexity.rating}), log volume/EPS (${logVolumeEpsComplexity.rating}), analytics/use-case mapping (${analyticsUseCaseMappingComplexity.rating}) and engineering complexity (${engineeringComplexity.rating}/3, equivalent ${engineeringComplexity.equivalentImplementationRating}).`;
+  const complexityDescription = complexityDescriptionFromRating(complexity);
+  const complexityReason = `Combined complexity uses the highest rating across transport/ingestion (${transportIngestionComplexity.rating}), data formatting/parsing (${dataFormattingParsingComplexity.rating}), log volume/EPS (${logVolumeEpsComplexity.rating}), analytics/use-case mapping (${analyticsUseCaseMappingComplexity.rating}), engagement complexity (${engagementComplexity.score}/18 ${engagementComplexity.rating}, equivalent ${engagementComplexity.equivalentImplementationRating}) and engineering complexity (${engineeringComplexity.rating}/4, equivalent ${engineeringComplexity.equivalentImplementationRating}). ${complexityBand}: ${complexityDescription}`;
   const baseScore = Math.round((securityValue * 0.3) + (technicalReadiness * 0.4) + (operationalAssurance * 0.3));
   const reverseEngineeringRequired = calculateReverseEngineering(customRequired, documentationAvailability);
   const discoveryValues = [schemaDiscovery];
@@ -6185,6 +6331,16 @@ function buildCalculatorResult() {
     engineeringMaintenanceTechnicalDebtBand: engineeringComplexity.maintenanceTechnicalDebtBand,
     engineeringMaintenanceTechnicalDebtReason: engineeringComplexity.maintenanceTechnicalDebtReason,
     engineeringComplexityReason: engineeringComplexity.reason,
+    engagementComplexityScore: engagementComplexity.score,
+    engagementComplexityMaxScore: engagementComplexity.maxScore,
+    engagementComplexityRawEvidenceScore: engagementComplexity.rawEvidenceScore,
+    engagementComplexityPenaltyScore: engagementComplexity.penaltyScore,
+    engagementComplexityRating: engagementComplexity.rating,
+    engagementComplexityRange: engagementComplexity.range,
+    engagementComplexityDescription: engagementComplexity.description,
+    engagementComplexityEquivalentRating: engagementComplexity.equivalentImplementationRating,
+    engagementComplexityReason: engagementComplexity.reason,
+    engagementComplexityDrivers: engagementComplexity.drivers,
     combinedComplexityBand: complexityBand,
     combinedComplexityRating: complexity,
     combinedComplexityReason: complexityReason,
@@ -6246,7 +6402,7 @@ function calculatorConditions(result) {
   if (result.dataFormattingParsingComplexityRating >= 4) conditions.push(`High data formatting/parsing complexity: ${result.dataFormattingParsingMethod}`);
   if (result.logVolumeEpsComplexityRating >= 4) conditions.push(`High log volume/EPS complexity: ${result.logVolumeEpsProfile}`);
   if (result.analyticsUseCaseMappingComplexityRating >= 4) conditions.push(`High analytics/use-case mapping complexity: ${result.analyticsUseCaseMappingProfile}`);
-  if (result.engineeringComplexityRating >= 3) conditions.push(`High engineering complexity: ingestion ${result.engineeringIngestionArchitectureScore}/3, parsing ${result.engineeringParsingNormalisationScore}/3, maintenance debt ${result.engineeringMaintenanceTechnicalDebtScore}/3`);
+  if (result.engineeringComplexityRating >= 3) conditions.push(`High engineering complexity: ingestion ${result.engineeringIngestionArchitectureScore}/4, parsing ${result.engineeringParsingNormalisationScore}/4, maintenance debt ${result.engineeringMaintenanceTechnicalDebtScore}/4`);
   if (result.reverseEngineeringRequired !== "No") conditions.push(`Reverse engineering requirement: ${result.reverseEngineeringRequired}`);
   if (schemaAccessibilityNeedsAttention(result.schemaDiscovery)) conditions.push(`Data schema availability & accessibility: ${result.schemaDiscovery}`);
   if (result.sampleEvents !== "Yes") conditions.push(`Sample events available: ${result.sampleEvents}`);
@@ -6275,7 +6431,8 @@ function updateCalculatorOutputs() {
   const logVolumeEpsComplexity = calculateLogVolumeEpsComplexity();
   const analyticsComplexity = calculateAnalyticsUseCaseMappingComplexity();
   const engineeringComplexity = calculateEngineeringComplexity();
-  const combinedRating = Math.max(transportComplexity.rating, parsingComplexity.rating, logVolumeEpsComplexity.rating, analyticsComplexity.rating, engineeringComplexity.equivalentImplementationRating);
+  const engagementComplexity = calculateEngagementComplexity();
+  const combinedRating = Math.max(transportComplexity.rating, parsingComplexity.rating, logVolumeEpsComplexity.rating, analyticsComplexity.rating, engagementComplexity.equivalentImplementationRating, engineeringComplexity.equivalentImplementationRating);
   const combinedBand = complexityBandFromRating(combinedRating);
   const transportOutput = document.getElementById("calcTransportComplexityOut");
   const transportNote = document.getElementById("calcTransportComplexityNote");
@@ -6295,29 +6452,33 @@ function updateCalculatorOutputs() {
   if (analyticsNote) analyticsNote.textContent = analyticsComplexity.reason;
   const engineeringIngestionOutput = document.getElementById("calcEngineeringIngestionOut");
   const engineeringIngestionNote = document.getElementById("calcEngineeringIngestionNote");
-  if (engineeringIngestionOutput) engineeringIngestionOutput.textContent = `${engineeringComplexity.ingestionArchitectureScore}/3 - ${engineeringComplexity.ingestionArchitectureBand}`;
+  if (engineeringIngestionOutput) engineeringIngestionOutput.textContent = `${engineeringComplexity.ingestionArchitectureScore}/4 - ${engineeringComplexity.ingestionArchitectureBand}`;
   if (engineeringIngestionNote) engineeringIngestionNote.textContent = engineeringComplexity.ingestionArchitectureReason;
   const engineeringParsingOutput = document.getElementById("calcEngineeringParsingOut");
   const engineeringParsingNote = document.getElementById("calcEngineeringParsingNote");
-  if (engineeringParsingOutput) engineeringParsingOutput.textContent = `${engineeringComplexity.parsingNormalisationScore}/3 - ${engineeringComplexity.parsingNormalisationBand}`;
+  if (engineeringParsingOutput) engineeringParsingOutput.textContent = `${engineeringComplexity.parsingNormalisationScore}/4 - ${engineeringComplexity.parsingNormalisationBand}`;
   if (engineeringParsingNote) engineeringParsingNote.textContent = engineeringComplexity.parsingNormalisationReason;
   const engineeringMaintenanceOutput = document.getElementById("calcEngineeringMaintenanceOut");
   const engineeringMaintenanceNote = document.getElementById("calcEngineeringMaintenanceNote");
-  if (engineeringMaintenanceOutput) engineeringMaintenanceOutput.textContent = `${engineeringComplexity.maintenanceTechnicalDebtScore}/3 - ${engineeringComplexity.maintenanceTechnicalDebtBand}`;
+  if (engineeringMaintenanceOutput) engineeringMaintenanceOutput.textContent = `${engineeringComplexity.maintenanceTechnicalDebtScore}/4 - ${engineeringComplexity.maintenanceTechnicalDebtBand}`;
   if (engineeringMaintenanceNote) engineeringMaintenanceNote.textContent = engineeringComplexity.maintenanceTechnicalDebtReason;
   const engineeringOutput = document.getElementById("calcEngineeringComplexityOut");
   const engineeringNote = document.getElementById("calcEngineeringComplexityNote");
-  if (engineeringOutput) engineeringOutput.textContent = `${engineeringComplexity.rating}/3 - ${engineeringComplexity.band}`;
+  if (engineeringOutput) engineeringOutput.textContent = `${engineeringComplexity.rating}/4 - ${engineeringComplexity.band}`;
   if (engineeringNote) engineeringNote.textContent = engineeringComplexity.reason;
   const difficultyDetails = calculateCurrentDifficultyDetails(securityValueDetails, technicalReadinessDetails, operationalAssuranceDetails);
   const difficultyOutput = document.getElementById("calcDifficultyOut");
   const difficultyNote = document.getElementById("calcDifficultyNote");
   if (difficultyOutput) difficultyOutput.textContent = `${difficultyDetails.rating} - ${difficultyDetails.band}`;
   if (difficultyNote) difficultyNote.textContent = `${difficultyDetails.reason} ${difficultyDetails.drivers.map(item => `${item.label}: ${item.reason}`).join("; ")}`;
+  const engagementOutput = document.getElementById("calcEngagementComplexityOut");
+  const engagementNote = document.getElementById("calcEngagementComplexityNote");
+  if (engagementOutput) engagementOutput.textContent = `${engagementComplexity.score}/18 - ${engagementComplexity.rating}`;
+  if (engagementNote) engagementNote.textContent = engagementComplexity.reason;
   const complexityOutput = document.getElementById("calcComplexityOut");
   const complexityNote = document.getElementById("calcComplexityNote");
   if (complexityOutput) complexityOutput.textContent = `${combinedRating} - ${combinedBand}`;
-  if (complexityNote) complexityNote.textContent = `Implementation complexity uses the highest rating across transport/ingestion (${transportComplexity.rating}), data formatting/parsing (${parsingComplexity.rating}), log volume/EPS (${logVolumeEpsComplexity.rating}), analytics/use-case mapping (${analyticsComplexity.rating}) and engineering complexity (${engineeringComplexity.rating}/3, equivalent ${engineeringComplexity.equivalentImplementationRating}).`;
+  if (complexityNote) complexityNote.textContent = `Implementation complexity uses the highest rating across transport/ingestion (${transportComplexity.rating}), data formatting/parsing (${parsingComplexity.rating}), log volume/EPS (${logVolumeEpsComplexity.rating}), analytics/use-case mapping (${analyticsComplexity.rating}), engagement complexity (${engagementComplexity.score}/18 ${engagementComplexity.rating}, equivalent ${engagementComplexity.equivalentImplementationRating}) and engineering complexity (${engineeringComplexity.rating}/4, equivalent ${engineeringComplexity.equivalentImplementationRating}). ${complexityDescriptionFromRating(combinedRating)}`;
 }
 
 function calculatorScoreBand(value) {
@@ -6333,7 +6494,8 @@ function calculatorPrimaryIssue(result) {
   if (result.technicalReadinessBlockers && result.technicalReadinessBlockers.length) issues.push("technical readiness blocker");
   if (result.operationalAssuranceBlockers && result.operationalAssuranceBlockers.length) issues.push("operational assurance blocker");
   if (result.supportabilityRating === "High Risk") issues.push("supportability risk");
-  if (result.engineeringComplexityRating >= 3) issues.push("high engineering complexity");
+  if (result.engineeringComplexityRating >= 4) issues.push("very high engineering complexity");
+  else if (result.engineeringComplexityRating >= 3) issues.push("high engineering complexity");
   if (result.combinedComplexityRating >= 4) issues.push("high implementation complexity");
   if (result.reverseEngineeringRequired !== "No") issues.push("reverse-engineering requirement");
   if (result.technicalReadiness < 60) issues.push("technical readiness below target");
@@ -6367,8 +6529,9 @@ function calculatorRadarRiskScore(value) {
 function calculatorRadarEngineeringScore(rating) {
   const numeric = Number(rating) || 0;
   if (numeric <= 1) return 100;
-  if (numeric === 2) return 60;
-  if (numeric >= 3) return 25;
+  if (numeric === 2) return 70;
+  if (numeric === 3) return 45;
+  if (numeric >= 4) return 20;
   return 40;
 }
 function calculatorRadarBand(score) {
@@ -6455,6 +6618,7 @@ function renderViabilityCalculator() {
       <div class="assurance-score-track"><div class="assurance-score-fill" style="width:${result.baseScore}%"></div></div>
       <div class="calc-summary-meta">
         <div><span>Primary issue</span><strong>${escapeHtml(primaryIssue)}</strong></div>
+        <div><span>Engagement complexity rating</span><strong>${escapeHtml(result.engagementComplexityRating)} · ${escapeHtml(result.engagementComplexityScore)}/18</strong><strong>${escapeHtml(result.engagementComplexityDescription)}</strong></div>
         <div><span>Next step</span><strong>${escapeHtml(summaryNextStep)}</strong></div>
       </div>
     </div>
@@ -6465,7 +6629,7 @@ function renderViabilityCalculator() {
         <div class="calc-result-tile"><span>Technical readiness</span><strong>${escapeHtml(result.technicalReadiness)}% · ${escapeHtml(calculatorScoreBand(result.technicalReadiness))}</strong></div>
         <div class="calc-result-tile"><span>Operational assurance</span><strong>${escapeHtml(result.operationalAssurance)}% · ${escapeHtml(calculatorScoreBand(result.operationalAssurance))}</strong></div>
         <div class="calc-result-tile"><span>Supportability</span><strong>${escapeHtml(result.supportabilityRating)}</strong></div>
-        <div class="calc-result-tile"><span>Engineering complexity</span><strong>${escapeHtml(result.engineeringComplexityRating)}/3 · ${escapeHtml(result.engineeringComplexityBand)}</strong></div>
+        <div class="calc-result-tile"><span>Engineering complexity</span><strong>${escapeHtml(result.engineeringComplexityRating)}/4 · ${escapeHtml(result.engineeringComplexityBand)}</strong></div>
         <div class="calc-result-tile"><span>Effort / duration</span><strong>${escapeHtml(result.effortRating)} · ${escapeHtml(result.duration)}</strong></div>
       </div>
     </div>
@@ -6485,13 +6649,16 @@ function renderViabilityCalculator() {
         <div class="calc-actions-list">
           <div><strong>Custom solution:</strong> ${escapeHtml(result.customRequired)} — ${escapeHtml(result.customType)}</div>
           <div><strong>Documentation availability &amp; accessibility:</strong> ${escapeHtml(result.documentationAvailability)}</div>
-          <div><strong>Supportability:</strong> ${escapeHtml(result.supportabilityRating)} · reverse engineering ${escapeHtml(result.reverseEngineeringRequired)} · discovery score ${escapeHtml(result.discoveryScore)} / 5</div>
+          <div><strong>Supportability:</strong> ${escapeHtml(result.supportabilityRating)} · reverse engineering ${escapeHtml(result.reverseEngineeringRequired)} · discovery score ${escapeHtml(result.discoveryScore)} / 3</div>
           <div><strong>Transport &amp; ingestion method:</strong> ${escapeHtml(result.transportIngestionMethod)} · complexity ${escapeHtml(result.transportIngestionComplexityRating)} - ${escapeHtml(result.transportIngestionComplexityBand)}</div>
           <div><strong>Data formatting &amp; parsing:</strong> ${escapeHtml(result.dataFormattingParsingMethod)} · complexity ${escapeHtml(result.dataFormattingParsingComplexityRating)} - ${escapeHtml(result.dataFormattingParsingComplexityBand)}</div>
           <div><strong>Log volume &amp; EPS:</strong> ${escapeHtml(result.logVolumeEpsProfile)} · complexity ${escapeHtml(result.logVolumeEpsComplexityRating)} - ${escapeHtml(result.logVolumeEpsComplexityBand)}</div>
           <div><strong>Analytics / use case mapping:</strong> ${escapeHtml(result.analyticsUseCaseMappingProfile)} · complexity ${escapeHtml(result.analyticsUseCaseMappingComplexityRating)} - ${escapeHtml(result.analyticsUseCaseMappingComplexityBand)}</div>
-          <div><strong>Engineering complexity:</strong> ${escapeHtml(result.engineeringComplexityRating)}/3 - ${escapeHtml(result.engineeringComplexityBand)} · ingestion ${escapeHtml(result.engineeringIngestionArchitectureScore)}/3, parsing ${escapeHtml(result.engineeringParsingNormalisationScore)}/3, maintenance debt ${escapeHtml(result.engineeringMaintenanceTechnicalDebtScore)}/3</div>
-          <div><strong>Combined implementation complexity:</strong> ${escapeHtml(result.combinedComplexityRating)} - ${escapeHtml(result.combinedComplexityBand)}</div>
+          <div><strong>Engineering complexity:</strong> ${escapeHtml(result.engineeringComplexityRating)}/4 - ${escapeHtml(result.engineeringComplexityBand)} · ingestion ${escapeHtml(result.engineeringIngestionArchitectureScore)}/4, parsing ${escapeHtml(result.engineeringParsingNormalisationScore)}/4, maintenance debt ${escapeHtml(result.engineeringMaintenanceTechnicalDebtScore)}/4</div>
+          <div><strong>Engagement complexity:</strong> ${escapeHtml(result.engagementComplexityScore)}/18 - ${escapeHtml(result.engagementComplexityRating)} · equivalent implementation rating ${escapeHtml(result.engagementComplexityEquivalentRating)}. ${escapeHtml(result.engagementComplexityDescription)}</div>
+          <div><strong>Engagement complexity driver(s):</strong> ${escapeHtml(result.engagementComplexityDrivers.map(item => `${item.label}: ${item.reason}`).join("; "))}</div>
+          ${renderEngagementComplexityReference(result.engagementComplexityRating)}
+          <div><strong>Combined implementation complexity:</strong> ${escapeHtml(result.combinedComplexityRating)} - ${escapeHtml(result.combinedComplexityBand)} · ${escapeHtml(result.combinedComplexityReason)}</div>
           <div><strong>Calculated difficulty / complexity / time:</strong> ${escapeHtml(result.difficulty)} - ${escapeHtml(result.difficultyBand)} / ${escapeHtml(result.complexity)} / ${escapeHtml(result.timeRating)} - ${escapeHtml(result.timeRatingBand)} · effort index ${escapeHtml(result.effortIndex)}</div>
           <div><strong>Calculated time basis:</strong> ${escapeHtml(result.timeRatingReason)}</div>
           <div><strong>Calculated time driver(s):</strong> ${escapeHtml(result.timeRatingDrivers.map(item => `${item.label}: ${item.reason}`).join("; "))}</div>
@@ -6521,8 +6688,8 @@ function populateCalculatorPatternOptions() {
 function exportViabilityCalculator(event) {
   if (!currentCalculatorResult) renderViabilityCalculator();
   const result = currentCalculatorResult;
-  const columns = ["assessmentId", "platform", "dataSource", "owner", "decision", "baseScore", "securityValue", "securityValueAnswered", "securityValueRawScore", "securityValueBlockers", "technicalReadiness", "technicalReadinessAnswered", "technicalReadinessRawScore", "technicalReadinessBlockers", "operationalAssurance", "operationalAssuranceAnswered", "operationalAssuranceRawScore", "operationalAssuranceBlockers", "gateFailures", "gateFailureItems", "customRequired", "customType", "transportIngestionMethod", "transportIngestionComplexityBand", "transportIngestionComplexityRating", "transportIngestionComplexityReason", "dataFormattingParsingMethod", "dataFormattingParsingComplexityBand", "dataFormattingParsingComplexityRating", "dataFormattingParsingComplexityReason", "logVolumeEpsProfile", "logVolumeEpsComplexityBand", "logVolumeEpsComplexityRating", "logVolumeEpsComplexityReason", "analyticsUseCaseMappingProfile", "analyticsUseCaseMappingComplexityBand", "analyticsUseCaseMappingComplexityRating", "analyticsUseCaseMappingComplexityReason", "engineeringComplexityBand", "engineeringComplexityRating", "engineeringComplexityEquivalentRating", "engineeringIngestionArchitectureScore", "engineeringIngestionArchitectureBand", "engineeringIngestionArchitectureReason", "engineeringParsingNormalisationScore", "engineeringParsingNormalisationBand", "engineeringParsingNormalisationReason", "engineeringMaintenanceTechnicalDebtScore", "engineeringMaintenanceTechnicalDebtBand", "engineeringMaintenanceTechnicalDebtReason", "engineeringComplexityReason", "combinedComplexityBand", "combinedComplexityRating", "combinedComplexityReason", "supportabilityRating", "documentationAvailability", "reverseEngineeringRequired", "schemaDiscovery", "sampleEvents", "volumeKnown", "difficulty", "difficultyBand", "difficultyReason", "difficultyDrivers", "complexity", "timeRating", "timeRatingBand", "timeRatingReason", "timeRatingDrivers", "effortRating", "duration", "recommendedPatternId", "nextAction"];
-  const lines = [columns.map(csvValue).join(","), columns.map(column => csvValue(column === "securityValueBlockers" ? result.securityValueBlockers.map(item => item.label).join("; ") : column === "technicalReadinessBlockers" ? result.technicalReadinessBlockers.map(item => item.label).join("; ") : column === "operationalAssuranceBlockers" ? result.operationalAssuranceBlockers.map(item => item.label).join("; ") : column === "gateFailureItems" ? result.gateFailureItems.map(item => `${item.area}: ${item.label}`).join("; ") : column === "difficultyDrivers" ? result.difficultyDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : column === "timeRatingDrivers" ? result.timeRatingDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : result[column])).join(",")];
+  const columns = ["assessmentId", "platform", "dataSource", "owner", "decision", "baseScore", "securityValue", "securityValueAnswered", "securityValueRawScore", "securityValueBlockers", "technicalReadiness", "technicalReadinessAnswered", "technicalReadinessRawScore", "technicalReadinessBlockers", "operationalAssurance", "operationalAssuranceAnswered", "operationalAssuranceRawScore", "operationalAssuranceBlockers", "gateFailures", "gateFailureItems", "customRequired", "customType", "transportIngestionMethod", "transportIngestionComplexityBand", "transportIngestionComplexityRating", "transportIngestionComplexityReason", "dataFormattingParsingMethod", "dataFormattingParsingComplexityBand", "dataFormattingParsingComplexityRating", "dataFormattingParsingComplexityReason", "logVolumeEpsProfile", "logVolumeEpsComplexityBand", "logVolumeEpsComplexityRating", "logVolumeEpsComplexityReason", "analyticsUseCaseMappingProfile", "analyticsUseCaseMappingComplexityBand", "analyticsUseCaseMappingComplexityRating", "analyticsUseCaseMappingComplexityReason", "engineeringComplexityBand", "engineeringComplexityRating", "engineeringComplexityEquivalentRating", "engineeringIngestionArchitectureScore", "engineeringIngestionArchitectureBand", "engineeringIngestionArchitectureReason", "engineeringParsingNormalisationScore", "engineeringParsingNormalisationBand", "engineeringParsingNormalisationReason", "engineeringMaintenanceTechnicalDebtScore", "engineeringMaintenanceTechnicalDebtBand", "engineeringMaintenanceTechnicalDebtReason", "engineeringComplexityReason", "engagementComplexityScore", "engagementComplexityMaxScore", "engagementComplexityRawEvidenceScore", "engagementComplexityPenaltyScore", "engagementComplexityRating", "engagementComplexityRange", "engagementComplexityDescription", "engagementComplexityEquivalentRating", "engagementComplexityReason", "engagementComplexityDrivers", "combinedComplexityBand", "combinedComplexityRating", "combinedComplexityReason", "supportabilityRating", "documentationAvailability", "reverseEngineeringRequired", "schemaDiscovery", "sampleEvents", "volumeKnown", "difficulty", "difficultyBand", "difficultyReason", "difficultyDrivers", "complexity", "timeRating", "timeRatingBand", "timeRatingReason", "timeRatingDrivers", "effortRating", "duration", "recommendedPatternId", "nextAction"];
+  const lines = [columns.map(csvValue).join(","), columns.map(column => csvValue(column === "securityValueBlockers" ? result.securityValueBlockers.map(item => item.label).join("; ") : column === "technicalReadinessBlockers" ? result.technicalReadinessBlockers.map(item => item.label).join("; ") : column === "operationalAssuranceBlockers" ? result.operationalAssuranceBlockers.map(item => item.label).join("; ") : column === "gateFailureItems" ? result.gateFailureItems.map(item => `${item.area}: ${item.label}`).join("; ") : column === "difficultyDrivers" ? result.difficultyDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : column === "timeRatingDrivers" ? result.timeRatingDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : column === "engagementComplexityDrivers" ? result.engagementComplexityDrivers.map(item => `${item.label}: ${item.reason}`).join("; ") : result[column])).join(",")];
   const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
