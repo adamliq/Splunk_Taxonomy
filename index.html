@@ -2198,17 +2198,28 @@
           <details class="calc-section calc-question-section">
             <summary><span>Technical readiness questions</span><span class="calc-section-summary-meta">19 scored + complexity factors</span></summary>
             <fieldset class="calc-section-body">
-            <p class="calc-section-intro">These answers calculate the Technical Readiness percentage. Use Confirmed/ready only when evidence is available; use Partial when a design assumption still needs validation.</p>
+            <p class="calc-section-intro">These answers calculate the Technical Readiness percentage. Each question asks whether the source has enough evidence to move from viability into design/build. Use Confirmed/ready only when evidence is available; use Partial when a design assumption still needs validation.</p>
             <div class="calc-question-grid">
               <div class="calc-field">
-            <label for="calcCustomRequired">Custom solution required</label>
-            <select id="calcCustomRequired"><option>No</option><option>Yes</option><option>Unknown</option></select>
+            <label for="calcCustomRequired">Is a custom solution required?</label><span class="calc-help">Select Yes when the source cannot use a certified TA, supported API input, standard syslog/agent path, or other repeatable ingestion method.</span>
+            <select id="calcCustomRequired">
+              <option value="No">No — standard supported onboarding path is expected</option>
+              <option value="Yes">Yes — custom script, parser, add-on or routing logic is required</option>
+              <option value="Unknown">Unknown — not enough evidence to determine yet</option>
+            </select>
           </div>
               <div class="calc-field">
-            <label for="calcCustomType">Custom / integration type</label>
-            <select id="calcCustomType"><option>None required</option><option>Supported add-on or API input</option><option>Custom REST/API polling script</option><option>Custom technology add-on or parser</option><option>Custom routing or processor logic</option><option>To be confirmed</option></select>
+            <label for="calcCustomType">Custom or integration approach</label><span class="calc-help">Describe the likely build path, such as supported add-on/API, custom REST polling, custom parser, routing logic, or still to be confirmed.</span>
+            <select id="calcCustomType">
+              <option value="None required">None required — certified TA, supported connector or standard path should be enough</option>
+              <option value="Supported add-on or API input">Supported add-on or API input — packaged or repeatable ingestion path exists</option>
+              <option value="Custom REST/API polling script">Custom REST/API polling script — build polling, pagination, checkpointing and retries</option>
+              <option value="Custom technology add-on or parser">Custom technology add-on or parser — build sourcetype, props/transforms or modular input</option>
+              <option value="Custom routing or processor logic">Custom routing or processor logic — build filtering, splitting, routing or pipeline logic</option>
+              <option value="To be confirmed">To be confirmed — integration approach is not yet known</option>
+            </select>
           </div>
-              <div class="calc-field"><label for="calcDocumentation">Documentation availability &amp; accessibility</label><select id="calcDocumentation" class="technical-readiness-question">
+              <div class="calc-field"><label for="calcDocumentation">Documentation availability &amp; accessibility</label><span class="calc-help">Assess whether product, API, audit-log and integration documentation is easy to access, current, searchable and usable by the onboarding team.</span><select id="calcDocumentation" class="technical-readiness-question">
                 <option value="Exceptional">Exceptional: Publicly hosted or instant SSO access. 24/7 uptime. Fully searchable index.</option>
                 <option value="Good">Good: Access requires a quick login portal. Minor downtime or slow search indexing. Formats are standard.</option>
                 <option value="Fair">Fair: Kept behind a manual gate. Must email an account manager for copies. Documents are heavily restricted.</option>
@@ -2216,8 +2227,8 @@
                 <option value="Fail">Fail: No documentation available. Total absence of manuals, APIs, or portals. Requests go unanswered.</option>
               </select></div>
               <div class="calc-field">
-            <label for="calcSchemaDiscovery">Data Schema Availability &amp; Accessibility</label>
-            <select id="calcSchemaDiscovery">
+            <label for="calcSchemaDiscovery">Data schema availability &amp; accessibility</label><span class="calc-help">Assess whether field dictionaries, API schemas, table layouts, object relationships, data types and constraints are documented and accessible.</span>
+            <select id="calcSchemaDiscovery" class="technical-readiness-question">
               <option value="Exceptional">Exceptional: Publicly hosted or instant SSO access. 24/7 uptime. Complete, live, machine-readable schemas (Swagger/GraphQL). Every table, field, data type, relationship, and constraint is fully documented in a data dictionary.</option>
               <option value="Good">Good: Mostly complete with fast access. Minor gaps in edge-case fields, but core objects and tables are fully mapped. Available via static documentation portals with standard formatting.</option>
               <option value="Fair">Fair: Partially complete and gated access. Must request diagrams manually. Core fields exist, but metadata (data types, lengths, nullability rules) is missing or vague.</option>
@@ -2226,28 +2237,126 @@
             </select>
           </div>
               <div class="calc-field">
-            <label for="calcSampleEvents">Sample events available</label>
-            <select id="calcSampleEvents"><option>Yes</option><option>Partial</option><option>No</option></select>
+            <label for="calcSampleEvents">Sample events available for validation</label><span class="calc-help">Use Yes only when real or representative raw events are available for parsing, timestamp, field, CIM and detection validation.</span>
+            <select id="calcSampleEvents" class="technical-readiness-question">
+              <option value="Yes">Yes — real or representative raw events are available</option>
+              <option value="Partial">Partial — limited samples or only screenshots/examples available</option>
+              <option value="No">No — no usable sample events available yet</option>
+            </select>
           </div>
               <div class="calc-field">
-            <label for="calcVolumeKnown">Volume known</label>
-            <select id="calcVolumeKnown"><option>Known</option><option selected>Estimate</option><option>Unknown</option></select>
+            <label for="calcVolumeKnown">EPS / volume estimate confidence</label><span class="calc-help">Assess whether expected EPS, daily GB, peak bursts and retention/cost impact are known enough for sizing and approval.</span>
+            <select id="calcVolumeKnown" class="technical-readiness-question">
+              <option value="Known">Known — EPS, daily GB and peak volume are measured or approved</option>
+              <option value="Estimate" selected>Estimate — rough volume is available but needs validation</option>
+              <option value="Unknown">Unknown — EPS, daily GB or peak volume is not known</option>
+            </select>
           </div>
-              <div class="calc-field"><label for="calcTechIntegrationPath">Integration / export path</label><select id="calcTechIntegrationPath" class="technical-readiness-question"><option value="3">Confirmed supported path</option><option value="2" selected>Viable path identified</option><option value="1">Candidate path, needs validation</option><option value="0">Unknown or no viable path</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechSupportPath">Splunk / vendor support path</label><select id="calcTechSupportPath" class="technical-readiness-question"><option value="3">Certified TA available</option><option value="2" selected>API/export ingest — build required</option><option value="1">Custom integration only</option><option value="0">No supported path / unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechLogLocation">Log location / access</label><select id="calcTechLogLocation" class="technical-readiness-question"><option value="3">Confirmed and accessible</option><option value="2" selected>Known, access pending</option><option value="1">Likely, not proven</option><option value="0">Unknown or inaccessible</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechEnablement">Log enablement / licensing</label><select id="calcTechEnablement" class="technical-readiness-question"><option value="3">Already enabled or no change needed</option><option value="2" selected>Config/licence available</option><option value="1">Dependency or approval required</option><option value="0">Unavailable or unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechPrerequisites">Source prerequisites</label><select id="calcTechPrerequisites" class="technical-readiness-question"><option value="3">Tenant/endpoints/IDs complete</option><option value="2" selected>Mostly known</option><option value="1">Partially known</option><option value="0">Unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechAuthentication">Authentication / credentials</label><select id="calcTechAuthentication" class="technical-readiness-question"><option value="3">Approved service credential model</option><option value="2" selected>Known, approval pending</option><option value="1">Unclear or manual workaround</option><option value="0">Not possible or unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechNetwork">Network / firewall path</label><select id="calcTechNetwork" class="technical-readiness-question"><option value="3">Approved path available</option><option value="2" selected>Ports/proxy known, approval pending</option><option value="1">Complex or unclear path</option><option value="0">Blocked or unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechEncryption">Encryption / certificate trust</label><select id="calcTechEncryption" class="technical-readiness-question"><option value="3">TLS/certificates confirmed</option><option value="2" selected>Design known, validation pending</option><option value="1">Limitations require review</option><option value="0">Not acceptable or unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechDataFormat">Data format</label><select id="calcTechDataFormat" class="technical-readiness-question"><option value="3">Structured and documented</option><option value="2" selected>Known, parser/config required</option><option value="1">Semi-structured/proprietary</option><option value="0">Unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechTimeQuality">Timestamp / timezone quality</label><select id="calcTechTimeQuality" class="technical-readiness-question"><option value="3">Reliable timestamp and timezone</option><option value="2" selected>Known, validation pending</option><option value="1">Partial or inconsistent</option><option value="0">Unknown or unreliable</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechParsing">Parsing / sourcetype readiness</label><select id="calcTechParsing" class="technical-readiness-question"><option value="3">Add-on/parser ready</option><option value="2" selected>Minor configuration required</option><option value="1">Custom parsing required</option><option value="0">Unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechFields">Required fields known</label><select id="calcTechFields" class="technical-readiness-question"><option value="3">Required fields documented</option><option value="2" selected>Key fields known</option><option value="1">Partial field list</option><option value="0">Unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechCim">CIM / detection mapping</label><select id="calcTechCim" class="technical-readiness-question"><option value="3">CIM/use-case mapping known</option><option value="2" selected>Partial mapping available</option><option value="1">Custom mapping required</option><option value="0">Unknown</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechCapacity">Capacity / cost impact</label><select id="calcTechCapacity" class="technical-readiness-question"><option value="3">Capacity and cost accepted</option><option value="2" selected>Estimate available</option><option value="1">Incomplete estimate</option><option value="0">Unknown or unacceptable</option><option value="na">N/A</option></select></div>
-              <div class="calc-field"><label for="calcTechRouting">Routing / architecture fit</label><select id="calcTechRouting" class="technical-readiness-question"><option value="3">Architecture selected</option><option value="2" selected>Candidate architecture identified</option><option value="1">Intermediary/route unclear</option><option value="0">No approved route</option><option value="na">N/A</option></select></div>
+              <div class="calc-field"><label for="calcTechIntegrationPath">Source integration or export path</label><span class="calc-help">Can the source reliably send, expose or export the required logs through a supported connector, API, syslog, database or file path?</span><select id="calcTechIntegrationPath" class="technical-readiness-question">
+              <option value="3">Confirmed supported path — connector/API/export/syslog route is proven and approved</option>
+              <option value="2" selected>Viable path identified — likely route known but validation or approval remains</option>
+              <option value="1">Candidate path only — feasibility still needs proof</option>
+              <option value="0">Unknown or no viable path — no confirmed way to collect the logs</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechSupportPath">Splunk / vendor support path</label><span class="calc-help">Indicates whether onboarding can use a certified Splunk TA, a standard vendor export/API, a custom integration, or no known supported path.</span><select id="calcTechSupportPath" class="technical-readiness-question">
+              <option value="3">Certified TA available — prebuilt Splunk Technology Add-on or supported connector exists</option>
+              <option value="2" selected>API/export ingest — standard path exists but onboarding build is required</option>
+              <option value="1">Custom integration only — bespoke script, modular input, parser or routing required</option>
+              <option value="0">No supported path / unknown — not viable yet or not assessed</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechLogLocation">Log location and access</label><span class="calc-help">Do we know where the events live, which event types are needed, and whether the collection account or collector can access them?</span><select id="calcTechLogLocation" class="technical-readiness-question">
+              <option value="3">Confirmed and accessible — event location and access path are proven</option>
+              <option value="2" selected>Known, access pending — location is known but permission or account access remains</option>
+              <option value="1">Likely, not proven — expected location needs validation</option>
+              <option value="0">Unknown or inaccessible — events cannot yet be located or reached</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechEnablement">Log enablement and licensing</label><span class="calc-help">Confirms whether the required audit/security logs are enabled and whether any licence, plan, feature flag or subscription is required.</span><select id="calcTechEnablement" class="technical-readiness-question">
+              <option value="3">Already enabled or no change needed — required logs are already generated</option>
+              <option value="2" selected>Configuration/licence available — enablement is understood and achievable</option>
+              <option value="1">Dependency or approval required — vendor, platform or licensing action remains</option>
+              <option value="0">Unavailable or unknown — logging cannot be enabled or status is unknown</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechPrerequisites">Source platform prerequisites</label><span class="calc-help">Checks whether required tenant IDs, subscriptions, endpoints, namespaces, database details, scopes, APIs or source-side settings are known.</span><select id="calcTechPrerequisites" class="technical-readiness-question">
+              <option value="3">Complete — tenant IDs, endpoints, scopes, subscriptions and source settings are known</option>
+              <option value="2" selected>Mostly known — minor details still need confirmation</option>
+              <option value="1">Partially known — several prerequisites still need discovery</option>
+              <option value="0">Unknown — prerequisite details are not available</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechAuthentication">Authentication and credential model</label><span class="calc-help">Confirms the credential method, approval path and ownership for API keys, OAuth apps, service accounts, certificates or tokens.</span><select id="calcTechAuthentication" class="technical-readiness-question">
+              <option value="3">Approved service credential model — ownership, access and rotation are agreed</option>
+              <option value="2" selected>Known, approval pending — credential type is known but approval remains</option>
+              <option value="1">Unclear or manual workaround — credential design is weak or not operationally suitable</option>
+              <option value="0">Not possible or unknown — no workable authentication method confirmed</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechNetwork">Network and firewall path</label><span class="calc-help">Confirms ports, proxy, allowlists, private endpoints, routing and firewall/security-zone paths between the source, collectors and Splunk.</span><select id="calcTechNetwork" class="technical-readiness-question">
+              <option value="3">Approved path available — ports, proxy, routing and firewall path are approved</option>
+              <option value="2" selected>Ports/proxy known, approval pending — network design is known but not yet approved</option>
+              <option value="1">Complex or unclear path — security-zone, proxy or routing issues remain</option>
+              <option value="0">Blocked or unknown — no network path is confirmed</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechEncryption">Encryption and certificate trust</label><span class="calc-help">Checks TLS, certificate chain, mTLS, CA trust, certificate ownership and whether encryption meets platform/security requirements.</span><select id="calcTechEncryption" class="technical-readiness-question">
+              <option value="3">TLS/certificates confirmed — trust chain and encryption requirements are known</option>
+              <option value="2" selected>Design known, validation pending — encryption approach needs testing</option>
+              <option value="1">Limitations require review — certificate, TLS or trust constraints need assessment</option>
+              <option value="0">Not acceptable or unknown — encryption path is not viable or not known</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechDataFormat">Raw event structure / data format</label><span class="calc-help">Describes how predictable the raw data is, such as JSON, CEF, key-value, syslog, CSV, multi-line or proprietary text.</span><select id="calcTechDataFormat" class="technical-readiness-question">
+              <option value="3">Structured and documented — predictable JSON/CEF/key-value/schema-backed events</option>
+              <option value="2" selected>Known, parser/config required — format is understood but needs configuration</option>
+              <option value="1">Semi-structured or proprietary — parsing design still needs work</option>
+              <option value="0">Unknown — raw event structure has not been confirmed</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechTimeQuality">Timestamp and timezone quality</label><span class="calc-help">Confirms whether event time is present, parseable, accurate, timezone-aware and not dependent on ingestion time.</span><select id="calcTechTimeQuality" class="technical-readiness-question">
+              <option value="3">Reliable timestamp and timezone — event time is present, accurate and parseable</option>
+              <option value="2" selected>Known, validation pending — expected to work but needs test events</option>
+              <option value="1">Partial or inconsistent — timestamp or timezone quality may need remediation</option>
+              <option value="0">Unknown or unreliable — event time cannot be trusted yet</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechParsing">Parser and sourcetype readiness</label><span class="calc-help">Checks whether a TA, parser, sourcetype, props/transforms or field extraction approach already exists or must be created.</span><select id="calcTechParsing" class="technical-readiness-question">
+              <option value="3">Add-on/parser ready — sourcetype, props/transforms or TA already supports the events</option>
+              <option value="2" selected>Minor configuration required — parser exists but needs tuning or validation</option>
+              <option value="1">Custom parsing required — field extraction, sourcetype or transforms must be built</option>
+              <option value="0">Unknown — parser or sourcetype readiness has not been assessed</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechFields">Required fields known</label><span class="calc-help">Confirms the fields needed for detection, CIM, entity mapping and investigation, such as user, src, dest, action, status and object.</span><select id="calcTechFields" class="technical-readiness-question">
+              <option value="3">Required fields documented — detection/CIM/investigation fields are known</option>
+              <option value="2" selected>Key fields known — core fields are known but some mapping detail remains</option>
+              <option value="1">Partial field list — field coverage is incomplete</option>
+              <option value="0">Unknown — required fields have not been identified</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechCim">CIM / detection mapping</label><span class="calc-help">Confirms whether fields can map to Splunk CIM or the detection schema needed by existing correlation searches and dashboards.</span><select id="calcTechCim" class="technical-readiness-question">
+              <option value="3">CIM/use-case mapping known — fields map to the target detection/data model</option>
+              <option value="2" selected>Partial mapping available — core mapping exists but needs validation</option>
+              <option value="1">Custom mapping required — normalisation or enrichment must be designed</option>
+              <option value="0">Unknown — no detection/CIM/ASIM/ECS mapping exists yet</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechCapacity">Capacity and cost impact</label><span class="calc-help">Assesses whether expected storage, licence, index, retention, filtering and infrastructure impact are known and accepted.</span><select id="calcTechCapacity" class="technical-readiness-question">
+              <option value="3">Capacity and cost accepted — storage, licence, retention and index impact are approved</option>
+              <option value="2" selected>Estimate available — sizing exists but needs validation or approval</option>
+              <option value="1">Incomplete estimate — cost, storage or retention impact is only partially known</option>
+              <option value="0">Unknown or unacceptable — capacity/cost impact is not viable or not known</option>
+              <option value="na">N/A</option>
+            </select></div>
+              <div class="calc-field"><label for="calcTechRouting">Routing and architecture fit</label><span class="calc-help">Confirms the target architecture, such as direct to Splunk Cloud/on-prem, heavy forwarder, syslog server, ingest processor or security-zone intermediary.</span><select id="calcTechRouting" class="technical-readiness-question">
+              <option value="3">Architecture selected — target route, collector, index and destination are agreed</option>
+              <option value="2" selected>Candidate architecture identified — likely design exists but needs approval</option>
+              <option value="1">Intermediary or route unclear — collector, processor or security-zone path is unresolved</option>
+              <option value="0">No approved route — architecture is blocked or unknown</option>
+              <option value="na">N/A</option>
+            </select></div>
             </div>
           
             <div class="calc-complexity-group">
@@ -5303,24 +5412,24 @@ const securityValueQuestions = [
 ];
 const technicalReadinessQuestions = [
   { id: "calcDocumentation", label: "Documentation availability & accessibility", type: "documentation" },
-  { id: "calcSchemaDiscovery", label: "Data Schema Availability & Accessibility", type: "schemaAccessibility", critical: true },
+  { id: "calcSchemaDiscovery", label: "Data schema availability & accessibility", type: "schemaAccessibility", critical: true },
   { id: "calcSampleEvents", label: "Sample events available", type: "sampleEvents", critical: true },
-  { id: "calcVolumeKnown", label: "Volume known", type: "volume" },
-  { id: "calcTechIntegrationPath", label: "Integration/export path", critical: true },
-  { id: "calcTechSupportPath", label: "Splunk/vendor support path" },
-  { id: "calcTechLogLocation", label: "Log location/access", critical: true },
-  { id: "calcTechEnablement", label: "Log enablement/licensing" },
-  { id: "calcTechPrerequisites", label: "Source prerequisites" },
-  { id: "calcTechAuthentication", label: "Authentication/credentials", critical: true },
-  { id: "calcTechNetwork", label: "Network/firewall path", critical: true },
-  { id: "calcTechEncryption", label: "Encryption/certificate trust" },
-  { id: "calcTechDataFormat", label: "Data format" },
-  { id: "calcTechTimeQuality", label: "Timestamp/timezone quality" },
-  { id: "calcTechParsing", label: "Parsing/sourcetype readiness" },
+  { id: "calcVolumeKnown", label: "EPS / volume estimate confidence", type: "volume" },
+  { id: "calcTechIntegrationPath", label: "Source integration or export path", critical: true },
+  { id: "calcTechSupportPath", label: "Splunk / vendor support path" },
+  { id: "calcTechLogLocation", label: "Log location and access", critical: true },
+  { id: "calcTechEnablement", label: "Log enablement and licensing" },
+  { id: "calcTechPrerequisites", label: "Source platform prerequisites" },
+  { id: "calcTechAuthentication", label: "Authentication and credential model", critical: true },
+  { id: "calcTechNetwork", label: "Network and firewall path", critical: true },
+  { id: "calcTechEncryption", label: "Encryption and certificate trust" },
+  { id: "calcTechDataFormat", label: "Raw event structure / data format" },
+  { id: "calcTechTimeQuality", label: "Timestamp and timezone quality" },
+  { id: "calcTechParsing", label: "Parser and sourcetype readiness" },
   { id: "calcTechFields", label: "Required fields known" },
-  { id: "calcTechCim", label: "CIM/detection mapping" },
-  { id: "calcTechCapacity", label: "Capacity/cost impact" },
-  { id: "calcTechRouting", label: "Routing/architecture fit", critical: true }
+  { id: "calcTechCim", label: "CIM / detection mapping" },
+  { id: "calcTechCapacity", label: "Capacity and cost impact" },
+  { id: "calcTechRouting", label: "Routing and architecture fit", critical: true }
 ];
 function calcInputValue(id) {
   const element = document.getElementById(id);
