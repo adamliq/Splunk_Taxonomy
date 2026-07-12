@@ -629,31 +629,66 @@
 
     /* Selectable page views */
     .page-navigation {
+      position: relative;
       display: flex;
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
       margin: 22px 0 18px;
-      padding: 6px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: 0 4px 14px rgba(15,23,42,.05);
+      padding: 38px 10px 10px;
+      border: 1px solid rgba(169, 200, 234, .34);
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0f2034 0%, #173a5c 58%, #1f4e78 100%);
+      box-shadow: 0 10px 28px rgba(15, 32, 52, .22);
+      overflow: hidden;
+    }
+    .page-navigation::before {
+      content: "MAIN MENU";
+      position: absolute;
+      top: 11px;
+      left: 16px;
+      color: rgba(255,255,255,.72);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .page-navigation::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 92% 10%, rgba(112,48,160,.22), transparent 34%);
     }
     .page-tab {
-      flex: 0 1 auto;
-      min-width: 170px;
-      border: 0;
-      background: transparent;
-      color: #475569;
-      padding: 11px 16px;
-      border-radius: 9px;
+      position: relative;
+      z-index: 1;
+      flex: 1 1 170px;
+      min-width: 160px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      color: rgba(255,255,255,.9);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-align: center;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
     }
-    .page-tab:hover { background: #f1f5f9; }
-    .page-tab.active {
-      background: #1f4e78;
+    .page-tab:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.34);
+      background: rgba(255,255,255,.14);
       color: #fff;
-      box-shadow: 0 3px 10px rgba(31,78,120,.22);
+    }
+    .page-tab:focus-visible {
+      outline: 3px solid rgba(169,200,234,.5);
+      outline-offset: 2px;
+    }
+    .page-tab.active {
+      border-color: rgba(255,255,255,.72);
+      background: #ffffff;
+      color: #0f2034;
+      box-shadow: 0 6px 18px rgba(0,0,0,.22);
     }
     .page-view[hidden] { display: none !important; }
 
@@ -787,8 +822,8 @@
       .pattern-table-shell { max-height: none; }
     }
     @media (max-width: 620px) {
-      .page-navigation { display: grid; grid-template-columns: 1fr; }
-      .page-tab { width: 100%; }
+      .page-navigation { display: grid; grid-template-columns: 1fr; padding: 38px 8px 8px; }
+      .page-tab { width: 100%; min-width: 0; }
       .patterns-toolbar { grid-template-columns: 1fr; }
       .patterns-hero { padding: 17px; }
     }
@@ -2204,6 +2239,87 @@
       }
     }
 
+
+    /* Assessment Hub */
+    .assessments-page { padding-bottom: 42px; }
+    .assessments-hero {
+      margin-bottom: 18px;
+      padding: 24px;
+      border: 1px solid #ddd6fe;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #faf5ff 0%, #ffffff 56%, #eff6ff 100%);
+      box-shadow: var(--shadow);
+    }
+    .assessments-hero .eyebrow { color: #6d28d9; opacity: 1; }
+    .assessments-hero h2 { margin: 6px 0 0; font-size: clamp(26px, 4vw, 38px); }
+    .assessments-hero p { max-width: 980px; margin: 10px 0 0; color: #475569; line-height: 1.6; }
+    .assessment-section-title { margin: 24px 0 12px; font-size: 18px; }
+    .assessment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .assessment-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 230px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(15,23,42,.05);
+    }
+    .assessment-card:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(15,23,42,.09); }
+    .assessment-icon { font-size: 28px; line-height: 1; }
+    .assessment-card h3 { margin: 14px 0 7px; font-size: 18px; }
+    .assessment-card p { margin: 0; color: #64748b; line-height: 1.5; font-size: 13px; }
+    .assessment-meta { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
+    .assessment-tag { padding: 4px 8px; border-radius: 999px; background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 800; }
+    .assessment-card-actions { margin-top: auto; padding-top: 18px; }
+    .assessment-launch { width: 100%; border-color: #6d28d9; background: #6d28d9; color: #fff; }
+    .assessment-launch:hover { background: #5b21b6; }
+    .assessment-card.future { background: #f8fafc; border-style: dashed; }
+    .assessment-card.future:hover { transform: none; box-shadow: 0 8px 22px rgba(15,23,42,.05); }
+    .assessment-card.future .assessment-launch { border-color: #cbd5e1; background: #e2e8f0; color: #64748b; cursor: not-allowed; }
+    .assessment-note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-left: 4px solid #6d28d9;
+      border-radius: 10px;
+      background: #faf5ff;
+      color: #4c1d68;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    /* Embedded quality assessment calculators */
+    .quality-modal .modal-dialog { width: min(1180px, 100%); }
+    .quality-modal .modal-header { background: linear-gradient(135deg, #0f4c5c, #1f6f8b 58%, #7030a0); }
+    .quality-shell { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 18px; align-items: start; }
+    .quality-form-card, .quality-result-card { border: 1px solid var(--border); border-radius: 15px; background: #fff; overflow: hidden; }
+    .quality-card-head { padding: 16px 18px; border-bottom: 1px solid var(--border); background: #f8fafc; }
+    .quality-card-head h3 { margin: 0; font-size: 18px; }
+    .quality-card-head p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .quality-criteria { display: grid; gap: 13px; padding: 18px; }
+    .quality-criterion { display: grid; gap: 6px; padding: 13px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; }
+    .quality-criterion label { color: #1e293b; font-size: 13px; font-weight: 900; }
+    .quality-criterion small { color: #64748b; line-height: 1.4; }
+    .quality-criterion textarea { width: 100%; min-height: 64px; resize: vertical; padding: 10px 11px; border: 1px solid #cbd5e1; border-radius: 9px; font: inherit; }
+    .quality-result-card { position: sticky; top: 0; }
+    .quality-result-body { padding: 18px; }
+    .quality-score { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+    .quality-score strong { font-size: 42px; line-height: 1; color: #0f172a; }
+    .quality-score span { color: #64748b; font-size: 12px; font-weight: 800; }
+    .quality-rating { margin-top: 12px; padding: 12px 13px; border: 1px solid #bfdbfe; border-radius: 11px; background: #eff6ff; color: #1e3a8a; }
+    .quality-rating strong { display: block; font-size: 16px; }
+    .quality-rating span { display: block; margin-top: 4px; font-size: 12px; line-height: 1.45; }
+    .quality-breakdown { display: grid; gap: 7px; margin-top: 14px; }
+    .quality-breakdown div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 9px; border-radius: 9px; background: #f8fafc; color: #475569; font-size: 11px; }
+    .quality-breakdown strong { color: #0f172a; }
+    .quality-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+    .quality-actions button { flex: 1 1 130px; }
+    @media (max-width: 900px) { .quality-shell { grid-template-columns: 1fr; } .quality-result-card { position: static; } }
+
   </style>
 </head>
 <body>
@@ -2219,8 +2335,7 @@
   <nav class="page-navigation" aria-label="Splunk taxonomy pages">
     <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
     <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Taxonomy explorer</button>
-    <button id="showAssurancePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assurancePage">Assurance model</button>
-    <button id="showViabilityPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="viabilityPage">Viability assessment</button>
+    <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
     <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
     <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
     <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
@@ -2286,6 +2401,74 @@
     <div class="info-note">
       The default path is intentionally decision-first: assess value and viability before committing engineering time to collection, parsing, dashboards or detections.
     </div>
+  </section>
+
+
+  <section id="assessmentsPage" class="page-view assessments-page" role="tabpanel" aria-labelledby="showAssessmentsPage" hidden>
+    <div class="assessments-hero">
+      <div class="eyebrow">Assessment centre</div>
+      <h2>Logging Assessment Hub</h2>
+      <p>Launch the scoring and assurance tools used across the SIEM onboarding lifecycle. Detailed assessment evidence remains linked to the relevant taxonomy records.</p>
+    </div>
+
+    <h3 class="assessment-section-title">Available assessments</h3>
+    <div class="assessment-grid">
+      <article class="assessment-card">
+        <div class="assessment-icon" aria-hidden="true">📊</div>
+        <h3>Log Onboarding Viability</h3>
+        <p>Assesses security value, technical readiness, operational assurance and engagement complexity before engineering begins.</p>
+        <div class="assessment-meta"><span class="assessment-tag">Score</span><span class="assessment-tag">Decision</span><span class="assessment-tag">Complexity</span></div>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" data-assessment-page="viability">Launch assessment</button></div>
+      </article>
+
+      <article class="assessment-card">
+        <div class="assessment-icon" aria-hidden="true">🛡️</div>
+        <h3>Data Source Assurance</h3>
+        <p>Measures onboarding completeness, health, CIM alignment, detection coverage and operational supportability.</p>
+        <div class="assessment-meta"><span class="assessment-tag">Assurance</span><span class="assessment-tag">Health</span><span class="assessment-tag">Coverage</span></div>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" data-assessment-page="assurance">Launch assessment</button></div>
+      </article>
+
+      <article class="assessment-card">
+        <div class="assessment-icon" aria-hidden="true">🕒</div>
+        <h3>Timestamp Quality</h3>
+        <p>Scores format consistency, timezone quality, precision, completeness, event-time reliability and Splunk parsing complexity.</p>
+        <div class="assessment-meta"><span class="assessment-tag">0–24 score</span><span class="assessment-tag">TAX-04.09.01</span></div>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" data-quality-assessment="timestamp">Launch assessment</button></div>
+      </article>
+
+      <article class="assessment-card">
+        <div class="assessment-icon" aria-hidden="true">📄</div>
+        <h3>Log Format Quality</h3>
+        <p>Scores structural consistency, delimitation, schema identification, event boundaries, encoding integrity and parsing complexity.</p>
+        <div class="assessment-meta"><span class="assessment-tag">0–24 score</span><span class="assessment-tag">TAX-04.09.03</span></div>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" data-quality-assessment="format">Launch assessment</button></div>
+      </article>
+    </div>
+
+    <h3 class="assessment-section-title">Planned assessments</h3>
+    <div class="assessment-grid">
+      <article class="assessment-card future">
+        <div class="assessment-icon" aria-hidden="true">🔌</div>
+        <h3>API Quality</h3>
+        <p>Planned assessment for documentation, vendor support, authentication, pagination, stability, schema control and resilience.</p>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" disabled>Coming soon</button></div>
+      </article>
+      <article class="assessment-card future">
+        <div class="assessment-icon" aria-hidden="true">🧩</div>
+        <h3>Schema Quality</h3>
+        <p>Planned assessment for schema availability, field stability, identifiers, data types, optionality and change control.</p>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" disabled>Coming soon</button></div>
+      </article>
+      <article class="assessment-card future">
+        <div class="assessment-icon" aria-hidden="true">🔁</div>
+        <h3>Collection Resilience</h3>
+        <p>Planned assessment for retries, checkpointing, deduplication, failure recovery, alerting and operational ownership.</p>
+        <div class="assessment-card-actions"><button class="assessment-launch" type="button" disabled>Coming soon</button></div>
+      </article>
+    </div>
+
+    <div class="assessment-note">Assessment tools produce scores or ratings. Engineering utilities such as the Logging Pattern Advisor remain accessible from their relevant workflow pages.</div>
   </section>
 
   <section id="taxonomyPage" class="page-view" role="tabpanel" aria-labelledby="showTaxonomyPage" hidden>
@@ -3238,6 +3421,39 @@
           <div class="example-panel bad"><h4>Avoid</h4><ul><li><code>new_test_2</code></li><li><code>AzureLogs</code></li><li><code>hec-token-prod-9f2…</code></li><li><code>Critical Alert</code></li></ul></div>
         </div>
       </section>
+    </div>
+  </div>
+</div>
+
+<div id="qualityAssessmentModal" class="modal quality-modal" role="dialog" aria-modal="true" aria-labelledby="qualityAssessmentTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow">Assessment Centre</p>
+        <h2 id="qualityAssessmentTitle" class="modal-title">Quality Assessment</h2>
+        <p id="qualityAssessmentSubtitle" class="modal-subtitle"></p>
+      </div>
+      <button id="closeQualityAssessment" class="modal-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="quality-shell">
+        <section class="quality-form-card">
+          <div class="quality-card-head"><h3>Assessment criteria</h3><p>Select a score from 0 to 4 for each criterion and optionally record supporting evidence.</p></div>
+          <form id="qualityAssessmentForm" class="quality-criteria"></form>
+        </section>
+        <aside class="quality-result-card">
+          <div class="quality-card-head"><h3>Assessment result</h3><p>Calculated using the six-criterion 0–24 quality model.</p></div>
+          <div class="quality-result-body">
+            <div class="quality-score"><strong id="qualityTotal">0</strong><span>/ 24</span></div>
+            <div id="qualityRating" class="quality-rating"><strong>Incomplete</strong><span>Complete all six criteria.</span></div>
+            <div id="qualityBreakdown" class="quality-breakdown"></div>
+            <div class="quality-actions">
+              <button id="resetQualityAssessment" type="button">Reset</button>
+              <button id="exportQualityAssessment" type="button" class="primary-button">Export CSV</button>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
 </div>
@@ -5932,6 +6148,7 @@ catalogueDetail.addEventListener("click", event => {
 const pageTabs = {
   info: document.getElementById("showInfoPage"),
   taxonomy: document.getElementById("showTaxonomyPage"),
+  assessments: document.getElementById("showAssessmentsPage"),
   assurance: document.getElementById("showAssurancePage"),
   viability: document.getElementById("showViabilityPage"),
   catalogue: document.getElementById("showCataloguePage"),
@@ -5941,6 +6158,7 @@ const pageTabs = {
 const pageViews = {
   info: document.getElementById("infoPage"),
   taxonomy: document.getElementById("taxonomyPage"),
+  assessments: document.getElementById("assessmentsPage"),
   assurance: document.getElementById("assurancePage"),
   viability: document.getElementById("viabilityPage"),
   catalogue: document.getElementById("cataloguePage"),
@@ -7452,9 +7670,10 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "taxonomy", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "taxonomy", "assessments", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   Object.entries(pageTabs).forEach(([name, tab]) => {
+    if (!tab) return;
     const active = name === selected;
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", String(active));
@@ -7468,8 +7687,10 @@ function setActivePage(pageName, updateHash = true) {
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
       ? "#info"
-      : selected === "assurance"
-        ? "#assurance-model"
+      : selected === "assessments"
+        ? "#assessments"
+        : selected === "assurance"
+          ? "#assurance-model"
         : selected === "viability"
           ? "#viability-assessment"
           : selected === "catalogue"
@@ -7487,6 +7708,7 @@ function setActivePage(pageName, updateHash = true) {
 function pageNameFromHash() {
   if (location.hash === "#info") return "info";
   if (location.hash === "#taxonomy") return "taxonomy";
+  if (location.hash === "#assessments") return "assessments";
   if (location.hash === "#assurance-model") return "assurance";
   if (location.hash === "#viability-assessment") return "viability";
   if (location.hash === "#data-source-catalogue") return "catalogue";
@@ -7784,16 +8006,37 @@ renderViabilityCalculator();
     healthPriorityFilter.appendChild(option);
   });
 
-pageTabs.info.addEventListener("click", () => setActivePage("info"));
-pageTabs.taxonomy.addEventListener("click", () => setActivePage("taxonomy"));
-pageTabs.assurance.addEventListener("click", () => setActivePage("assurance"));
-pageTabs.viability.addEventListener("click", () => setActivePage("viability"));
-pageTabs.catalogue.addEventListener("click", () => setActivePage("catalogue"));
-pageTabs.patterns.addEventListener("click", () => setActivePage("patterns"));
-pageTabs.health.addEventListener("click", () => setActivePage("health"));
+Object.entries(pageTabs).forEach(([name, tab]) => {
+  if (tab) tab.addEventListener("click", () => setActivePage(name));
+});
 
 document.querySelectorAll("[data-info-page]").forEach(button => {
   button.addEventListener("click", () => setActivePage(button.dataset.infoPage || "info"));
+});
+
+
+document.querySelectorAll("[data-assessment-page]").forEach(button => {
+  button.addEventListener("click", () => setActivePage(button.dataset.assessmentPage));
+});
+document.querySelectorAll("[data-assessment-taxonomy]").forEach(button => {
+  button.addEventListener("click", () => {
+    const code = button.dataset.assessmentTaxonomy;
+    const target = nodes.find(node => node.code === code || node.displayCode === code);
+    if (target) {
+      state.selectedCode = target.code;
+      getAncestors(target.code).forEach(ancestor => state.expanded.add(ancestor.code));
+      state.expanded.add(target.code);
+      const searchBox = document.getElementById("search");
+      if (searchBox) searchBox.value = "";
+      renderTree();
+      renderDetail();
+    }
+    setActivePage("taxonomy");
+    setTimeout(() => {
+      const selectedCard = document.querySelector(".node-card.selected");
+      if (selectedCard) selectedCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 0);
+  });
 });
 
 
@@ -7898,6 +8141,88 @@ document.getElementById("openAdvisor").addEventListener("click", event => openAd
 document.getElementById("closeAdvisor").addEventListener("click", closeAdvisor);
 advisorModal.addEventListener("click", event => { if (event.target === advisorModal) closeAdvisor(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && advisorModal.classList.contains("open")) closeAdvisor(); });
+
+
+const qualityAssessmentDefinitions = {
+  timestamp: {
+    title: "Timestamp Quality Assessment",
+    subtitle: "Scores timestamp reliability, timezone handling, precision, completeness and Splunk parsing complexity.",
+    taxonomy: "TAX-04.09.01",
+    criteria: [
+      ["Format Consistency", ["No reliable timestamp format","Frequent or unpredictable variation","Two predictable formats are present","Consistent format with rare exceptions","One documented timestamp format across all events"]],
+      ["Timezone Quality", ["Timezone is unknown, conflicting or inconsistent","Local time is ambiguous or affected by daylight-saving changes","Timezone can be inferred from the source, host or collection path","Timezone is absent but consistently documented and applied","UTC or an explicit UTC offset is included in every event"]],
+      ["Timestamp Precision", ["Date only, no usable time, or unusable precision","Minute-level precision only","Second-level precision only","Milliseconds are normally present but occasionally omitted","Millisecond, microsecond or finer precision"]],
+      ["Completeness and Ambiguity", ["Missing essential components or cannot be reliably interpreted","Ambiguous ordering, two-digit year or several inferred components","Missing year, timezone or another inferable component","Full date and time with only one externally supplied component","Full year, month, day, time, fractional seconds and timezone; fully unambiguous"]],
+      ["Event-Time Reliability", ["No trustworthy event occurrence timestamp","Timestamp mainly represents receipt, processing or forwarding time","Event time is usable but has known clock, buffering or delay issues","Reliable event occurrence time with minor documented drift","Timestamp represents when the activity occurred and the source clock is synchronised"]],
+      ["Splunk Parsing Complexity", ["Cannot be parsed reliably without modifying or enriching the source data","Requires conditional parsing, preprocessing, multiple sourcetypes or source-specific rules","Requires TIME_FORMAT, TIME_PREFIX, MAX_TIMESTAMP_LOOKAHEAD or TZ","Requires a defined TIME_FORMAT or minor sourcetype configuration","Splunk parses the timestamp deterministically with minimal configuration"]]
+    ]
+  },
+  format: {
+    title: "Log Format Quality Assessment",
+    subtitle: "Scores event structure, schema, boundaries, encoding, integrity and Splunk parsing complexity.",
+    taxonomy: "TAX-04.09.03",
+    criteria: [
+      ["Structural Consistency", ["No reliable event structure","Frequent structural variation or optional sections that shift position","Several predictable structural variants","Consistent structure with rare exceptions","Every event follows one documented structure"]],
+      ["Field Delimitation and Escaping", ["Fields cannot be separated reliably","Delimiters regularly appear unescaped inside values","Requires documented quoting or escape rules but remains manageable","Clear delimiters with rare malformed or escaping exceptions","Field boundaries, quoting and escaping are unambiguous"]],
+      ["Schema and Field Identification", ["No identifiable schema or repeatable field meaning","Field meaning depends heavily on position, context or event subtype","Positional fields or a partially documented schema","Most fields are named and stable; minor optional or undocumented fields","Stable named fields with documented data types"]],
+      ["Event Boundary Quality", ["Events cannot be separated reliably","Boundaries depend on fragile heuristics or inconsistent line patterns","Multiline events follow a predictable start or continuation pattern","Minor line-breaking configuration is required","Each event has deterministic boundaries or explicit framing"]],
+      ["Encoding and Data Integrity", ["Data is materially corrupted or unusable","Frequent malformed characters, invalid escapes or truncated events","Mixed but manageable encoding, escaping or occasional truncation","Minor sanitisation is needed for rare malformed characters","UTF-8 or another documented encoding; no truncation or corruption"]],
+      ["Splunk Parsing Complexity", ["Cannot be parsed reliably without changing the source format","Requires preprocessing, a custom parser, multiple sourcetypes or source-specific branching","Requires several props.conf settings, custom field extractions or format-specific handling","Requires normal sourcetype configuration or a supported add-on","Splunk parses and extracts the format deterministically with minimal configuration"]]
+    ]
+  }
+};
+let activeQualityAssessment = null;
+const qualityModal = document.getElementById("qualityAssessmentModal");
+const qualityForm = document.getElementById("qualityAssessmentForm");
+function qualityBand(score, completed) {
+  if (completed < 6) return ["Incomplete", "Complete all six criteria."];
+  if (score >= 22) return ["Exceptional", "Production-ready and highly reliable."];
+  if (score >= 18) return ["Good", "Suitable with minor Splunk configuration."];
+  if (score >= 13) return ["Fair", "Usable, but controlled parsing or time handling is required."];
+  if (score >= 7) return ["Poor", "Significant parsing or data-quality risk."];
+  return ["Fail", "Correct, transform or enrich before ingestion."];
+}
+function renderQualityAssessment() {
+  const def = qualityAssessmentDefinitions[activeQualityAssessment];
+  const selects = [...qualityForm.querySelectorAll("select")];
+  const completed = selects.filter(s => s.value !== "").length;
+  const score = selects.reduce((sum, s) => sum + (s.value === "" ? 0 : Number(s.value)), 0);
+  document.getElementById("qualityTotal").textContent = String(score);
+  const [rating, meaning] = qualityBand(score, completed);
+  document.getElementById("qualityRating").innerHTML = `<strong>${rating}</strong><span>${meaning}</span>`;
+  document.getElementById("qualityBreakdown").innerHTML = def.criteria.map((c,i) => { const v=selects[i]?.value; return `<div><span>${c[0]}</span><strong>${v === "" || v == null ? "Not scored" : `${v}/4`}</strong></div>`; }).join("");
+}
+function openQualityAssessment(type) {
+  activeQualityAssessment = type;
+  const def = qualityAssessmentDefinitions[type];
+  document.getElementById("qualityAssessmentTitle").textContent = def.title;
+  document.getElementById("qualityAssessmentSubtitle").textContent = `${def.subtitle} Taxonomy reference: ${def.taxonomy}.`;
+  qualityForm.innerHTML = def.criteria.map((criterion, index) => `<div class="quality-criterion"><label for="qualityScore${index}">${criterion[0]}</label><select id="qualityScore${index}" data-quality-index="${index}"><option value="">Select score…</option>${[4,3,2,1,0].map(score => `<option value="${score}">${score} — ${criterion[1][score]}</option>`).join("")}</select><small>${criterion[1][4]}</small><textarea data-quality-note="${index}" placeholder="Notes / evidence"></textarea></div>`).join("");
+  qualityForm.querySelectorAll("select").forEach(select => select.addEventListener("change", renderQualityAssessment));
+  renderQualityAssessment();
+  qualityModal.classList.add("open");
+  document.body.classList.add("modal-open");
+}
+function closeQualityAssessment() { qualityModal.classList.remove("open"); document.body.classList.remove("modal-open"); }
+document.querySelectorAll("[data-quality-assessment]").forEach(button => button.addEventListener("click", () => openQualityAssessment(button.dataset.qualityAssessment)));
+document.getElementById("closeQualityAssessment").addEventListener("click", closeQualityAssessment);
+qualityModal.addEventListener("click", event => { if (event.target === qualityModal) closeQualityAssessment(); });
+document.getElementById("resetQualityAssessment").addEventListener("click", () => { qualityForm.reset(); renderQualityAssessment(); });
+document.getElementById("exportQualityAssessment").addEventListener("click", event => {
+  const def = qualityAssessmentDefinitions[activeQualityAssessment];
+  const selects=[...qualityForm.querySelectorAll("select")];
+  const notes=[...qualityForm.querySelectorAll("textarea")];
+  const completed=selects.filter(s=>s.value!=="").length;
+  const total=selects.reduce((sum,s)=>sum+(s.value===""?0:Number(s.value)),0);
+  const [rating,meaning]=qualityBand(total,completed);
+  const csvCell=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const rows=[["Assessment",def.title],["Taxonomy Reference",def.taxonomy],["Total Score",`${total}/24`],["Rating",rating],["Interpretation",meaning],["Generated",new Date().toISOString()],["Criterion","Score","Selected Assessment","Notes / Evidence"]];
+  def.criteria.forEach((c,i)=>{ const value=selects[i].value; rows.push([c[0],value===""?"":value,value===""?"":c[1][Number(value)],notes[i].value]); });
+  const blob=new Blob(["\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download=`${activeQualityAssessment}-quality-assessment.csv`; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(link.href);
+  const old=event.currentTarget.textContent; event.currentTarget.textContent="Exported"; setTimeout(()=>event.currentTarget.textContent=old,1200);
+});
+document.addEventListener("keydown", event => { if (event.key === "Escape" && qualityModal.classList.contains("open")) closeQualityAssessment(); });
 
 renderTree();
 renderDetail();
