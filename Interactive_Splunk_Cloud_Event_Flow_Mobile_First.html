@@ -1,0 +1,297 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Splunk Cloud Windows Event Flow</title>
+<style>
+:root{
+  --bg:#f3f6f9; --card:#fff; --ink:#132238; --muted:#5f6b7a;
+  --orange:#f58220; --blue:#1f6fbd; --purple:#7450a6; --green:#5b9f36;
+  --line:#d9e1e8; --shadow:0 6px 18px rgba(15,35,55,.08);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  padding-bottom:calc(92px + env(safe-area-inset-bottom));
+}
+header{
+  background:#111827;color:#fff;padding:16px 16px 14px;
+  position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(0,0,0,.18)
+}
+header h1{font-size:19px;line-height:1.2;margin:0 0 6px}
+header p{font-size:13px;line-height:1.35;margin:0;color:#d7dde6}
+main{max-width:760px;margin:0 auto;padding:12px}
+.summary{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:12px;box-shadow:var(--shadow);margin-bottom:12px
+}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pill{
+  border:1px solid var(--line);border-radius:10px;padding:9px;background:#fafcfe
+}
+.pill b{display:block;font-size:12px;margin-bottom:3px}
+.pill span{font-size:12px;color:var(--muted)}
+.route-toggle{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px
+}
+.route-toggle button{
+  border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;
+  font-weight:700;font-size:13px;color:var(--ink)
+}
+.route-toggle button.active{border-color:var(--blue);background:#eaf4ff;color:#0f4f8f}
+.timeline{display:flex;flex-direction:column;gap:10px}
+.step{
+  position:relative;background:var(--card);border:2px solid var(--line);
+  border-radius:14px;padding:12px 12px 12px 48px;box-shadow:var(--shadow);
+  opacity:.65;transform:scale(.99);transition:.2s ease
+}
+.step.active{opacity:1;transform:scale(1);border-color:var(--orange)}
+.step.done{opacity:.9}
+.badge{
+  position:absolute;left:12px;top:12px;width:26px;height:26px;border-radius:50%;
+  display:grid;place-items:center;background:#e9eef3;color:#425466;font-weight:800;font-size:13px
+}
+.step.active .badge{background:var(--orange);color:#fff}
+.step h2{font-size:16px;margin:0 0 7px}
+.step p{font-size:13px;line-height:1.45;margin:0;color:var(--muted)}
+.flow{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px
+}
+.node{
+  border:1.5px solid var(--orange);border-radius:8px;background:#fff8f1;
+  padding:7px 8px;font-size:12px;font-weight:700
+}
+.node.queue{border-color:var(--blue);background:#eef6ff;border-radius:999px}
+.node.proc{border-color:var(--purple);background:#f6f0ff}
+.node.store{border-color:var(--green);background:#f2faee}
+.arrow{
+  text-align:center;color:var(--blue);font-weight:800;font-size:20px;line-height:1
+}
+.details{
+  margin-top:10px;border-top:1px solid var(--line);padding-top:9px
+}
+.details summary{font-size:12px;font-weight:800;cursor:pointer;color:#29445f}
+.details pre{
+  white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f9fb;
+  border:1px solid var(--line);border-radius:8px;padding:8px;font-size:11px;line-height:1.4
+}
+#eventCard{
+  background:#0f172a;color:#e5edf7;border-radius:12px;padding:11px;margin-top:12px
+}
+#eventCard .label{font-size:11px;color:#9fb0c5;text-transform:uppercase;letter-spacing:.05em}
+#eventText{font-size:12px;line-height:1.45;white-space:pre-line;margin-top:5px}
+.controls{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px
+}
+.controls button{
+  min-height:46px;border:0;border-radius:12px;font-weight:800;font-size:14px
+}
+.controls .secondary{background:#e9eef3;color:#22364a}
+.controls .primary{background:var(--orange);color:#fff}
+.progress{
+  grid-column:1/-1;height:5px;background:#e3e9ef;border-radius:999px;overflow:hidden
+}
+.progress > div{height:100%;width:0;background:var(--blue);transition:.25s}
+.status{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
+.hidden{display:none!important}
+@media(min-width:700px){
+  header h1{font-size:24px}
+  main{padding:18px}
+  .step{padding:16px 16px 16px 58px}
+  .badge{left:16px;top:16px}
+  .summary-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Windows Event → Splunk Cloud</h1>
+  <p>Mobile-first interactive flow through Universal Forwarder, Ingest Processor and the Cloud Indexer tier.</p>
+</header>
+
+<main>
+<section class="summary">
+  <div class="summary-grid">
+    <div class="pill"><b>Source</b><span>Windows Security log</span></div>
+    <div class="pill"><b>Example</b><span>Event ID 4624</span></div>
+    <div class="pill"><b>Transport</b><span>Splunk TCP over TLS</span></div>
+    <div class="pill"><b>Default target</b><span>Cloud indexer tier</span></div>
+  </div>
+  <div class="route-toggle">
+    <button id="indexerBtn" class="active" onclick="setRoute('indexer')">Indexer route</button>
+    <button id="s3Btn" onclick="setRoute('s3')">AWS S3 route</button>
+  </div>
+  <div id="eventCard">
+    <div class="label">Event at current stage</div>
+    <div id="eventText"></div>
+  </div>
+</section>
+
+<section class="timeline">
+  <article class="step" data-route="both" data-desc="Windows writes a successful logon event to the Security event log.">
+    <div class="badge">1</div>
+    <h2>Windows Event Log</h2>
+    <p>The source system creates Event ID 4624 in <b>Security.evtx</b>.</p>
+    <div class="flow"><span class="node">Security.evtx</span><span class="node">Event ID 4624</span></div>
+    <details class="details"><summary>View sample event</summary><pre>Computer=WIN10-001
+EventCode=4624
+Account_Name=alice
+Logon_Type=2
+Source_Network_Address=10.10.20.45</pre></details>
+  </article>
+  <div class="arrow">↓</div>
+
+  <article class="step" data-route="both" data-desc="The Universal Forwarder collects the event using the WinEventLog input.">
+    <div class="badge">2</div>
+    <h2>Universal Forwarder collection</h2>
+    <p>The forwarder reads the configured Windows Event Log channel.</p>
+    <div class="flow"><span class="node">WinEventLog input</span><span class="node queue">WinParsingQueue</span></div>
+    <details class="details"><summary>inputs.conf example</summary><pre>[WinEventLog://Security]
+disabled = 0
+renderXml = true
+index = windows
+sourcetype = XmlWinEventLog:Security</pre></details>
+  </article>
+  <div class="arrow">↓</div>
+
+  <article class="step" data-route="both" data-desc="Minimal Universal Forwarder processing prepares the event for reliable forwarding.">
+    <div class="badge">3</div>
+    <h2>UF queue and forwarding path</h2>
+    <p>Winparsing and structured parsing feed the <b>parsingQueue</b>, then the event moves to the tcpout queue.</p>
+    <div class="flow">
+      <span class="node proc">winparsing</span>
+      <span class="node proc">structuredparsing</span>
+      <span class="node queue">parsingQueue</span>
+      <span class="node queue">tcpout_queue</span>
+    </div>
+    <details class="details"><summary>outputs.conf example</summary><pre>[tcpout]
+defaultGroup = splunkcloud
+
+[tcpout:splunkcloud]
+server = inputs.example.splunkcloud.com:9997
+useACK = true
+sslVerifyServerCert = true</pre></details>
+  </article>
+  <div class="arrow">↓ TLS + ACK</div>
+
+  <article class="step" data-route="both" data-desc="Splunk Cloud receives the event over TLS and acknowledges reliable delivery.">
+    <div class="badge">4</div>
+    <h2>Splunk Cloud Ingest Processor</h2>
+    <p>The managed service receives the stream, terminates TLS and applies pipeline rules.</p>
+    <div class="flow">
+      <span class="node proc">Receive</span>
+      <span class="node proc">Filter noise</span>
+      <span class="node proc">Mask PII</span>
+      <span class="node proc">Route</span>
+    </div>
+    <details class="details"><summary>What the pipeline can do</summary><pre>• Drop low-value or repetitive events
+• Mask usernames, email addresses, tokens or IPs
+• Route matching events to the Splunk Cloud indexer tier
+• Route selected events to Amazon S3</pre></details>
+  </article>
+  <div class="arrow">↓</div>
+
+  <article class="step" data-route="indexer" data-desc="The default route enters the top of the Splunk Cloud indexer parsing queue.">
+    <div class="badge">5</div>
+    <h2>Default route: Cloud indexer tier</h2>
+    <p>The route connects directly to the <b>top of the Parsing Queue</b>.</p>
+    <div class="flow">
+      <span class="node queue">Parsing Queue</span>
+      <span class="node proc">Line breaking</span>
+      <span class="node proc">Timestamp extraction</span>
+      <span class="node queue">Typing Queue</span>
+      <span class="node queue">Index Queue</span>
+    </div>
+  </article>
+
+  <article class="step hidden" data-route="s3" data-desc="The alternative route writes selected event data to Amazon S3.">
+    <div class="badge">5</div>
+    <h2>Alternative route: Amazon S3</h2>
+    <p>Selected events bypass indexing and are delivered to the configured S3 destination.</p>
+    <div class="flow"><span class="node proc">S3 output route</span><span class="node store">Amazon S3 bucket</span></div>
+  </article>
+  <div class="arrow">↓</div>
+
+  <article class="step" data-route="indexer" data-desc="The event is written to Splunk Cloud storage and becomes searchable.">
+    <div class="badge">6</div>
+    <h2>Indexed and searchable</h2>
+    <p>The event is stored in hot/warm/cold tiers and becomes available to search.</p>
+    <div class="flow"><span class="node store">Hot bucket</span><span class="node store">Warm bucket</span><span class="node store">Search</span></div>
+  </article>
+
+  <article class="step hidden" data-route="s3" data-desc="The event is stored in S3 according to the configured object path and lifecycle policy.">
+    <div class="badge">6</div>
+    <h2>Stored in Amazon S3</h2>
+    <p>The routed event is available for archive, downstream analytics or federated access.</p>
+    <div class="flow"><span class="node store">S3 object</span><span class="node store">Lifecycle policy</span></div>
+  </article>
+</section>
+</main>
+
+<nav class="controls">
+  <button class="secondary" onclick="prevStep()">Previous</button>
+  <button class="primary" id="playBtn" onclick="togglePlay()">Play</button>
+  <button class="secondary" onclick="nextStep()">Next</button>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="status" id="status"></div>
+</nav>
+
+<script>
+let route='indexer', index=0, timer=null;
+
+function visibleSteps(){
+  return [...document.querySelectorAll('.step')].filter(s => !s.classList.contains('hidden'));
+}
+function routeText(step){
+  return step.dataset.desc || '';
+}
+function render(){
+  const steps=visibleSteps();
+  if(index>=steps.length) index=steps.length-1;
+  steps.forEach((s,i)=>{
+    s.classList.toggle('active',i===index);
+    s.classList.toggle('done',i<index);
+  });
+  const active=steps[index];
+  document.getElementById('status').textContent=`Step ${index+1} of ${steps.length}`;
+  document.getElementById('bar').style.width=`${((index+1)/steps.length)*100}%`;
+  document.getElementById('eventText').textContent=routeText(active);
+  setTimeout(()=>active.scrollIntoView({behavior:'smooth',block:'center'}),20);
+}
+function nextStep(){ const steps=visibleSteps(); if(index<steps.length-1){index++;render();}}
+function prevStep(){ if(index>0){index--;render();}}
+function stopPlay(){
+  if(timer){clearInterval(timer);timer=null}
+  document.getElementById('playBtn').textContent='Play';
+}
+function togglePlay(){
+  if(timer){stopPlay();return}
+  index=0;render();
+  document.getElementById('playBtn').textContent='Pause';
+  timer=setInterval(()=>{
+    const steps=visibleSteps();
+    if(index>=steps.length-1){stopPlay();return}
+    index++;render();
+  },1700);
+}
+function setRoute(r){
+  stopPlay(); route=r; index=0;
+  document.getElementById('indexerBtn').classList.toggle('active',r==='indexer');
+  document.getElementById('s3Btn').classList.toggle('active',r==='s3');
+  document.querySelectorAll('.step').forEach(s=>{
+    const sr=s.dataset.route;
+    s.classList.toggle('hidden', !(sr==='both'||sr===r));
+  });
+  render();
+}
+render();
+</script>
+</body>
+</html>
