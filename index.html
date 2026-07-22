@@ -2881,8 +2881,8 @@
       <div class="reference-section-heading"><div><h3>Assessment methodologies</h3><p>Purpose, inputs, outputs and interpretation for each scoring tool.</p></div></div>
       <div class="method-grid">
         <article class="method-card"><h4>Log Onboarding Viability</h4><p>Determines whether engineering should proceed and how complex the engagement is likely to be.</p><ul class="method-list"><li>Security value</li><li>Technical readiness</li><li>Operational assurance</li><li>Engagement complexity</li></ul><div class="method-actions"><button type="button" data-assessment-page="viability">Open assessment</button></div></article>
-        <article class="method-card"><h4>Timestamp Quality</h4><p>Scores consistency, timezone, precision, completeness, event-time reliability and Splunk parsing complexity.</p><ul class="method-list"><li>Six criteria scored 0–4</li><li>Total score out of 24</li><li>Exceptional to Fail rating</li></ul><div class="method-actions"><button type="button" data-open-quality-assessment="timestamp">Open calculator</button></div></article>
-        <article class="method-card"><h4>Log Format Quality</h4><p>Measures how consistently and reliably events can be separated, parsed and normalised.</p><ul class="method-list"><li>Structure and delimiters</li><li>Schema and event boundaries</li><li>Encoding and parsing complexity</li></ul><div class="method-actions"><button type="button" data-open-quality-assessment="logformat">Open calculator</button></div></article>
+        <article class="method-card"><h4>Timestamp Quality</h4><p>Scores consistency, timezone, precision, completeness, event-time reliability and Splunk parsing complexity.</p><ul class="method-list"><li>Six criteria scored 0–4</li><li>Total score out of 24</li><li>Exceptional to Fail rating</li></ul><div class="method-actions"><button type="button" data-open-quality-assessment="timestamp">Open calculator</button><button type="button" data-open-reference-detail="timestamp-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptTimestampQuality">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Log Format Quality</h4><p>Measures how consistently and reliably events can be separated, parsed and normalised.</p><ul class="method-list"><li>Structure and delimiters</li><li>Schema and event boundaries</li><li>Encoding and parsing complexity</li></ul><div class="method-actions"><button type="button" data-open-quality-assessment="logformat">Open calculator</button><button type="button" data-open-reference-detail="log-format-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatQuality">Open AI prompt</button></div></article>
         <article class="method-card"><h4>Investigative Context Density (ICD)</h4><p>Measures the breadth of distinct investigative context types present across individual events and a representative file.</p><ul class="method-list"><li>Distinct context types per event</li><li>Average ICD across the file</li><li>Signal, noise and minimum-threshold compliance</li></ul><div class="method-actions"><button type="button" data-icd-assessment="open">Open calculator</button></div></article>
         <article class="method-card"><h4>Context Dimension Coverage (CDC)</h4><p>Measures how many of the seven investigative context dimensions are represented in each event and across a representative file.</p><ul class="method-list"><li>When, Who, Where, What, Outcome, Impact and Correlation</li><li>Average dimensions and average CDC for the file</li><li>Minimum-threshold compliance and noise percentage</li></ul><div class="method-actions"><button type="button" data-cdc-assessment="open">Open calculator</button></div></article>
 
@@ -2898,6 +2898,10 @@
       <div class="reference-section-heading"><div><h3>Standards &amp; references</h3><p>Record the authoritative sources used to define local requirements and scoring.</p></div></div>
       <div class="method-grid">
         <article class="method-card"><h4>Splunk configuration and CIM</h4><p>Use Splunk product documentation, Common Information Model guidance, validated add-on documentation and deployment requirements as implementation references.</p></article>
+        <article class="method-card"><h4>Datetime Format</h4><p>Defines the timestamp representation used by the source event, including the literal layout, date standard, precision, timezone expression and example value.</p><ul class="method-list"><li>Raw timestamp example</li><li>Named standard or vendor format</li><li>Timezone and precision</li><li>Equivalent Splunk <code>strptime</code> pattern</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-format">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Datetime Parse</h4><p>Defines how Splunk locates, interprets and assigns event time for a sourcetype using timestamp parsing settings.</p><ul class="method-list"><li><code>TIME_PREFIX</code></li><li><code>TIME_FORMAT</code></li><li><code>MAX_TIMESTAMP_LOOKAHEAD</code></li><li><code>TZ</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Line Break</h4><p>Defines how Splunk separates the incoming data stream into individual events for a sourcetype.</p><ul class="method-list"><li><code>SHOULD_LINEMERGE</code></li><li><code>LINE_BREAKER</code></li><li>Single-line and multiline behaviour</li><li>Boundary validation</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-break">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineBreakProps">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Log Format Parse</h4><p>Defines how Splunk interprets CSV, TSV, JSON, XML, structured, semi-structured and unstructured events after line breaking and timestamp recognition.</p><ul class="method-list"><li>Format detection</li><li>Index-time versus search-time extraction</li><li><code>props.conf</code></li><li>Optional <code>transforms.conf</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-format-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></article>
         <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
         <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
       </div>
@@ -3247,6 +3251,193 @@
         <div class="eccs-note" style="margin-top:12px"><strong>Relationship to Log Source Cyber Value:</strong> Pivot Density is weighted &times;1.5 and Pivot Breadth &times;1.0 in the embedded 40-point value model, after the quality gates pass. Neither is a direct component of the separate CVI formula, but both provide supporting evidence for ECCS Correlation, Required Field Coverage and overall investigation readiness.</div>
       </section>
     </article>
+
+    <article id="logFormatParseReferenceView" class="eccs-reference" aria-labelledby="logFormatParseReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero"><div class="eyebrow">References / Splunk sourcetype definition</div><h2 id="logFormatParseReferenceTitle">Log Format Parse</h2><p>Defines how Splunk interprets the structural format of an event and makes fields available after line breaking and timestamp parsing.</p><nav class="eccs-anchor-nav"><a href="#log-format-parse-definition">Definition</a><a href="#log-format-parse-matrix">Format matrix</a><a href="#log-format-parse-examples">Examples</a><a href="#log-format-parse-validation">Validation</a></nav></div>
+      <section id="log-format-parse-definition" class="eccs-detail-section"><h3>Definition</h3><p>The Log Format Parse record documents the detected structure, extraction strategy, and effective <code>props.conf</code> and optional <code>transforms.conf</code> settings for a sourcetype.</p><div class="method-actions"><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></section>
+      <section id="log-format-parse-matrix" class="eccs-detail-section"><h3>Format matrix</h3><div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Format</th><th>Typical approach</th><th>Key checks</th></tr></thead><tbody>
+      <tr><td>CSV</td><td><code>INDEXED_EXTRACTIONS = CSV</code></td><td>Delimiter, quotes, headers, embedded commas.</td></tr>
+      <tr><td>TSV</td><td><code>INDEXED_EXTRACTIONS = TSV</code></td><td>Tabs, empty columns, trailing fields.</td></tr>
+      <tr><td>JSON</td><td>Indexed or search-time JSON extraction depending on collection path.</td><td>Nested arrays, duplicate keys, HEC metadata, double extraction.</td></tr>
+      <tr><td>XML</td><td><code>KV_MODE = xml</code> at search time.</td><td>Namespaces, repeated nodes, multiline records.</td></tr>
+      <tr><td>Structured</td><td><code>KV_MODE = auto</code> or explicit search-time extraction.</td><td>Quotes, escapes, duplicate keys.</td></tr>
+      <tr><td>Semi-structured</td><td><code>REPORT-*</code> or <code>EXTRACT-*</code>.</td><td>Schema drift, optional labels, inconsistent syntax.</td></tr>
+      <tr><td>Unstructured</td><td>Targeted regex only.</td><td>False positives and maintenance cost.</td></tr>
+      <tr><td>Mixed</td><td>Separate sourcetypes or preprocess.</td><td>Conflicting schemas and unsafe universal parsing.</td></tr>
+      </tbody></table></div></section>
+      <section id="log-format-parse-examples" class="eccs-detail-section"><h3>Example sourcetype definitions</h3>
+      <h4>CSV</h4><pre class="prompt-body">[example:csv]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+INDEXED_EXTRACTIONS = CSV
+FIELD_DELIMITER = ,
+FIELD_QUOTE = "
+HEADER_FIELD_LINE_NUMBER = 1
+TIMESTAMP_FIELDS = event_time</pre>
+      <h4>TSV</h4><pre class="prompt-body">[example:tsv]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+INDEXED_EXTRACTIONS = TSV
+HEADER_FIELD_LINE_NUMBER = 1
+TIMESTAMP_FIELDS = event_time</pre>
+      <h4>JSON</h4><pre class="prompt-body">[example:json]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+INDEXED_EXTRACTIONS = JSON
+KV_MODE = none
+TIMESTAMP_FIELDS = event_time</pre><p>For HEC or another collector that already supplies structured metadata, omit settings that would duplicate extraction.</p>
+      <h4>XML</h4><pre class="prompt-body">[example:xml]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)(?=&lt;event(?:\s|&gt;))
+KV_MODE = xml</pre>
+      <h4>Structured key-value</h4><pre class="prompt-body">[example:key_value]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+KV_MODE = auto</pre>
+      <h4>Semi-structured</h4><pre class="prompt-body">[example:semi_structured]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+KV_MODE = none
+REPORT-fields = extract_example_fields</pre>
+      <h4>transforms.conf</h4><pre class="prompt-body">[extract_example_fields]
+REGEX = (\w+)=("[^"]*"|\S+)
+FORMAT = $1::$2
+MV_ADD = true</pre></section>
+      <section id="log-format-parse-validation" class="eccs-detail-section"><h3>Validation</h3><ul class="method-list"><li>Separate format detection from format quality scoring.</li><li>Prefer search-time extraction unless indexed extraction is justified.</li><li>Do not mix incompatible formats in one sourcetype.</li><li>Test quoting, escaping, duplicate keys, headers, nested content and schema drift.</li><li>Validate line breaking and timestamp parsing first.</li><li>Record omitted settings and rationale.</li></ul></section>
+    </article>
+
+    <article id="lineBreakReferenceView" class="eccs-reference" aria-labelledby="lineBreakReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Splunk sourcetype definition</div>
+        <h2 id="lineBreakReferenceTitle">Line Break</h2>
+        <p>Line Break defines how Splunk separates the incoming data stream into individual logical events before timestamp recognition and field extraction.</p>
+        <nav class="eccs-anchor-nav" aria-label="Line Break reference sections"><a href="#line-break-definition">Definition</a><a href="#line-break-settings">Settings</a><a href="#line-break-examples">Examples</a><a href="#line-break-validation">Validation</a></nav>
+      </div>
+      <section id="line-break-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>The Line Break record belongs to the Splunk sourcetype definition and documents the effective index-time settings used to divide a raw stream into logical events. Correct boundaries are required before timestamp parsing, field extraction, event counting and detection logic can be trusted.</p>
+        <div class="method-actions" style="margin-top:12px"><button type="button" data-open-prompt-panel="promptLineBreakProps">Open AI prompt</button></div>
+      </section>
+      <section id="line-break-settings" class="eccs-detail-section">
+        <h3>Splunk line-breaking settings</h3>
+        <div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Setting</th><th>Definition</th></tr></thead><tbody>
+          <tr><td><code>SHOULD_LINEMERGE</code></td><td>Controls whether Splunk attempts to merge multiple physical lines into a single logical event. A value of <code>false</code> is preferred when event boundaries can be expressed explicitly with <code>LINE_BREAKER</code>.</td></tr>
+          <tr><td><code>LINE_BREAKER</code></td><td>A regular expression defining the separator between events. The text matched by the first capturing group is discarded at the split point.</td></tr>
+        </tbody></table></div>
+      </section>
+      <section id="line-break-examples" class="eccs-detail-section">
+        <h3>Examples</h3>
+        <h4>One complete event per physical line</h4>
+        <pre class="prompt-body">[replace_with_sourcetype]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)</pre>
+        <p>Use this baseline only when each physical line is independently complete.</p>
+        <h4>Multiline events beginning with a timestamp</h4>
+        <pre class="prompt-body">[replace_with_sourcetype]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})</pre>
+        <p>The newline separator is removed while the timestamp remains at the start of the next event. Indented continuation lines remain attached to the preceding event.</p>
+      </section>
+      <section id="line-break-validation" class="eccs-detail-section">
+        <h3>Implementation and validation notes</h3>
+        <ul class="method-list">
+          <li>Verify whether one physical line equals one logical event before using a generic newline breaker.</li>
+          <li>Preserve continuation lines, stack traces, wrapped messages and pretty-printed structured content.</li>
+          <li>Test Windows <code>\r\n</code>, Unix <code>\n</code> and any legacy <code>\r</code> endings present in the source.</li>
+          <li>Confirm expected event counts and inspect the first and last characters of adjacent events.</li>
+          <li>Ensure the first capture group removes only the separator and does not consume useful event content.</li>
+          <li>Use separate sourcetypes when one stream contains incompatible boundary patterns.</li>
+        </ul>
+      </section>
+    </article>
+
+    <article id="datetimeFormatReferenceView" class="eccs-reference" aria-labelledby="datetimeFormatReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Datetime reference</div>
+        <h2 id="datetimeFormatReferenceTitle">Datetime Format</h2>
+        <p>Datetime Format records how event time is represented in the raw source data. It describes the source timestamp itself before Splunk parsing rules are applied.</p>
+        <nav class="eccs-anchor-nav" aria-label="Datetime Format reference sections"><a href="#datetime-format-definition">Definition</a><a href="#datetime-format-fields">Required details</a><a href="#datetime-format-examples">Examples</a><a href="#datetime-format-splunk">Splunk mapping</a></nav>
+      </div>
+      <section id="datetime-format-definition" class="eccs-detail-section"><h3>Definition</h3><p>A Datetime Format is the literal timestamp representation emitted by the source system. Record the exact value as observed, the recognised standard or vendor-specific format, precision, timezone handling and the equivalent Splunk <code>strptime</code> expression.</p><div class="method-actions" style="margin-top:12px"><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></section>
+      <section id="datetime-format-fields" class="eccs-detail-section"><h3>Required details</h3><div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Attribute</th><th>Description</th></tr></thead><tbody><tr><td>Raw timestamp example</td><td>An exact timestamp copied from the source event.</td></tr><tr><td>Format name</td><td>ISO 8601, RFC 3339, RFC 2822, Unix epoch, Windows File Time, vendor-defined or another recognised representation.</td></tr><tr><td>Precision</td><td>Seconds, milliseconds, microseconds, nanoseconds or another supported resolution.</td></tr><tr><td>Timezone expression</td><td>UTC marker, numeric offset, named zone, abbreviation or no timezone present.</td></tr><tr><td>Splunk pattern</td><td>The corresponding <code>strptime</code> pattern used in <code>TIME_FORMAT</code>.</td></tr></tbody></table></div></section>
+      <section id="datetime-format-examples" class="eccs-detail-section"><h3>Examples</h3><div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Raw example</th><th>Format</th><th>Splunk pattern</th></tr></thead><tbody><tr><td><code>2026-07-21T08:00:11.902+10:00</code></td><td>ISO 8601 / RFC 3339 with milliseconds and offset</td><td><code>%Y-%m-%dT%H:%M:%S.%3N%:z</code></td></tr><tr><td><code>2026-07-21 08:00:11</code></td><td>Calendar datetime without timezone</td><td><code>%Y-%m-%d %H:%M:%S</code></td></tr><tr><td><code>1773040800123</code></td><td>Unix epoch milliseconds</td><td>Use epoch-aware parsing or preprocessing appropriate to the input.</td></tr></tbody></table></div></section>
+      <section id="datetime-format-splunk" class="eccs-detail-section"><h3>Relationship to Splunk parsing</h3><p>Datetime Format documents what the source emits. Datetime Parse documents how the associated Splunk sourcetype is configured to find and interpret that value. One format may require different parsing rules depending on its position within the raw event.</p></section>
+    </article>
+
+    <article id="datetimeParseReferenceView" class="eccs-reference" aria-labelledby="datetimeParseReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Splunk sourcetype definition</div>
+        <h2 id="datetimeParseReferenceTitle">Datetime Parse</h2>
+        <p>Datetime Parse is the Splunk timestamp definition associated with a sourcetype. It records how Splunk locates the timestamp, interprets its structure, limits the search window and assigns timezone context.</p>
+        <nav class="eccs-anchor-nav" aria-label="Datetime Parse reference sections"><a href="#datetime-parse-definition">Definition</a><a href="#datetime-parse-settings">Settings</a><a href="#datetime-parse-example">Example</a><a href="#datetime-parse-notes">Implementation notes</a></nav>
+      </div>
+      <section id="datetime-parse-definition" class="eccs-detail-section"><h3>Definition</h3><p>The Datetime Parse record belongs to the Splunk sourcetype definition and should reflect the effective parsing configuration used at index time. Record the deployed values and the raw event evidence used to validate them.</p><div class="method-actions" style="margin-top:12px"><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></section>
+      <section id="datetime-parse-settings" class="eccs-detail-section"><h3>Splunk timestamp parsing settings</h3><div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Setting</th><th>Definition</th></tr></thead><tbody><tr><td><code>TIME_PREFIX</code></td><td>A regular expression identifying text just before the timestamp. This limits where Splunk searches for the date.</td></tr><tr><td><code>TIME_FORMAT</code></td><td>The pattern of the date using <code>strptime</code> syntax, for example <code>%Y-%m-%d %H:%M:%S</code>.</td></tr><tr><td><code>MAX_TIMESTAMP_LOOKAHEAD</code></td><td>The number of characters after <code>TIME_PREFIX</code> that Splunk evaluates to find the date. The default is typically 128 bytes.</td></tr><tr><td><code>TZ</code></td><td>The time zone of the incoming logs, for example <code>Australia/Sydney</code>, when it differs from the indexer's local time or when the raw timestamp does not carry an explicit zone.</td></tr></tbody></table></div></section>
+      <section id="datetime-parse-example" class="eccs-detail-section"><h3>Example sourcetype definition</h3><pre class="prompt-body">[ibm:cognos:login]
+TIME_PREFIX = ^
+TIME_FORMAT = %Y-%m-%dT%H:%M:%S.%3N%:z
+MAX_TIMESTAMP_LOOKAHEAD = 29
+TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit UTC offset, <code>TZ</code> should not override that event-provided offset. Retain <code>TZ</code> only where required for timestamps without embedded timezone information.</p></section>
+      <section id="datetime-parse-notes" class="eccs-detail-section"><h3>Implementation notes</h3><ul class="method-list"><li>Calculate <code>MAX_TIMESTAMP_LOOKAHEAD</code> from the timestamp position and maximum timestamp length rather than leaving an unnecessarily broad search range.</li><li>Escape <code>TIME_PREFIX</code> as a valid regular expression and ensure it identifies the timestamp location without consuming the timestamp itself.</li><li>Validate parsing against representative normal, error, multiline and boundary events.</li><li>Confirm that Splunk <code>_time</code> matches the source event time and is not silently derived from receipt or index time.</li></ul></section>
+    </article>
+
+    <article id="timestampQualityReferenceView" class="eccs-reference" aria-labelledby="timestampQualityReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="timestampQualityReferenceTitle">Timestamp Quality</h2>
+        <p>Timestamp Quality measures whether event time can be parsed, trusted, ordered and correlated consistently. It separates the source event timestamp from receipt or ingestion time and scores six equally weighted criteria from 0 to 4.</p>
+        <nav class="eccs-anchor-nav" aria-label="Timestamp Quality reference sections"><a href="#timestamp-definition">Definition</a><a href="#timestamp-criteria">Criteria</a><a href="#timestamp-matrix">Scoring matrix</a><a href="#timestamp-examples">Worked examples</a><a href="#timestamp-splunk">Splunk guidance</a><a href="#timestamp-interpretation">Interpretation</a></nav>
+      </div>
+      <section id="timestamp-definition" class="eccs-detail-section"><h3>Definition and calculation</h3><p>Assess the timestamp carried by the source event. Do not substitute Splunk <code>_indextime</code>, collector receipt time or a file modification time unless the source does not provide event time and the limitation is explicitly recorded.</p><div class="eccs-formula">Timestamp Quality (%) = (total criterion points / 24) &times; 100<small>Six criteria &times; a maximum of 4 points = 24 points.</small></div><div class="method-actions" style="margin-top:12px"><button type="button" data-open-quality-assessment="timestamp">Open calculator</button><button type="button" data-open-prompt-panel="promptTimestampQuality">Open AI prompt</button></div></section>
+      <section id="timestamp-criteria" class="eccs-detail-section"><h3>Six scoring criteria</h3><div class="eccs-dimensions">
+        <details class="eccs-dimension" open><summary><span class="eccs-dimension-number">1</span>Presence and completeness</summary><div class="eccs-dimension-body"><p>Is event time present on every applicable event, with all required components such as year, month, day, hour, minute and second?</p><div class="eccs-field-list"><code>timestamp</code><code>event_time</code><code>TimeGenerated</code><code>_time</code></div><p>Penalise missing timestamps, partial dates, inherited header timestamps and timestamps present only on some event types.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">2</span>Format and parseability</summary><div class="eccs-dimension-body"><p>Is the format recognised, unambiguous and consistently parseable without brittle assumptions?</p><p>Prefer ISO 8601 or RFC 3339. Penalise locale-dependent dates, mixed ordering, ambiguous epoch units and undocumented proprietary formats.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">3</span>Timezone clarity</summary><div class="eccs-dimension-body"><p>Does the timestamp include <code>Z</code>, an explicit UTC offset or a reliably documented source timezone?</p><p>Do not infer timezone solely from the analyst location or Splunk search-head timezone.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">4</span>Precision and resolution</summary><div class="eccs-dimension-body"><p>Is precision appropriate for the event rate and investigation requirement?</p><p>Milliseconds or finer may be required for high-volume authentication, process or transaction logs; second precision can be sufficient for low-rate administrative events.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">5</span>Correctness and event-time reliability</summary><div class="eccs-dimension-body"><p>Does the value plausibly represent when the activity occurred rather than when it was batched, received or processed?</p><p>Check future timestamps, excessive past drift, impossible dates, clock rollback and conflict between multiple time fields.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">6</span>Consistency</summary><div class="eccs-dimension-body"><p>Is one stable timestamp convention used across the representative dataset and across event types?</p><p>Penalise mixed timezones, mixed precision, mixed delimiters and format changes that require multiple parsing branches.</p></div></details>
+      </div></section>
+      <section id="timestamp-matrix" class="eccs-detail-section"><h3>Criterion scoring matrix</h3><div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th>Score</th><th>Meaning</th><th>Evidence expected</th></tr></thead><tbody><tr><td>4</td><td>Exceptional</td><td>Complete, explicit, correctly parsed and consistent; no material ambiguity or drift.</td></tr><tr><td>3</td><td>Good</td><td>Operationally reliable with a minor limitation that does not normally impede investigation.</td></tr><tr><td>2</td><td>Fair</td><td>Usable with documented assumptions, enrichment or non-trivial parsing.</td></tr><tr><td>1</td><td>Poor</td><td>Frequently incomplete, ambiguous, inconsistent or unreliable.</td></tr><tr><td>0</td><td>Fail</td><td>Absent, invalid or unusable for dependable event ordering.</td></tr></tbody></table></div></section>
+      <section id="timestamp-examples" class="eccs-detail-section"><h3>Worked examples</h3><div class="eccs-examples">
+        <details open><summary>Example 1 — ISO 8601 with offset and milliseconds</summary><div class="eccs-example-body"><pre>2026-07-21T08:00:11.902+10:00 event_type=login_attempt result=success</pre><table class="eccs-example-table"><tbody><tr><td>Presence</td><td>4</td><td>Complete on the event.</td></tr><tr><td>Format</td><td>4</td><td>Unambiguous ISO 8601.</td></tr><tr><td>Timezone</td><td>4</td><td>Explicit +10:00 offset.</td></tr><tr><td>Precision</td><td>4</td><td>Millisecond precision.</td></tr><tr><td>Correctness</td><td>4</td><td>Represents event time and is plausible.</td></tr><tr><td>Consistency</td><td>4</td><td>Stable across the sample.</td></tr></tbody></table><div class="eccs-example-result">24 / 24 = 100% — Exceptional</div></div></details>
+        <details><summary>Example 2 — Traditional syslog without year or timezone</summary><div class="eccs-example-body"><pre>Jul 21 08:00:11 host01 sshd[2211]: Failed password for jsmith</pre><table class="eccs-example-table"><tbody><tr><td>Presence</td><td>2</td><td>Month, day and time exist; year is absent.</td></tr><tr><td>Format</td><td>3</td><td>Recognised syslog format.</td></tr><tr><td>Timezone</td><td>1</td><td>Must be supplied by source configuration.</td></tr><tr><td>Precision</td><td>2</td><td>Second precision only.</td></tr><tr><td>Correctness</td><td>2</td><td>Year rollover and host clock require assurance.</td></tr><tr><td>Consistency</td><td>3</td><td>Stable within the sample.</td></tr></tbody></table><div class="eccs-example-result">13 / 24 = 54.2% — Poor</div></div></details>
+        <details><summary>Example 3 — Mixed locale dates and epoch values</summary><div class="eccs-example-body"><pre>21/07/26 08:00:11 ...
+07/21/2026 08:00:12 ...
+1784592013000 ...</pre><div class="eccs-example-result">Representative score: 7 / 24 = 29.2% — Very Poor. Mixed locale order and undocumented epoch units create material parsing and ordering risk.</div></div></details>
+      </div></section>
+      <section id="timestamp-splunk" class="eccs-detail-section"><h3>Splunk parsing guidance</h3><div class="eccs-note"><strong>Only propose settings supported by the sample.</strong> Record <code>TIME_PREFIX</code> when a stable prefix exists, <code>TIME_FORMAT</code> when the format is known, and <code>MAX_TIMESTAMP_LOOKAHEAD</code> as the number of characters Splunk must inspect from the prefix to the end of the timestamp. Validate against representative events and timezone behaviour before production use.</div></section>
+      <section id="timestamp-interpretation" class="eccs-detail-section"><h3>Interpretation bands</h3><div class="eccs-table-wrap"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Percentage</th><th>Rating</th><th>Operational meaning</th></tr></thead><tbody><tr><td>90–100%</td><td>Exceptional</td><td>Reliable for ordering, correlation and investigation.</td></tr><tr><td>80–89%</td><td>Excellent</td><td>Strong with only minor limitations.</td></tr><tr><td>70–79%</td><td>Good</td><td>Operationally usable; document known limitations.</td></tr><tr><td>60–69%</td><td>Fair</td><td>Usable with remediation or enrichment.</td></tr><tr><td>40–59%</td><td>Poor</td><td>Material investigation and parsing risk.</td></tr><tr><td>20–39%</td><td>Very Poor</td><td>Significant source or parsing remediation required.</td></tr><tr><td>0–19%</td><td>Fail</td><td>Not dependable as event time.</td></tr></tbody></table></div></section>
+    </article>
+
+    <article id="logFormatQualityReferenceView" class="eccs-reference" aria-labelledby="logFormatQualityReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero"><div class="eyebrow">References / Detailed reference</div><h2 id="logFormatQualityReferenceTitle">Log Format Quality</h2><p>Log Format Quality measures whether events can be separated, parsed and normalised reliably without losing meaning. The local calculator scores six criteria from 0 to 4 for a maximum of 24 points.</p><nav class="eccs-anchor-nav" aria-label="Log Format Quality reference sections"><a href="#format-definition">Definition</a><a href="#format-criteria">Criteria</a><a href="#format-matrix">Scoring matrix</a><a href="#format-examples">Worked examples</a><a href="#format-splunk">Splunk guidance</a><a href="#format-interpretation">Interpretation</a></nav></div>
+      <section id="format-definition" class="eccs-detail-section"><h3>Definition and calculation</h3><p>Assess the raw source format before relying on search-time extractions. Distinguish defects in the source data from defects introduced by transport, line breaking or Splunk configuration.</p><div class="eccs-formula">Log Format Quality (%) = (total criterion points / 24) &times; 100<small>Six criteria &times; a maximum of 4 points = 24 points.</small></div><div class="method-actions" style="margin-top:12px"><button type="button" data-open-quality-assessment="logformat">Open calculator</button><button type="button" data-open-prompt-panel="promptLogFormatQuality">Open AI prompt</button></div></section>
+      <section id="format-criteria" class="eccs-detail-section"><h3>Six scoring criteria</h3><div class="eccs-dimensions">
+        <details class="eccs-dimension" open><summary><span class="eccs-dimension-number">1</span>Structure and format identification</summary><div class="eccs-dimension-body"><p>Can the format be identified confidently as valid JSON, XML, CSV, TSV, key-value, CEF, LEEF, syslog, fixed-width or another documented structure?</p><p>Do not award structured-format credit merely because braces, tags or delimiters appear.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">2</span>Event boundary reliability</summary><div class="eccs-dimension-body"><p>Can every event be separated without accidental merging or splitting?</p><p>Assess newline behaviour, multiline stack traces, headers, continuations and stable start patterns.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">3</span>Delimiter, quoting and escaping integrity</summary><div class="eccs-dimension-body"><p>Are delimiters, quotes, escape characters and embedded newlines handled consistently?</p><p>Penalise unescaped delimiters, broken quotes, invalid JSON escaping and values that silently shift columns.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">4</span>Schema and field stability</summary><div class="eccs-dimension-body"><p>Are field names, order, optionality, nesting and data types stable across representative events and versions?</p><p>Record mixed schemas and event families rather than hiding them in an average.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">5</span>Encoding and content integrity</summary><div class="eccs-dimension-body"><p>Are character encoding, Unicode, control characters, binary fragments and truncation handled without corrupting meaning?</p><p>Prefer UTF-8 and verify that special characters, paths, commands and user-provided text survive transport.</p></div></details>
+        <details class="eccs-dimension"><summary><span class="eccs-dimension-number">6</span>Parsing and normalisation complexity</summary><div class="eccs-dimension-body"><p>Can fields be extracted and normalised with native structured parsing or stable, maintainable rules?</p><p>Penalise extensive brittle regular expressions, positional assumptions and source-specific exceptions.</p></div></details>
+      </div></section>
+      <section id="format-matrix" class="eccs-detail-section"><h3>Criterion scoring matrix</h3><div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th>Score</th><th>Meaning</th><th>Evidence expected</th></tr></thead><tbody><tr><td>4</td><td>Exceptional</td><td>Valid, stable, lossless and straightforward to parse using supported mechanisms.</td></tr><tr><td>3</td><td>Good</td><td>Reliable with minor exceptions or manageable configuration.</td></tr><tr><td>2</td><td>Fair</td><td>Usable but requires non-trivial parsing, multiple branches or documented constraints.</td></tr><tr><td>1</td><td>Poor</td><td>Frequent inconsistency, malformed records, boundary failures or brittle extraction.</td></tr><tr><td>0</td><td>Fail</td><td>Cannot be separated or parsed reliably without loss or manual reconstruction.</td></tr></tbody></table></div></section>
+      <section id="format-examples" class="eccs-detail-section"><h3>Worked examples</h3><div class="eccs-examples">
+        <details open><summary>Example 1 — Stable one-object-per-event JSON</summary><div class="eccs-example-body"><pre>{"time":"2026-07-21T08:00:11.902+10:00","event_type":"login","user":"ADAM.SMITH","result":"success"}</pre><div class="eccs-example-result">24 / 24 = 100% — Exceptional, provided validation confirms valid JSON, UTF-8 and stable types.</div></div></details>
+        <details><summary>Example 2 — Consistent key-value with multiline continuation</summary><div class="eccs-example-body"><pre>2026-07-21 08:00:11 INFO User login successful.
+    User=ADAM.SMITH
+    ClientIP=10.50.12.81
+    SessionID=1A2C9B41</pre><table class="eccs-example-table"><tbody><tr><td>Structure</td><td>3</td><td>Recognisable timestamp/message plus key-value continuation.</td></tr><tr><td>Boundaries</td><td>2</td><td>Requires a reliable timestamp-start rule.</td></tr><tr><td>Delimiters</td><td>3</td><td>Stable equals delimiter.</td></tr><tr><td>Schema</td><td>3</td><td>Fields vary by event type but remain clear.</td></tr><tr><td>Encoding</td><td>4</td><td>No evidence of corruption.</td></tr><tr><td>Complexity</td><td>2</td><td>Multiline extraction and event-type handling required.</td></tr></tbody></table><div class="eccs-example-result">17 / 24 = 70.8% — Good</div></div></details>
+        <details><summary>Example 3 — Mixed free text, malformed CSV and concatenated events</summary><div class="eccs-example-body"><div class="eccs-example-result">Representative score: 5 / 24 = 20.8% — Very Poor. Repair source delimiters and event boundaries before relying on search-time regular expressions.</div></div></details>
+      </div></section>
+      <section id="format-splunk" class="eccs-detail-section"><h3>Splunk parsing guidance</h3><div class="eccs-note"><strong>Validate event breaking before field extraction.</strong> Determine whether <code>SHOULD_LINEMERGE</code>, <code>LINE_BREAKER</code>, structured parsing settings, character-set handling or source-side changes are required. Keep raw-event preservation and truncation checks in the acceptance test.</div></section>
+      <section id="format-interpretation" class="eccs-detail-section"><h3>Interpretation bands</h3><div class="eccs-table-wrap"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Percentage</th><th>Rating</th><th>Operational meaning</th></tr></thead><tbody><tr><td>90–100%</td><td>Exceptional</td><td>Stable, efficient and low-risk parsing.</td></tr><tr><td>80–89%</td><td>Excellent</td><td>Strong format with minor manageable exceptions.</td></tr><tr><td>70–79%</td><td>Good</td><td>Operationally usable with documented parsing.</td></tr><tr><td>60–69%</td><td>Fair</td><td>Non-trivial parsing and assurance required.</td></tr><tr><td>40–59%</td><td>Poor</td><td>Material extraction and maintenance risk.</td></tr><tr><td>20–39%</td><td>Very Poor</td><td>Source-side or transport remediation strongly recommended.</td></tr><tr><td>0–19%</td><td>Fail</td><td>Not dependable for production ingestion.</td></tr></tbody></table></div></section>
+    </article>
   </section>
 
 
@@ -3376,6 +3567,9 @@
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogSourceCyberValue" aria-selected="false">Log Source Cyber Value</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptTimestampQuality" aria-selected="false">Timestamp Quality</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogFormatQuality" aria-selected="false">Log Format Quality</button>
+          <button type="button" class="prompt-submenu-button" data-prompt-target="promptDatetimeStandardProps" aria-selected="false">Datetime Standard &amp; props.conf</button>
+          <button type="button" class="prompt-submenu-button" data-prompt-target="promptLineBreakProps" aria-selected="false">Line Break &amp; props.conf</button>
+          <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogFormatParse" aria-selected="false">Log Format Parse</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptDataSourceAssurance" aria-selected="false">Data Source Assurance</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogOnboardingViability" aria-selected="false">Log Onboarding Viability</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptCyberValueIndex" aria-selected="false">Cyber Value Index</button>
@@ -5658,12 +5852,12 @@ Return
 
 You are a SIEM data-quality analyst. Analyse the supplied raw events and score timestamp quality for reliable parsing, ordering, correlation and investigation.
 
-Assess six criteria
-1. Presence and unambiguous location.
+Assess the six calculator-aligned criteria
+1. Presence and completeness.
 2. Recognised format and parseability.
-3. Time-zone or UTC-offset clarity.
-4. Precision appropriate to the event rate.
-5. Correctness and plausibility, including future/past drift.
+3. Timezone or UTC-offset clarity.
+4. Precision and resolution appropriate to the event rate.
+5. Correctness and event-time reliability, including future/past drift.
 6. Consistency across events and event types.
 
 Score each criterion from 0 to 4:
@@ -5677,7 +5871,11 @@ Checks
 - Do not assume a timezone when none is present.
 
 Calculation
-Timestamp Quality Score = achieved points ÷ possible points × 100.
+Timestamp Quality raw score = sum of six criterion scores, maximum 24.
+Timestamp Quality percentage = achieved points ÷ 24 × 100.
+
+Use these interpretation bands:
+90–100 Exceptional; 80–89 Excellent; 70–79 Good; 60–69 Fair; 40–59 Poor; 20–39 Very Poor; 0–19 Fail.
 
 Return
 1. Detected timestamp fields and examples.
@@ -5696,15 +5894,13 @@ Return
 
 You are a SIEM parsing and data-quality analyst. Analyse the supplied raw events and score the quality of the log format for reliable ingestion and field extraction.
 
-Assess
-1. Event boundary reliability and multiline behaviour.
-2. Structural consistency across events.
-3. Delimiter, quoting and escaping correctness.
-4. Field-name clarity and stability.
-5. Value typing and representation consistency.
-6. Nested or repeated structure handling.
-7. Parseability without brittle regular expressions.
-8. Preservation of original meaning and special characters.
+Assess the six calculator-aligned criteria
+1. Structure and confident format identification.
+2. Event boundary reliability and multiline behaviour.
+3. Delimiter, quoting and escaping integrity.
+4. Schema, field-name and value-type stability.
+5. Encoding and content integrity, including truncation and special characters.
+6. Parsing and normalisation complexity without brittle regular expressions.
 
 Score each applicable criterion from 0 to 4:
 0 unusable; 1 poor; 2 fair; 3 good; 4 exceptional.
@@ -5717,7 +5913,11 @@ Rules
 - Distinguish source-format defects from SIEM parsing configuration defects.
 
 Calculation
-Log Format Quality Score = achieved points ÷ possible points × 100.
+Log Format Quality raw score = sum of six criterion scores, maximum 24.
+Log Format Quality percentage = achieved points ÷ 24 × 100.
+
+Use these interpretation bands:
+90–100 Exceptional; 80–89 Excellent; 70–79 Good; 60–69 Fair; 40–59 Poor; 20–39 Very Poor; 0–19 Fail.
 
 Return
 1. Format identification and confidence.
@@ -5727,6 +5927,401 @@ Return
 5. Recommended event-breaking, extraction or normalisation approach.
 6. Risks requiring source-side remediation.
 7. Confidence and limitations.</pre>
+        </article>
+        <article id="promptLogFormatParse" class="prompt-card" data-prompt-panel hidden>
+          <div class="prompt-card-header"><div><h4>Log Format Parse and Splunk sourcetype definition</h4><p>Determine the format and propose evidence-based <code>props.conf</code> and optional <code>transforms.conf</code>.</p><div id="logFormatParsePromptStatus" class="prompt-status" aria-live="polite"></div></div><button type="button" class="prompt-copy-button" data-copy-prompt="logFormatParsePrompt" data-copy-status="logFormatParsePromptStatus">Copy prompt</button></div>
+          <pre id="logFormatParsePrompt" class="prompt-body">Copilot Prompt — Determine Log Format Parse and Splunk Sourcetype Definition
+
+You are a senior Splunk parsing engineer and log-format analyst.
+
+Analyse the supplied representative raw events and determine how Splunk should interpret and extract their structural format after line breaking and timestamp parsing.
+
+Evidence rules
+- Use only the supplied raw events and stated source context.
+- Do not infer the format from the filename alone.
+- Distinguish transport envelope, syslog header, HEC metadata and application payload.
+- Classify the primary payload as CSV, TSV, JSON, XML, structured key-value, semi-structured, unstructured, mixed or unknown.
+- Do not recommend indexed extraction unless the evidence and collection method justify it.
+- Avoid duplicate extraction where HEC, an add-on, modular input or upstream processor already supplies fields.
+- Recommend separate sourcetypes when schemas or formats are incompatible.
+- State uncertainty and conditional alternatives rather than inventing settings.
+
+Tasks
+1. Identify format, delimiter, headers, quoting, escaping, nesting, arrays, duplicate keys, optional fields, encoding and consistency.
+2. Choose index-time, search-time, add-on, HEC/upstream, or separate-sourcetype extraction.
+3. Consider only evidence-supported settings: INDEXED_EXTRACTIONS, FIELD_DELIMITER, FIELD_QUOTE, HEADER_FIELD_LINE_NUMBER, TIMESTAMP_FIELDS, KV_MODE, AUTO_KV_JSON, CHARSET, TRUNCATE, SHOULD_LINEMERGE, LINE_BREAKER, EXTRACT-* and REPORT-*.
+4. Produce transforms.conf only when explicit search-time extraction is required. Include REGEX, FORMAT and MV_ADD where justified.
+5. Validate expected fields, headers, quoting, duplicate keys, nested content, multiline records, schema drift and collection-path duplication.
+
+Required output
+A. Executive conclusion: detected format, extraction strategy, sourcetype approach and confidence.
+B. Format analysis table: Sample | Format | Delimiter/structure | Header | Quoting/escaping | Nested content | Consistency | Confidence.
+C. Extraction strategy table: Option | Recommended | Evidence | Risks | Rationale.
+D. Proposed props.conf.
+E. Proposed transforms.conf if required.
+F. Expected extracted field examples.
+G. Validation findings and exceptions.
+H. Omitted settings and rationale.
+I. Assumptions, unresolved inputs and ingestion tests.
+
+Example patterns
+
+CSV:
+[example:csv]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+INDEXED_EXTRACTIONS = CSV
+FIELD_DELIMITER = ,
+FIELD_QUOTE = "
+HEADER_FIELD_LINE_NUMBER = 1
+TIMESTAMP_FIELDS = event_time
+
+TSV:
+[example:tsv]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+INDEXED_EXTRACTIONS = TSV
+HEADER_FIELD_LINE_NUMBER = 1
+TIMESTAMP_FIELDS = event_time
+
+JSON:
+[example:json]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+INDEXED_EXTRACTIONS = JSON
+KV_MODE = none
+TIMESTAMP_FIELDS = event_time
+
+XML:
+[example:xml]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)(?=&lt;event(?:\s|&gt;))
+KV_MODE = xml
+
+Structured key-value:
+[example:key_value]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+KV_MODE = auto
+
+Semi-structured:
+[example:semi_structured]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+KV_MODE = none
+REPORT-fields = extract_example_fields
+
+transforms.conf:
+[extract_example_fields]
+REGEX = (\w+)=("[^"]*"|\S+)
+FORMAT = $1::$2
+MV_ADD = true
+
+Treat examples as patterns only. Derive the final recommendation from the supplied sample.</pre>
+        </article>
+        <article id="promptLineBreakProps" class="prompt-card" data-prompt-panel hidden>
+          <div class="prompt-card-header">
+            <div><h4>Line Break and Splunk props.conf</h4><p>AI prompt for determining logical event boundaries and deriving safe Splunk line-breaking settings.</p><div id="lineBreakPropsPromptStatus" class="prompt-status" aria-live="polite"></div></div>
+            <button type="button" class="prompt-copy-button" data-copy-prompt="lineBreakPropsPrompt" data-copy-status="lineBreakPropsPromptStatus">Copy prompt</button>
+          </div>
+          <pre id="lineBreakPropsPrompt" class="prompt-body">Copilot Prompt — Determine Line Break and Splunk props.conf Settings
+
+You are a senior Splunk parsing engineer and SIEM data-quality analyst.
+
+Analyse the supplied representative raw log sample and determine how Splunk should separate the incoming stream into individual logical events.
+
+Evidence rules
+- Use only the supplied raw sample and stated source context.
+- Do not assume that every physical line is a complete event.
+- Preserve continuation lines, stack traces, indented attributes, wrapped messages and embedded newlines when they belong to the preceding event.
+- Identify the start and end of each logical event before proposing configuration.
+- Do not invent an event marker that is not present in the sample.
+- Treat different line-ending styles separately where relevant: Windows CRLF, Unix LF and legacy CR.
+- Remember that Splunk removes the text matched by the first capturing group in LINE_BREAKER.
+- Use a lookahead when the next event begins with a stable marker that must remain part of the next event.
+- If the source contains incompatible event-boundary patterns, recommend separate sourcetypes or preprocessing rather than an unsafe universal regex.
+
+Tasks
+
+1. Identify the physical line structure
+Report:
+- Observed line-ending style
+- Number of physical lines
+- Number of blank lines
+- Whether indentation or continuation lines occur
+- Whether stack traces, XML, JSON pretty-printing or wrapped messages occur
+- Whether one physical line consistently equals one logical event
+
+2. Reconstruct logical events
+For each representative event, identify:
+- First physical line
+- Last physical line
+- Start-of-event marker
+- Continuation-line pattern
+- End-of-event evidence
+- Confidence that the boundary is correct
+
+3. Classify the line-break model
+Choose one:
+- One event per physical line
+- Multiline event beginning with a timestamp
+- Multiline event beginning with a stable header or prefix
+- Structured payload with embedded newlines
+- Delimiter-separated records
+- Mixed or inconsistent
+- Insufficient evidence
+
+4. Derive Splunk line-breaking settings
+
+SHOULD_LINEMERGE
+- Prefer false when event boundaries can be expressed explicitly with LINE_BREAKER.
+- Explain any case where true is proposed and identify the operational risk.
+
+LINE_BREAKER
+- Provide a valid Splunk regular expression.
+- Put the discarded boundary characters in the first capturing group.
+- Preserve the next event's start marker using lookahead where required.
+- Escape backslashes correctly.
+- Avoid consuming timestamps, event identifiers or useful payload content.
+- Explain exactly where the split occurs.
+
+5. Produce the proposed props.conf stanza
+
+Use this exact structure:
+
+[sourcetype_name]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = &lt;regular expression&gt;
+
+Replace sourcetype_name with the supplied sourcetype. If none is supplied, use [replace_with_sourcetype].
+
+For a verified one-event-per-line source, use:
+
+[replace_with_sourcetype]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+
+Do not use the baseline newline rule when continuation lines belong to the preceding event.
+
+6. Validate the proposal
+Explain:
+- Expected event count before and after parsing
+- Which sample boundaries match
+- Any sample boundaries that do not match
+- Whether blank lines are consumed safely
+- Whether the first capturing group removes only separators
+- Whether the next event marker remains intact
+- Whether CRLF and LF are both handled
+- Whether exceptionally long events create truncation or size risks
+- Whether timestamp parsing will receive the correct first line
+- Whether separate sourcetypes are required
+
+Required output
+
+A. Executive conclusion
+- Detected line-break model
+- Recommended SHOULD_LINEMERGE
+- Recommended LINE_BREAKER
+- Confidence: High, Medium or Low
+
+B. Physical and logical structure table
+Columns:
+Sample | Physical lines | Logical events | Start marker | Continuation pattern | Boundary confidence
+
+C. Derived settings table
+Columns:
+Setting | Proposed value | Evidence | Regex behaviour | Confidence
+
+D. Proposed props.conf stanza
+
+E. Boundary walkthrough
+Show exactly where at least two consecutive events split.
+
+F. Validation findings and exceptions
+
+G. Assumptions, unresolved inputs and recommended ingestion tests
+
+Example 1 — one event per line
+
+Raw sample:
+2026-07-21T08:00:11.902+10:00 INFO event_type=login_attempt user=ADAM.SMITH
+2026-07-21T08:03:44.614+10:00 WARN event_type=login_attempt user=jsmith result=failure
+
+Expected configuration:
+
+[replace_with_sourcetype]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)
+
+Example 2 — multiline event beginning with a timestamp
+
+Raw sample:
+2026-07-21 08:02:16.453 INFO User login successful.
+    User=ADAM.SMITH
+    ClientIP=10.50.12.81
+2026-07-21 08:02:22.993 INFO Cube view opened.
+    User=ADAM.SMITH
+    Cube=GL_Budget
+
+Expected configuration:
+
+[replace_with_sourcetype]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})
+
+Explain that the newline separator is discarded while the timestamp remains at the beginning of the next event.</pre>
+        </article>
+        <article id="promptDatetimeStandardProps" class="prompt-card" data-prompt-panel hidden>
+          <div class="prompt-card-header">
+            <div><h4>Datetime Standard and Splunk props.conf</h4><p>AI prompt for identifying the datetime standard and deriving evidence-based Splunk timestamp parsing settings.</p><div id="datetimeStandardPropsPromptStatus" class="prompt-status" aria-live="polite"></div></div>
+            <button type="button" class="prompt-copy-button" data-copy-prompt="datetimeStandardPropsPrompt" data-copy-status="datetimeStandardPropsPromptStatus">Copy prompt</button>
+          </div>
+          <pre id="datetimeStandardPropsPrompt" class="prompt-body">Copilot Prompt — Determine Datetime Standard and Splunk props.conf Settings
+
+You are a senior Splunk parsing engineer and SIEM data-quality analyst.
+
+Analyse the supplied representative raw log events. Determine the datetime standard used by the source and propose the Splunk timestamp settings that would be appropriate for the sourcetype.
+
+Evidence rules
+- Use only the supplied raw events and stated source context.
+- Do not invent a timestamp, prefix, timezone, year, locale or precision that is not supported by evidence.
+- Distinguish event time from receipt time, processing time, file time and index time.
+- If more than one timestamp appears, identify each one and state which should become Splunk _time.
+- If the sample is insufficient or inconsistent, say so and provide conditional alternatives rather than presenting one configuration as certain.
+- Escape TIME_PREFIX as a valid regular expression.
+- Do not include the timestamp itself in TIME_PREFIX.
+- Calculate MAX_TIMESTAMP_LOOKAHEAD from the first character after TIME_PREFIX through the end of the longest valid timestamp.
+- Omit TZ when the timestamp already carries an unambiguous UTC marker or numeric offset, unless a specific Splunk deployment requirement is supplied.
+- Do not assume the indexer timezone is suitable.
+
+Tasks
+
+1. Identify every candidate datetime value
+For each candidate, report:
+- Exact raw example
+- Field name or location
+- Position within the event
+- Whether it represents event time, receipt time, processing time or another time
+- Percentage of sampled events containing it
+- Whether it is consistent across event types
+
+2. Determine the datetime standard
+Classify the selected event timestamp as one of:
+- ISO 8601 extended
+- ISO 8601 basic or compact
+- RFC 3339
+- RFC 2822 or RFC 822
+- Unix epoch seconds
+- Unix epoch milliseconds
+- Unix epoch microseconds
+- Windows File Time
+- Syslog timestamp
+- Vendor-defined
+- Unknown or mixed
+
+Report:
+- Standard name
+- Exact literal pattern
+- Splunk strptime pattern
+- Precision: seconds, milliseconds, microseconds, nanoseconds or other
+- Timezone representation: Z, numeric offset, named zone, abbreviation or absent
+- Locale dependence
+- Ambiguity or parsing risks
+
+3. Derive the Splunk timestamp settings
+
+TIME_PREFIX
+- Identify stable text immediately before the selected timestamp.
+- Provide the narrowest reliable regular expression.
+- Use ^ when the timestamp begins the event.
+- Explain why the prefix is safe across the supplied samples.
+
+TIME_FORMAT
+- Provide the Splunk strptime expression matching the raw timestamp.
+- Preserve literal separators.
+- Use the correct fractional-second token supported by Splunk.
+- Include the timezone token only when it exists in the raw value.
+
+MAX_TIMESTAMP_LOOKAHEAD
+- Show the character-count calculation.
+- Count from the first character after TIME_PREFIX to the end of the longest valid timestamp.
+- Provide the final integer.
+- State whether a safety margin is necessary and why.
+
+TZ
+- If the timestamp contains Z or an explicit numeric offset, normally return: not required.
+- If the timestamp lacks a zone but the source timezone is supplied, return the appropriate IANA timezone, for example Australia/Sydney.
+- If the timezone cannot be proven, return: unresolved — deployment input required.
+- Do not infer timezone from an IP address, hostname or organisation name alone.
+
+4. Produce the proposed props.conf stanza
+
+Use this exact structure:
+
+[sourcetype_name]
+TIME_PREFIX = &lt;regular expression&gt;
+TIME_FORMAT = &lt;Splunk strptime pattern&gt;
+MAX_TIMESTAMP_LOOKAHEAD = &lt;integer&gt;
+TZ = &lt;IANA timezone, only when required&gt;
+
+Replace sourcetype_name with the supplied sourcetype. If no sourcetype is supplied, use [replace_with_sourcetype].
+
+Only include settings supported by the evidence. If a setting should be omitted, show it separately under “Omitted settings and rationale” rather than placing it in the stanza.
+
+5. Validate the proposal
+Explain:
+- Which samples match the proposed configuration
+- Any samples that do not match
+- Whether multiline events affect timestamp discovery
+- Whether mixed timestamp formats require separate sourcetypes or routing
+- Whether the timestamp could be truncated by MAX_TIMESTAMP_LOOKAHEAD
+- How to verify in Splunk that _time equals the source event time
+- Any daylight-saving implications
+- Any risk of Splunk falling back to previous-event time, file time or index time
+
+Required output
+
+A. Executive conclusion
+- Selected event timestamp
+- Detected standard
+- Confidence: High, Medium or Low
+
+B. Datetime analysis table
+Columns:
+Candidate | Example | Meaning | Standard | Precision | Timezone | Coverage | Selected
+
+C. Derived settings table
+Columns:
+Setting | Proposed value | Evidence | Calculation or rationale | Confidence
+
+D. Proposed props.conf stanza
+
+E. Omitted settings and rationale
+
+F. Validation findings and exceptions
+
+G. Assumptions, unresolved inputs and recommended test cases
+
+Example
+
+Raw event:
+2026-07-21T08:00:11.902+10:00 INFO event_type=login_attempt user=ADAM.SMITH
+
+Expected analysis:
+- Standard: ISO 8601 extended / RFC 3339-compatible
+- Precision: milliseconds
+- Timezone: explicit numeric UTC offset
+- TIME_PREFIX: ^
+- TIME_FORMAT: %Y-%m-%dT%H:%M:%S.%3N%:z
+- MAX_TIMESTAMP_LOOKAHEAD: 29
+- TZ: not required because the raw timestamp contains an explicit offset
+
+Example props.conf:
+
+[replace_with_sourcetype]
+TIME_PREFIX = ^
+TIME_FORMAT = %Y-%m-%dT%H:%M:%S.%3N%:z
+MAX_TIMESTAMP_LOOKAHEAD = 29</pre>
         </article>
         <article id="promptDataSourceAssurance" class="prompt-card" data-prompt-panel hidden>
           <div class="prompt-card-header">
@@ -11659,7 +12254,7 @@ function exportViabilityCalculator(event) {
 function setActivePage(pageName, updateHash = true) {
   const selected = ["info", "taxonomy", "assessments", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
-  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : "");
+  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : "");
   
 const frameworkConcepts = [
   {term:"Logging Pattern",category:"Collection",definition:"An approved reusable reference architecture for collecting a class of data sources.",example:"Syslog via SC4S to Splunk Cloud."},
@@ -11669,8 +12264,10 @@ const frameworkConcepts = [
   {term:"Source-side Logging Configuration",category:"Collection",definition:"Configuration applied on the source platform that determines which events are generated and sent.",example:"FortiGate policy logging, event filters and syslog destination settings."},
   {term:"Transport Reliability Requirement",category:"Collection",definition:"The minimum acceptable delivery assurance for a collection path.",example:"TCP/TLS required; UDP loss is not acceptable."},
   {term:"Pre-ingest Filtering Decision",category:"Collection",definition:"The governed decision to retain, suppress, sample or transform events before indexing.",example:"Drop repetitive heartbeat records but retain failures and state changes."},
-  {term:"Timestamp Quality",category:"Data quality",definition:"A measure of timestamp consistency, timezone clarity, precision, completeness, event-time reliability and parsing complexity.",example:"21/24 — Good."},
-  {term:"Log Format Quality",category:"Data quality",definition:"A measure of structural consistency, delimitation, schema clarity, event boundaries, integrity and parsing complexity.",example:"Stable JSON with one event per object and UTF-8 encoding."},
+  {term:"Datetime Format",category:"Data quality",detailView:"datetime-format",definition:"The literal timestamp representation emitted by a source event, including its standard, precision, timezone expression and equivalent Splunk strptime pattern.",example:"2026-07-21T08:00:11.902+10:00 mapped to %Y-%m-%dT%H:%M:%S.%3N%:z."},
+  {term:"Datetime Parse",category:"Data quality",detailView:"datetime-parse",definition:"The Splunk sourcetype timestamp definition describing how event time is located, interpreted and assigned using TIME_PREFIX, TIME_FORMAT, MAX_TIMESTAMP_LOOKAHEAD and TZ.",example:"TIME_PREFIX=^, TIME_FORMAT=%Y-%m-%d %H:%M:%S, MAX_TIMESTAMP_LOOKAHEAD=19, TZ=Australia/Sydney."},
+  {term:"Timestamp Quality",category:"Data quality",detailView:"timestamp-quality",definition:"A measure of timestamp consistency, timezone clarity, precision, completeness, event-time reliability and parsing complexity.",example:"21/24 — Good."},
+  {term:"Log Format Quality",category:"Data quality",detailView:"log-format-quality",definition:"A measure of structural consistency, delimitation, schema clarity, event boundaries, integrity and parsing complexity.",example:"Stable JSON with one event per object and UTF-8 encoding."},
   {term:"Parse Rate",category:"Data quality",definition:"The proportion of sampled events that can be parsed successfully using the approved configuration.",example:"99.5% of 10,000 sampled events parsed without fallback rules."},
   {term:"Schema Stability",category:"Data quality",definition:"The degree to which field names, types and event structures remain consistent over time and versions.",example:"No breaking field changes across three monthly samples."},
   {term:"Marginal Novelty",category:"Cyber value",definition:"The proportion of useful information that cannot already be reconstructed from existing sources.",example:"70% novelty means only 30% is reconstructible elsewhere.",detailView:"marginal-novelty"},
@@ -11713,7 +12310,7 @@ function renderFrameworkConcepts(){
   const q=(document.getElementById("conceptSearch")?.value||"").trim().toLowerCase();
   const category=document.getElementById("conceptCategoryFilter")?.value||"";
   const rows=frameworkConcepts.filter(item=>(!category||item.category===category)&&(!q||`${item.term} ${item.category} ${item.definition} ${item.example}`.toLowerCase().includes(q)));
-  grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${item.detailView==='eccs'?'ECCS':item.detailView==='icd'?'ICD':item.detailView==='pivot'?'Pivot Density &amp; Breadth':'Marginal Novelty'} reference</button></div>`:''}</article>`).join("");
+  grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${item.detailView==='eccs'?'ECCS':item.detailView==='icd'?'ICD':item.detailView==='pivot'?'Pivot Density &amp; Breadth':item.detailView==='timestamp-quality'?'Timestamp Quality':item.detailView==='log-format-quality'?'Log Format Quality':item.detailView==='datetime-format'?'Datetime Format':item.detailView==='datetime-parse'?'Datetime Parse':item.detailView==='line-break'?'Line Break':item.detailView==='log-format-parse'?'Log Format Parse':'Marginal Novelty'} reference</button>${(item.detailView==='datetime-format'||item.detailView==='datetime-parse'||item.detailView==='line-break'||item.detailView==='log-format-parse')?`<button type="button" data-open-prompt-panel="${item.detailView==='line-break'?'promptLineBreakProps':item.detailView==='log-format-parse'?'promptLogFormatParse':'promptDatetimeStandardProps'}">Open AI prompt</button>`:''}</div>`:''}</article>`).join("");
   grid.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
   const empty=document.getElementById("conceptEmpty"); if(empty) empty.hidden=rows.length>0;
 }
@@ -11723,16 +12320,28 @@ function setReferenceDetailVisibility(detailName){
   const novelty=document.getElementById("marginalNoveltyReferenceView");
   const icd=document.getElementById("icdReferenceView");
   const pivot=document.getElementById("pivotReferenceView");
+  const timestampQuality=document.getElementById("timestampQualityReferenceView");
+  const logFormatQuality=document.getElementById("logFormatQualityReferenceView");
+  const datetimeFormat=document.getElementById("datetimeFormatReferenceView");
+  const datetimeParse=document.getElementById("datetimeParseReferenceView");
+  const lineBreak=document.getElementById("lineBreakReferenceView");
+  const logFormatParse=document.getElementById("logFormatParseReferenceView");
   if(index) index.hidden=Boolean(detailName);
   if(eccs) eccs.hidden=detailName!=="eccs";
   if(novelty) novelty.hidden=detailName!=="marginal-novelty";
   if(icd) icd.hidden=detailName!=="icd";
   if(pivot) pivot.hidden=detailName!=="pivot";
+  if(timestampQuality) timestampQuality.hidden=detailName!=="timestamp-quality";
+  if(logFormatQuality) logFormatQuality.hidden=detailName!=="log-format-quality";
+  if(datetimeFormat) datetimeFormat.hidden=detailName!=="datetime-format";
+  if(datetimeParse) datetimeParse.hidden=detailName!=="datetime-parse";
+  if(lineBreak) lineBreak.hidden=detailName!=="line-break";
+  if(logFormatParse) logFormatParse.hidden=detailName!=="log-format-parse";
 }
 function showReferenceDetail(detailName){
   setActivePage("reference");
   setReferenceDetailVisibility(detailName);
-  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"}};
+  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"}};
   const config=detailConfig[detailName]||detailConfig.eccs;
   if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));
@@ -11753,6 +12362,14 @@ function openReferenceConcept(term){
 document.getElementById("conceptSearch")?.addEventListener("input",renderFrameworkConcepts);
 document.getElementById("conceptCategoryFilter")?.addEventListener("change",renderFrameworkConcepts);
 document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>document.getElementById(button.dataset.referenceJump)?.scrollIntoView({behavior:"smooth",block:"start"})));
+document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
+document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
+  setActivePage("prompts");
+  const target=button.dataset.openPromptPanel;
+  document.querySelectorAll("[data-prompt-panel]").forEach(panel=>panel.hidden=panel.id!==target);
+  document.querySelectorAll("[data-prompt-target]").forEach(tab=>{const active=tab.dataset.promptTarget===target;tab.classList.toggle("active",active);tab.setAttribute("aria-selected",String(active));});
+  requestAnimationFrame(()=>document.getElementById(target)?.scrollIntoView({behavior:"smooth",block:"start"}));
+}));
 document.querySelectorAll("[data-reference-term]").forEach(button=>button.addEventListener("click",()=>openReferenceConcept(button.dataset.referenceTerm)));
 document.querySelectorAll("[data-back-to-references]").forEach(link=>link.addEventListener("click",showReferenceIndex));
 document.querySelectorAll(".eccs-anchor-nav a").forEach(link=>link.addEventListener("click",event=>{
