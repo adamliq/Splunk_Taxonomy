@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore Splunk configuration files, standard locations, component applicability, and precedence.">
+  <title>Splunk Configuration Explorer</title>
+  <style>:root{color-scheme:light;--bg:#edf1f5;--panel:#fff;--panel2:#f6f8fa;--text:#16212b;--muted:#64717d;--line:#d9e0e6;--accent:#e85d24;--accent2:#fff0e9;--blue:#1463df;--blue2:#eaf2ff;--green:#13805d;--green2:#e7f7f1;--purple:#7754c7;--shadow:0 10px 34px rgba(16,31,45,.08);--radius:12px;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;--sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+:root.dark{color-scheme:dark;--bg:#10161d;--panel:#18212b;--panel2:#111a23;--text:#eef4f8;--muted:#98a7b5;--line:#2b3947;--accent:#ff7b42;--accent2:#3c251d;--blue:#64a0ff;--blue2:#1b304a;--green:#54c99d;--green2:#18372f;--purple:#ae8cf4;--shadow:0 12px 36px rgba(0,0,0,.28)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.45}.topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#17222c;color:#f7fafc;border-bottom:3px solid var(--accent)}.brand{display:flex;align-items:center;gap:12px}.brand h1{font-size:18px;margin:0;letter-spacing:.01em}.brand p{margin:1px 0 0;color:#aebbc7;font-size:13px}.mark{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;background:var(--accent);font:700 17px var(--mono);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}.top-actions{display:flex;gap:8px}.controls{display:grid;grid-template-columns:minmax(300px,1.8fr) minmax(130px,.55fr) minmax(180px,.72fr) minmax(220px,.9fr) auto;gap:10px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line)}label{display:flex;flex-direction:column;gap:4px}label>span{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}input,select,button{font:inherit;color:inherit}input,select{width:100%;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:9px 10px;outline:none}input:focus,select:focus,button:focus-visible{outline:3px solid color-mix(in srgb,var(--blue) 25%,transparent);border-color:var(--blue)}.search-wrap{position:relative;justify-content:flex-end}.search-wrap input{padding-left:38px;padding-right:38px}.search-icon{position:absolute;left:12px;bottom:8px;font-size:22px;color:var(--muted);font-weight:400}.search-wrap kbd{position:absolute;right:10px;bottom:10px;border:1px solid var(--line);border-radius:4px;padding:0 5px;background:var(--panel);color:var(--muted);font:12px var(--mono)}.button,.icon-button,.text-button{border:1px solid var(--line);background:var(--panel);border-radius:8px;cursor:pointer}.button{align-self:end;padding:9px 13px;font-weight:650}.button:hover,.icon-button:hover{background:var(--panel2)}.button.subtle{background:transparent;color:#e7edf2;border-color:#465461}.icon-button{min-width:36px;height:36px;padding:0 9px;display:grid;place-items:center}.topbar .icon-button{background:transparent;color:#fff;border-color:#465461}.workspace{height:calc(100vh - 137px);display:grid;grid-template-columns:minmax(260px,310px) minmax(390px,1fr) minmax(330px,410px);gap:1px;background:var(--line)}.panel{min-width:0;overflow:hidden;background:var(--panel);display:flex;flex-direction:column}.panel-head{min-height:67px;padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.panel-head h2{font-size:15px;margin:0}.panel-head p{font-size:12px;color:var(--muted);margin:2px 0 0}.panel-head select{width:auto;max-width:132px;padding:6px 8px;font-size:12px}.file-list{overflow:auto;padding:7px}.file-row{width:100%;border:0;border-left:3px solid transparent;border-radius:7px;background:transparent;text-align:left;padding:9px 10px;display:grid;grid-template-columns:27px 1fr auto;gap:8px;cursor:pointer}.file-row:hover{background:var(--panel2)}.file-row.selected{background:var(--accent2);border-left-color:var(--accent)}.mini-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:6px;background:var(--panel2);color:var(--accent);font:bold 15px var(--mono)}.file-main strong{display:block;font:600 13px var(--mono);overflow:hidden;text-overflow:ellipsis}.file-main span{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}.count-pill{font-size:11px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);padding:2px 6px;border-radius:20px}.tree-actions{display:flex;gap:5px}.breadcrumbs{min-height:36px;padding:8px 15px;border-bottom:1px solid var(--line);font:12px var(--mono);color:var(--muted);white-space:nowrap;overflow:auto}.legend{display:flex;flex-wrap:wrap;gap:12px;padding:9px 15px;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.dot.standard{background:var(--blue)}.dot.editable{background:var(--green)}.dot.readonly{background:var(--accent)}.dot.role{background:var(--purple)}.tree{padding:12px 14px 50px;overflow:auto;font:13px var(--mono)}.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}.tree>.tree-root{padding-left:0;border:0}.tree-node{margin:2px 0}.node-line{position:relative;display:flex;align-items:center;gap:6px;min-height:31px;padding:4px 7px;border-radius:7px}.node-line:hover{background:var(--panel2)}.tree-toggle{border:0;background:transparent;width:19px;padding:0;cursor:pointer;color:var(--muted)}.tree-toggle.blank{visibility:hidden}.node-icon{color:#e0a519}.node-icon.file{color:var(--muted)}.node-name{overflow-wrap:anywhere}.node-line.highlight{background:var(--blue2);box-shadow:inset 3px 0 0 var(--blue)}.node-line.highlight.admin{background:var(--green2);box-shadow:inset 3px 0 0 var(--green)}.node-line.highlight.noedit{background:var(--accent2);box-shadow:inset 3px 0 0 var(--accent)}.node-line.role-dependent:after{content:"role";font:10px var(--sans);color:var(--purple);border:1px solid color-mix(in srgb,var(--purple) 45%,transparent);border-radius:10px;padding:1px 5px;margin-left:auto}.path-meta{font:10px var(--sans);color:var(--muted);margin-left:auto}.details{overflow:auto;padding:16px 17px 35px}.detail-title{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:start}.file-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:9px;background:var(--accent2);color:var(--accent);font:bold 21px var(--mono)}.detail-title h2{font:700 17px var(--mono);margin:0}.detail-title p{font-size:13px;color:var(--muted);margin:2px 0}.badges{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}.badge{padding:3px 7px;border-radius:20px;background:var(--panel2);border:1px solid var(--line);font-size:11px;font-weight:650}.purpose{font-weight:650;margin:10px 0 5px}.description{color:var(--muted);margin:0}.detail-section{padding-top:15px;margin-top:15px;border-top:1px solid var(--line)}.detail-section h3{font-size:12px;text-transform:uppercase;letter-spacing:.07em;margin:0 0 9px;color:var(--muted)}.facts{display:grid;gap:7px;margin:0}.facts div{display:grid;grid-template-columns:82px 1fr;gap:8px}.facts dt{color:var(--muted);font-size:12px}.facts dd{margin:0;font-size:12px}.code-chips{display:flex;flex-wrap:wrap;gap:5px}.code-chips code,.related button{font:11px var(--mono);background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:4px 6px}.section-title{display:flex;justify-content:space-between}.text-button{border:0;background:transparent;color:var(--blue);padding:0;font-size:12px}pre{margin:0;background:#111a22;color:#dce8f1;border-radius:8px;padding:11px;white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.45 var(--mono)}.hint{font-size:11px;color:var(--muted);margin:6px 0 0}.precedence{display:grid;gap:5px}.precedence-step{display:flex;align-items:center;gap:8px;font-size:12px}.precedence-step b{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--blue2);color:var(--blue);font-size:10px}.guidance{display:grid;gap:7px}.guide{font-size:12px;padding:8px 9px;border-left:3px solid var(--line);background:var(--panel2);border-radius:0 6px 6px 0}.guide.warn{border-left-color:var(--accent)}.related{display:flex;flex-wrap:wrap;gap:5px}.related button{cursor:pointer;color:var(--blue)}.docs-link{display:block;margin-top:18px;color:var(--blue);font-weight:650;text-decoration:none}.empty{margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px;color:var(--muted);max-width:300px}.empty strong{color:var(--text);margin:7px 0}.empty-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--panel2);font:bold 18px serif}.hidden{display:none!important}dialog{width:min(520px,calc(100vw - 30px));border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);box-shadow:var(--shadow);padding:18px}dialog::backdrop{background:rgba(5,12,18,.55)}.dialog-head{display:flex;align-items:center;justify-content:space-between}.dialog-head h2{margin:0;font-size:18px}dialog li{margin:8px 0}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#17222c;color:#fff;padding:9px 13px;border-radius:7px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1100px){.workspace{grid-template-columns:270px minmax(360px,1fr)}.detail-panel{position:fixed;right:0;top:137px;bottom:0;width:min(420px,90vw);z-index:4;box-shadow:-14px 0 34px rgba(0,0,0,.15);transform:translateX(100%);transition:.2s}.detail-panel.open{transform:none}.controls{grid-template-columns:1.4fr .55fr .75fr}.root-field{display:none}}
+@media(max-width:720px){.topbar{height:66px;padding:0 13px}.brand p{display:none}.controls{grid-template-columns:1fr 1fr;padding:10px}.search-wrap{grid-column:1/-1}.controls .button{display:none}.workspace{height:calc(100vh - 194px);grid-template-columns:1fr}.catalogue-panel{display:flex}.tree-panel{display:none}body.tree-view .catalogue-panel{display:none}body.tree-view .tree-panel{display:flex}.detail-panel{top:0;width:100vw}.panel-head{min-height:61px}.topbar .button{display:none}}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">&gt;_</div>
+      <div><h1>Splunk Configuration Explorer</h1><p>Static configuration and path reference</p></div>
+    </div>
+    <div class="top-actions">
+      <button id="themeBtn" class="icon-button" type="button" aria-label="Toggle dark mode" title="Toggle theme">◐</button>
+      <button id="aboutBtn" class="button subtle" type="button">About</button>
+    </div>
+  </header>
+
+  <section class="controls" aria-label="Explorer controls">
+    <label class="search-wrap">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="searchInput" type="search" autocomplete="off" placeholder="Search files, stanzas, settings or purpose…" aria-label="Search configuration catalogue">
+      <kbd>/</kbd>
+    </label>
+    <label><span>Platform</span><select id="osSelect"><option value="linux">Linux</option><option value="windows">Windows</option></select></label>
+    <label><span>Installation</span><select id="roleSelect"><option value="splunk-enterprise">Enterprise Server</option><option value="heavy-forwarder">Heavy Forwarder</option><option value="universal-forwarder">Universal Forwarder</option></select></label>
+    <label class="root-field"><span>Display root</span><input id="rootInput" type="text" aria-label="Custom Splunk home"></label>
+    <button id="resetBtn" class="button" type="button">Reset</button>
+  </section>
+
+  <main class="workspace">
+    <aside class="panel catalogue-panel">
+      <div class="panel-head">
+        <div><h2>Configuration files</h2><p id="resultCount">Loading catalogue…</p></div>
+        <select id="categorySelect" aria-label="Filter by category"><option value="">All categories</option></select>
+      </div>
+      <div id="fileList" class="file-list" role="listbox" aria-label="Configuration files"></div>
+    </aside>
+
+    <section class="panel tree-panel">
+      <div class="panel-head tree-head">
+        <div><h2>Possible locations</h2><p id="locationSummary">Select a file to highlight its catalogue-defined paths</p></div>
+        <div class="tree-actions">
+          <button id="collapseBtn" class="icon-button" type="button" title="Collapse all" aria-label="Collapse all">−</button>
+          <button id="expandBtn" class="icon-button" type="button" title="Expand all" aria-label="Expand all">+</button>
+        </div>
+      </div>
+      <nav id="breadcrumbs" class="breadcrumbs" aria-label="Selected path"></nav>
+      <div class="legend">
+        <span><i class="dot standard"></i> Standard</span>
+        <span><i class="dot editable"></i> Administrator-managed</span>
+        <span><i class="dot readonly"></i> Do not edit</span>
+        <span><i class="dot role"></i> Role-dependent</span>
+      </div>
+      <div id="tree" class="tree" role="tree" aria-label="Splunk directory tree"></div>
+      <div id="emptyTree" class="empty hidden"><strong>No applicable locations</strong><span>This file is not used by the selected installation role.</span></div>
+    </section>
+
+    <aside class="panel detail-panel">
+      <div id="emptyDetails" class="empty"><div class="empty-icon">i</div><strong>Select a configuration file</strong><span>Purpose, locations, precedence and operational guidance will appear here.</span></div>
+      <article id="details" class="details hidden">
+        <div class="detail-title">
+          <div class="file-icon">≡</div>
+          <div><h2 id="detailName"></h2><p id="detailDisplay"></p></div>
+          <button id="copyNameBtn" class="icon-button" type="button" title="Copy filename" aria-label="Copy filename">⧉</button>
+        </div>
+        <div id="badges" class="badges"></div>
+        <p id="detailPurpose" class="purpose"></p>
+        <p id="detailDescription" class="description"></p>
+
+        <section class="detail-section">
+          <h3>Configuration context</h3>
+          <dl class="facts">
+            <div><dt>Context</dt><dd id="detailContext"></dd></div>
+            <div><dt>Components</dt><dd id="detailComponents"></dd></div>
+            <div><dt>Restart</dt><dd id="detailRestart"></dd></div>
+            <div><dt>Sensitive</dt><dd id="detailSensitive"></dd></div>
+          </dl>
+        </section>
+
+        <section class="detail-section">
+          <h3>Common stanzas</h3>
+          <div id="stanzas" class="code-chips"></div>
+        </section>
+        <section class="detail-section">
+          <h3>Important settings</h3>
+          <div id="settings" class="code-chips"></div>
+        </section>
+        <section class="detail-section">
+          <div class="section-title"><h3>Effective configuration</h3><button id="copyCommandBtn" class="text-button" type="button">Copy</button></div>
+          <pre id="btoolCommand"></pre>
+          <p class="hint">This command is displayed only. The explorer never connects to or changes a Splunk installation.</p>
+        </section>
+        <section class="detail-section">
+          <h3>Precedence</h3>
+          <div id="precedence" class="precedence"></div>
+        </section>
+        <section class="detail-section">
+          <h3>Guidance</h3>
+          <div id="guidance" class="guidance"></div>
+        </section>
+        <section class="detail-section">
+          <h3>Related files</h3>
+          <div id="related" class="related"></div>
+        </section>
+        <a id="docsLink" class="docs-link" target="_blank" rel="noreferrer">Open Splunk documentation ↗</a>
+      </article>
+    </aside>
+  </main>
+
+  <dialog id="aboutDialog">
+    <div class="dialog-head"><h2>About this explorer</h2><button id="closeAboutBtn" class="icon-button" aria-label="Close">×</button></div>
+    <p>This is a static reference. Highlighted paths are locations defined by the catalogue—not files discovered on your system.</p>
+    <ul>
+      <li>Splunk can merge settings from multiple copies of the same file.</li>
+      <li>Never edit files in product or app <code>default</code> directories.</li>
+      <li>Use <code>btool --debug</code> on the relevant instance to inspect effective configuration.</li>
+    </ul>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script id="catalogueData" type="application/json">{
+  "schema_version": "1.0.0",
+  "catalogue_version": "2026.09",
+  "title": "Splunk Configuration Explorer Catalogue",
+  "description": "Static reference catalogue for displaying Splunk Enterprise, heavy forwarder, and universal forwarder directory trees and configuration-file information.",
+  "generated_on": "2026-09-09",
+  "product_reference": "Splunk Enterprise and Universal Forwarder 10.x; verify version-specific behavior against the installed product documentation.",
+  "disclaimer": [
+    "This is a static reference catalogue and does not inspect a Splunk installation.",
+    "A highlighted path represents a valid, common, or role-dependent possible location; it does not mean the file exists.",
+    "Splunk merges settings from multiple copies of configuration files according to file context and directory precedence.",
+    "Do not edit files under $SPLUNK_HOME/etc/system/default or an app's default directory. Place supported overrides in an appropriate local directory.",
+    "Use btool --debug on the relevant Splunk instance to investigate the effective merged configuration."
+  ],
+  "schema_notes": {
+    "path_resolution": "Replace $SPLUNK_HOME with the selected profile's default_root or the user's custom display root. Replace placeholders such as <app>, <user>, and <cluster-app> only for display.",
+    "location_resolution": "For each configuration file, resolve location_template_ids against location_templates and then append any entry-specific valid_locations.",
+    "applicability": "A location is applicable only when the selected role occurs in both the configuration file applies_to list and the location template applies_to list.",
+    "status": "All locations describe catalogue knowledge, not discovered filesystem state."
+  },
+  "installation_profiles": [
+    {
+      "id": "linux-enterprise",
+      "label": "Linux Splunk Enterprise",
+      "operating_system": "linux",
+      "role": "splunk-enterprise",
+      "default_root": "/opt/splunk",
+      "executable": "$SPLUNK_HOME/bin/splunk",
+      "btool_command_template": "$SPLUNK_HOME/bin/splunk btool {btool_type} list --debug"
+    },
+    {
+      "id": "linux-heavy-forwarder",
+      "label": "Linux Heavy Forwarder",
+      "operating_system": "linux",
+      "role": "heavy-forwarder",
+      "default_root": "/opt/splunk",
+      "executable": "$SPLUNK_HOME/bin/splunk",
+      "btool_command_template": "$SPLUNK_HOME/bin/splunk btool {btool_type} list --debug"
+    },
+    {
+      "id": "linux-universal-forwarder",
+      "label": "Linux Universal Forwarder",
+      "operating_system": "linux",
+      "role": "universal-forwarder",
+      "default_root": "/opt/splunkforwarder",
+      "executable": "$SPLUNK_HOME/bin/splunk",
+      "btool_command_template": "$SPLUNK_HOME/bin/splunk btool {btool_type} list --debug"
+    },
+    {
+      "id": "windows-enterprise",
+      "label": "Windows Splunk Enterprise",
+      "operating_system": "windows",
+      "role": "splunk-enterprise",
+      "default_root": "C:\\Program Files\\Splunk",
+      "executable": "$SPLUNK_HOME\\bin\\splunk.exe",
+      "btool_command_template": "& \"$env:SPLUNK_HOME\\bin\\splunk.exe\" btool {btool_type} list --debug"
+    },
+    {
+      "id": "windows-heavy-forwarder",
+      "label": "Windows Heavy Forwarder",
+      "operating_system": "windows",
+      "role": "heavy-forwarder",
+      "default_root": "C:\\Program Files\\Splunk",
+      "executable": "$SPLUNK_HOME\\bin\\splunk.exe",
+      "btool_command_template": "& \"$env:SPLUNK_HOME\\bin\\splunk.exe\" btool {btool_type} list --debug"
+    },
+    {
+      "id": "windows-universal-forwarder",
+      "label": "Windows Universal Forwarder",
+      "operating_system": "windows",
+      "role": "universal-forwarder",
+      "default_root": "C:\\Program Files\\SplunkUniversalForwarder",
+      "executable": "$SPLUNK_HOME\\bin\\splunk.exe",
+      "btool_command_template": "& \"$env:SPLUNK_HOME\\bin\\splunk.exe\" btool {btool_type} list --debug"
+    }
+  ],
+  "role_definitions": [
+    {"id": "splunk-enterprise", "label": "Splunk Enterprise server", "description": "Full Splunk platform installation; component applicability depends on the server's deployed role."},
+    {"id": "heavy-forwarder", "label": "Heavy Forwarder", "description": "A full Splunk Enterprise instance configured primarily for forwarding, with parsing and app capabilities."},
+    {"id": "universal-forwarder", "label": "Universal Forwarder", "description": "Lightweight forwarding installation with a reduced feature and configuration set."}
+  ],
+  "component_tags": [
+    "standalone-server",
+    "search-head",
+    "search-head-cluster-member",
+    "search-head-cluster-deployer",
+    "indexer",
+    "indexer-cluster-peer",
+    "cluster-manager",
+    "deployment-server",
+    "license-manager",
+    "monitoring-console",
+    "heavy-forwarder",
+    "universal-forwarder"
+  ],
+  "location_templates": [
+    {
+      "id": "system-default",
+      "path_pattern": "$SPLUNK_HOME/etc/system/default/{filename}",
+      "location_type": "system-default",
+      "layer": "default",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "commonality": "shipped-when-supported",
+      "editable": false,
+      "description": "Product-supplied default configuration. It may not be present for every supported file or product role.",
+      "warning": "Never edit or copy the product default file. Upgrades overwrite this directory."
+    },
+    {
+      "id": "system-local",
+      "path_pattern": "$SPLUNK_HOME/etc/system/local/{filename}",
+      "location_type": "system-local",
+      "layer": "local",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "commonality": "common",
+      "editable": true,
+      "description": "Site-wide administrator-managed override with global scope."
+    },
+    {
+      "id": "app-default",
+      "path_pattern": "$SPLUNK_HOME/etc/apps/<app>/default/{filename}",
+      "location_type": "app-default",
+      "layer": "default",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "commonality": "common",
+      "editable": false,
+      "description": "Configuration shipped by an installed app.",
+      "warning": "Do not place administrator changes here; an app upgrade can overwrite them."
+    },
+    {
+      "id": "app-local",
+      "path_pattern": "$SPLUNK_HOME/etc/apps/<app>/local/{filename}",
+      "location_type": "app-local",
+      "layer": "local",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "commonality": "common",
+      "editable": true,
+      "description": "Administrator-managed override scoped to an installed app."
+    },
+    {
+      "id": "user-app-local",
+      "path_pattern": "$SPLUNK_HOME/etc/users/<user>/<app>/local/{filename}",
+      "location_type": "user-local",
+      "layer": "user",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "commonality": "app-user-context-only",
+      "editable": true,
+      "description": "User-specific configuration or knowledge objects for an app/user-context file."
+    },
+    {
+      "id": "deployment-app-default",
+      "path_pattern": "$SPLUNK_HOME/etc/deployment-apps/<app>/default/{filename}",
+      "location_type": "deployment-source-default",
+      "layer": "deployment",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["deployment-server"],
+      "commonality": "role-dependent",
+      "editable": false,
+      "description": "Default content in an app staged on a deployment server for deployment clients."
+    },
+    {
+      "id": "deployment-app-local",
+      "path_pattern": "$SPLUNK_HOME/etc/deployment-apps/<app>/local/{filename}",
+      "location_type": "deployment-source-local",
+      "layer": "deployment",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["deployment-server"],
+      "commonality": "role-dependent",
+      "editable": true,
+      "description": "Local content in an app staged on a deployment server for deployment clients."
+    },
+    {
+      "id": "manager-app-default",
+      "path_pattern": "$SPLUNK_HOME/etc/manager-apps/<cluster-app>/default/{filename}",
+      "location_type": "cluster-manager-source-default",
+      "layer": "cluster-bundle-source",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["cluster-manager"],
+      "commonality": "role-dependent",
+      "editable": false,
+      "description": "Indexer-cluster bundle source content on a cluster manager. Older releases used master-apps."
+    },
+    {
+      "id": "manager-app-local",
+      "path_pattern": "$SPLUNK_HOME/etc/manager-apps/<cluster-app>/local/{filename}",
+      "location_type": "cluster-manager-source-local",
+      "layer": "cluster-bundle-source",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["cluster-manager"],
+      "commonality": "role-dependent",
+      "editable": true,
+      "description": "Administrator-managed indexer-cluster bundle source content on a cluster manager."
+    },
+    {
+      "id": "peer-app-default",
+      "path_pattern": "$SPLUNK_HOME/etc/peer-apps/<cluster-app>/default/{filename}",
+      "location_type": "cluster-peer-replicated-default",
+      "layer": "cluster-replicated",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["indexer-cluster-peer"],
+      "commonality": "role-dependent",
+      "editable": false,
+      "description": "Bundle content replicated to an indexer cluster peer.",
+      "warning": "Do not edit directly on the peer; manage the source on the cluster manager."
+    },
+    {
+      "id": "peer-app-local",
+      "path_pattern": "$SPLUNK_HOME/etc/peer-apps/<cluster-app>/local/{filename}",
+      "location_type": "cluster-peer-replicated-local",
+      "layer": "cluster-replicated",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["indexer-cluster-peer"],
+      "commonality": "role-dependent",
+      "editable": false,
+      "description": "High-precedence bundle content replicated to an indexer cluster peer.",
+      "warning": "Do not edit directly on the peer; manage the source on the cluster manager."
+    },
+    {
+      "id": "shcluster-app-default",
+      "path_pattern": "$SPLUNK_HOME/etc/shcluster/apps/<app>/default/{filename}",
+      "location_type": "shc-deployer-source-default",
+      "layer": "cluster-bundle-source",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["search-head-cluster-deployer"],
+      "commonality": "role-dependent",
+      "editable": false,
+      "description": "Search-head cluster app bundle source on the deployer."
+    },
+    {
+      "id": "shcluster-app-local",
+      "path_pattern": "$SPLUNK_HOME/etc/shcluster/apps/<app>/local/{filename}",
+      "location_type": "shc-deployer-source-local",
+      "layer": "cluster-bundle-source",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["search-head-cluster-deployer"],
+      "commonality": "role-dependent",
+      "editable": true,
+      "description": "Administrator-managed search-head cluster app bundle source on the deployer."
+    }
+  ],
+  "directory_nodes": [
+    {"id": "root", "parent_id": null, "name": "$SPLUNK_HOME", "path": "$SPLUNK_HOME", "node_type": "installation-root", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "bin", "parent_id": "root", "name": "bin", "path": "$SPLUNK_HOME/bin", "node_type": "executables", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "etc", "parent_id": "root", "name": "etc", "path": "$SPLUNK_HOME/etc", "node_type": "configuration-root", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "system", "parent_id": "etc", "name": "system", "path": "$SPLUNK_HOME/etc/system", "node_type": "system-configuration", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "system-default", "parent_id": "system", "name": "default", "path": "$SPLUNK_HOME/etc/system/default", "node_type": "system-default", "editable": false, "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "system-local", "parent_id": "system", "name": "local", "path": "$SPLUNK_HOME/etc/system/local", "node_type": "system-local", "editable": true, "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "system-readme", "parent_id": "system", "name": "README", "path": "$SPLUNK_HOME/etc/system/README", "node_type": "configuration-reference", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "apps", "parent_id": "etc", "name": "apps", "path": "$SPLUNK_HOME/etc/apps", "node_type": "applications", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "app", "parent_id": "apps", "name": "<app>", "path": "$SPLUNK_HOME/etc/apps/<app>", "node_type": "application", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "app-default", "parent_id": "app", "name": "default", "path": "$SPLUNK_HOME/etc/apps/<app>/default", "node_type": "app-default", "editable": false, "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "app-local", "parent_id": "app", "name": "local", "path": "$SPLUNK_HOME/etc/apps/<app>/local", "node_type": "app-local", "editable": true, "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "users", "parent_id": "etc", "name": "users", "path": "$SPLUNK_HOME/etc/users", "node_type": "user-configuration", "applies_to": ["splunk-enterprise", "heavy-forwarder"]},
+    {"id": "user-app-local", "parent_id": "users", "name": "<user>/<app>/local", "path": "$SPLUNK_HOME/etc/users/<user>/<app>/local", "node_type": "user-app-local", "applies_to": ["splunk-enterprise", "heavy-forwarder"]},
+    {"id": "deployment-apps", "parent_id": "etc", "name": "deployment-apps", "path": "$SPLUNK_HOME/etc/deployment-apps", "node_type": "deployment-server-source", "applies_to": ["splunk-enterprise"], "components": ["deployment-server"]},
+    {"id": "manager-apps", "parent_id": "etc", "name": "manager-apps", "path": "$SPLUNK_HOME/etc/manager-apps", "node_type": "indexer-cluster-source", "applies_to": ["splunk-enterprise"], "components": ["cluster-manager"]},
+    {"id": "master-apps", "parent_id": "etc", "name": "master-apps", "path": "$SPLUNK_HOME/etc/master-apps", "node_type": "legacy-indexer-cluster-source", "deprecated_term": true, "applies_to": ["splunk-enterprise"], "components": ["cluster-manager"]},
+    {"id": "peer-apps", "parent_id": "etc", "name": "peer-apps", "path": "$SPLUNK_HOME/etc/peer-apps", "node_type": "indexer-cluster-replicated", "editable": false, "applies_to": ["splunk-enterprise"], "components": ["indexer-cluster-peer"]},
+    {"id": "shcluster", "parent_id": "etc", "name": "shcluster", "path": "$SPLUNK_HOME/etc/shcluster", "node_type": "search-head-cluster-source", "applies_to": ["splunk-enterprise"], "components": ["search-head-cluster-deployer"]},
+    {"id": "auth", "parent_id": "etc", "name": "auth", "path": "$SPLUNK_HOME/etc/auth", "node_type": "certificates-and-authentication", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "var", "parent_id": "root", "name": "var", "path": "$SPLUNK_HOME/var", "node_type": "runtime-data", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "var-log", "parent_id": "var", "name": "log/splunk", "path": "$SPLUNK_HOME/var/log/splunk", "node_type": "splunk-logs", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "var-run", "parent_id": "var", "name": "run/splunk", "path": "$SPLUNK_HOME/var/run/splunk", "node_type": "runtime-state", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]},
+    {"id": "share", "parent_id": "root", "name": "share", "path": "$SPLUNK_HOME/share", "node_type": "shared-resources", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"]}
+  ],
+  "precedence_profiles": [
+    {
+      "id": "global",
+      "label": "Global context",
+      "highest_to_lowest": ["system-local", "app-local", "app-default", "system-default"],
+      "notes": ["Used for activities such as input, forwarding, parsing, and indexing that are not tied to a current user or app.", "App-directory ordering can matter when multiple apps define the same setting."]
+    },
+    {
+      "id": "global-indexer-cluster-peer",
+      "label": "Global context on an indexer cluster peer",
+      "highest_to_lowest": ["peer-app-local", "system-local", "app-local", "peer-app-default", "app-default", "system-default"],
+      "notes": ["Peer-app directories contain content replicated from the cluster manager and must not be edited directly on a peer."]
+    },
+    {
+      "id": "app-user",
+      "label": "App and user context",
+      "highest_to_lowest": ["user-app-local", "current-app-local", "current-app-default", "exported-other-app-local", "exported-other-app-default", "system-local", "system-default"],
+      "notes": ["Current-user settings take priority.", "Other apps contribute only exported settings."]
+    },
+    {
+      "id": "mixed-props",
+      "label": "Mixed context for props.conf",
+      "highest_to_lowest": [],
+      "notes": ["Index-time props are evaluated in global context; search-time props are evaluated in app/user context.", "Use the context of the specific setting rather than applying one universal ordering."]
+    }
+  ],
+  "configuration_files": [
+    {
+      "id": "inputs-conf",
+      "filename": "inputs.conf",
+      "display_name": "Inputs Configuration",
+      "category": "Data collection",
+      "purpose": "Defines data inputs and input behaviour.",
+      "description": "Configures monitored files and directories, network inputs, scripted inputs, Windows inputs, modular inputs, and selected receiving inputs.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["standalone-server", "indexer", "heavy-forwarder", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global", "global-indexer-cluster-peer"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "deployment-app-default", "deployment-app-local", "manager-app-default", "manager-app-local", "peer-app-default", "peer-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[default]", "[monitor://<path>]", "[tcp://<port>]", "[udp://<port>]", "[splunktcp://<port>]", "[script://<path>]", "[WinEventLog://<channel>]"],
+      "important_settings": ["disabled", "index", "sourcetype", "source", "host", "interval", "crcSalt", "whitelist", "blacklist", "_TCP_ROUTING", "_INDEX_AND_FORWARD_ROUTING"],
+      "related_files": ["props.conf", "transforms.conf", "outputs.conf", "indexes.conf"],
+      "related_logs": ["splunkd.log", "metrics.log"],
+      "btool_type": "inputs",
+      "restart_guidance": "Many input changes are detected or reloadable, but restart requirements vary by input type; verify the relevant input documentation.",
+      "reload_guidance": "Use supported input-specific reload behavior or restart when required.",
+      "sensitive": true,
+      "security_notes": ["Input stanzas can contain credentials, tokens, command paths, and network bindings.", "Mask secrets and validate least-privilege access to monitored paths."],
+      "upgrade_notes": ["Keep administrator changes in local directories or managed deployment apps."],
+      "troubleshooting_notes": ["Use btool with --debug to identify the source of merged settings.", "Review splunkd.log for input initialization and permission errors."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/inputs.conf"
+    },
+    {
+      "id": "outputs-conf",
+      "filename": "outputs.conf",
+      "display_name": "Forwarding Outputs Configuration",
+      "category": "Forwarding",
+      "purpose": "Defines how a forwarder sends data to receivers or other destinations.",
+      "description": "Configures forwarding groups, Splunk-to-Splunk targets, load balancing, acknowledgements, routing, and output-related TLS settings.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["heavy-forwarder", "universal-forwarder", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "deployment-app-default", "deployment-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[tcpout]", "[tcpout:<target_group>]", "[tcpout-server://<host>:<port>]", "[syslog:<group>]"],
+      "important_settings": ["defaultGroup", "server", "disabled", "useACK", "autoLB", "sslCertPath", "sslRootCAPath", "sslPassword", "compressed"],
+      "related_files": ["inputs.conf", "server.conf", "props.conf", "transforms.conf"],
+      "related_logs": ["splunkd.log", "metrics.log"],
+      "btool_type": "outputs",
+      "restart_guidance": "Restart the forwarder after material forwarding changes unless the applicable procedure explicitly supports reload.",
+      "reload_guidance": "Treat restart as the safe operational default for forwarding changes.",
+      "sensitive": true,
+      "security_notes": ["May contain protected TLS password material and destination details."],
+      "upgrade_notes": ["Deployment-app delivery is common for fleet-managed forwarders."],
+      "troubleshooting_notes": ["Review TcpOutputProc and AutoLoadBalancedConnectionStrategy messages in splunkd.log."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/outputs.conf"
+    },
+    {
+      "id": "props-conf",
+      "filename": "props.conf",
+      "display_name": "Event Processing Properties",
+      "category": "Parsing and knowledge",
+      "purpose": "Defines source, source type, and host-based processing and search-time properties.",
+      "description": "Controls line breaking, timestamp recognition, character sets, event processing, field extraction, lookups, aliases, calculated fields, and links to transforms.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["heavy-forwarder", "indexer", "search-head", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "mixed",
+      "precedence_profile_ids": ["mixed-props", "global", "global-indexer-cluster-peer", "app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "user-app-local", "deployment-app-default", "deployment-app-local", "manager-app-default", "manager-app-local", "peer-app-default", "peer-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<sourcetype>]", "[source::<source>]", "[host::<host>]", "[rule::<rule>]", "[delayedrule::<rule>]"],
+      "important_settings": ["SHOULD_LINEMERGE", "LINE_BREAKER", "TIME_PREFIX", "TIME_FORMAT", "MAX_TIMESTAMP_LOOKAHEAD", "TZ", "TRUNCATE", "TRANSFORMS-<class>", "REPORT-<class>", "EXTRACT-<class>", "FIELDALIAS-<class>", "EVAL-<field>", "LOOKUP-<class>"],
+      "related_files": ["transforms.conf", "inputs.conf", "fields.conf", "limits.conf"],
+      "related_logs": ["splunkd.log", "search.log"],
+      "btool_type": "props",
+      "restart_guidance": "Restart requirements depend on whether settings are index-time or search-time and on the deployment topology.",
+      "reload_guidance": "Some search-time changes become available without restart; deploy and reload through supported cluster procedures where applicable.",
+      "sensitive": false,
+      "security_notes": ["Poorly scoped regexes can affect performance or data fidelity."],
+      "upgrade_notes": ["Keep custom parsing and knowledge configuration in managed apps."],
+      "troubleshooting_notes": ["Determine whether each setting belongs on the parsing tier, indexer, or search head.", "Use --debug because identical stanzas can be merged across apps."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/props.conf"
+    },
+    {
+      "id": "transforms-conf",
+      "filename": "transforms.conf",
+      "display_name": "Transforms Configuration",
+      "category": "Parsing and knowledge",
+      "purpose": "Defines reusable transformations used during index-time and search-time processing.",
+      "description": "Configures regex transformations, metadata rewrites, routing, field extractions, external lookups, and lookup-file definitions.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["heavy-forwarder", "indexer", "search-head"],
+      "operating_systems": ["linux", "windows"],
+      "context": "mixed",
+      "precedence_profile_ids": ["global", "global-indexer-cluster-peer", "app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "user-app-local", "deployment-app-default", "deployment-app-local", "manager-app-default", "manager-app-local", "peer-app-default", "peer-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<transform_name>]"],
+      "important_settings": ["REGEX", "FORMAT", "DEST_KEY", "SOURCE_KEY", "LOOKAHEAD", "WRITE_META", "filename", "external_cmd", "fields_list", "match_type"],
+      "related_files": ["props.conf", "fields.conf", "limits.conf"],
+      "related_logs": ["splunkd.log", "search.log"],
+      "btool_type": "transforms",
+      "restart_guidance": "Depends on whether the transform is used at index time or search time and on the deployment topology.",
+      "reload_guidance": "Use supported app or cluster reload/deployment procedures.",
+      "sensitive": false,
+      "security_notes": ["Routing or null-queue transforms can discard data; review changes carefully."],
+      "upgrade_notes": ["Store custom transforms in a dedicated app local directory or app package."],
+      "troubleshooting_notes": ["Confirm the corresponding props.conf class refers to the correct transform stanza."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/transforms.conf"
+    },
+    {
+      "id": "server-conf",
+      "filename": "server.conf",
+      "display_name": "Server Configuration",
+      "category": "Platform",
+      "purpose": "Configures core Splunk instance, service, clustering, SSL, and performance behaviour.",
+      "description": "Contains broad server-level settings including general instance properties, management TLS, distributed configuration, and clustering-related controls.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["standalone-server", "search-head", "indexer", "cluster-manager", "heavy-forwarder", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global", "global-indexer-cluster-peer"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "deployment-app-default", "deployment-app-local", "manager-app-default", "manager-app-local", "peer-app-default", "peer-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[general]", "[sslConfig]", "[clustering]", "[shclustering]", "[license]", "[diskUsage]", "[kvstore]"],
+      "important_settings": ["serverName", "pass4SymmKey", "sslPassword", "sslRootCAPath", "serverCert", "mode", "manager_uri", "master_uri", "site", "replication_factor", "search_factor"],
+      "related_files": ["web.conf", "distsearch.conf", "outputs.conf", "indexes.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "server",
+      "restart_guidance": "Many server.conf changes require a restart; follow the stanza-specific specification.",
+      "reload_guidance": "Do not assume server-level settings are dynamically reloadable.",
+      "sensitive": true,
+      "security_notes": ["Frequently contains encrypted shared secrets and TLS configuration."],
+      "upgrade_notes": ["Use supported cluster configuration and bundle workflows for clustered settings."],
+      "troubleshooting_notes": ["Check splunkd.log during startup for validation and compatibility errors."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/server.conf"
+    },
+    {
+      "id": "deploymentclient-conf",
+      "filename": "deploymentclient.conf",
+      "display_name": "Deployment Client Configuration",
+      "category": "Deployment",
+      "purpose": "Configures an instance as a client of a deployment server.",
+      "description": "Defines deployment-server connection details, client identity behaviour, polling, and repository-related deployment client settings.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["standalone-server", "indexer", "search-head", "heavy-forwarder", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[deployment-client]", "[target-broker:deploymentServer]"],
+      "important_settings": ["disabled", "targetUri", "phoneHomeIntervalInSecs", "clientName", "repositoryLocation"],
+      "related_files": ["serverclass.conf", "app.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "deploymentclient",
+      "restart_guidance": "Restart is the safe default after deployment client configuration changes.",
+      "reload_guidance": "Use documented deployment-client procedures rather than assuming reload.",
+      "sensitive": false,
+      "security_notes": ["Protect deployment-server addresses and TLS trust configuration."],
+      "upgrade_notes": ["Avoid circular or self-deployment patterns."],
+      "troubleshooting_notes": ["Review DeploymentClient messages in splunkd.log and confirm management-port connectivity."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/deploymentclient.conf"
+    },
+    {
+      "id": "serverclass-conf",
+      "filename": "serverclass.conf",
+      "display_name": "Deployment Server Classes",
+      "category": "Deployment",
+      "purpose": "Maps deployment clients to deployment apps on a deployment server.",
+      "description": "Defines server classes, client inclusion and exclusion rules, application assignments, and deployment behaviour.",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["deployment-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[serverClass:<name>]", "[serverClass:<name>:app:<app>]"],
+      "important_settings": ["whitelist.0", "blacklist.0", "machineTypesFilter", "repositoryLocation", "stateOnClient", "restartSplunkd", "issueReload"],
+      "related_files": ["deploymentclient.conf", "app.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "serverclass",
+      "restart_guidance": "Server class changes can be reloaded through supported deployment-server operations; deployed app changes can separately require client restart or reload.",
+      "reload_guidance": "Use the deployment server reload operation after validating serverclass.conf.",
+      "sensitive": false,
+      "security_notes": ["Incorrect filters can deploy configuration to unintended clients."],
+      "upgrade_notes": ["Treat serverclass.conf as controlled deployment infrastructure configuration."],
+      "troubleshooting_notes": ["Confirm client identity and whitelist/blacklist matching in deployment-server logs."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/serverclass.conf"
+    },
+    {
+      "id": "indexes-conf",
+      "filename": "indexes.conf",
+      "display_name": "Indexes Configuration",
+      "category": "Indexing",
+      "purpose": "Defines indexes, storage paths, retention, volume references, and index-level behaviour.",
+      "description": "Configures event and metric indexes, volumes, bucket storage, retention controls, and related indexing properties.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "indexer", "indexer-cluster-peer", "cluster-manager", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global", "global-indexer-cluster-peer"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "manager-app-default", "manager-app-local", "peer-app-default", "peer-app-local"],
+      "valid_locations": [
+        {"path_pattern": "$SPLUNK_HOME/etc/manager-apps/_cluster/local/indexes.conf", "location_type": "cluster-manager-source-local", "applies_to": ["splunk-enterprise"], "components": ["cluster-manager"], "commonality": "common-for-indexer-clusters", "description": "Common source location for index definitions distributed to indexer-cluster peers."},
+        {"path_pattern": "$SPLUNK_HOME/etc/peer-apps/_cluster/local/indexes.conf", "location_type": "cluster-peer-replicated-local", "applies_to": ["splunk-enterprise"], "components": ["indexer-cluster-peer"], "commonality": "common-for-indexer-clusters", "editable": false, "description": "Replicated index definition on an indexer-cluster peer; do not edit directly."}
+      ],
+      "common_stanzas": ["[<index_name>]", "[volume:<volume_name>]", "[default]"],
+      "important_settings": ["homePath", "coldPath", "thawedPath", "tstatsHomePath", "frozenTimePeriodInSecs", "maxTotalDataSizeMB", "repFactor", "datatype"],
+      "related_files": ["server.conf", "inputs.conf", "limits.conf"],
+      "related_logs": ["splunkd.log", "metrics.log"],
+      "btool_type": "indexes",
+      "restart_guidance": "Some index settings can be reloaded, while storage-path and topology changes may require restart or cluster procedures; validate each setting.",
+      "reload_guidance": "Use supported index and cluster-manager bundle procedures.",
+      "sensitive": false,
+      "security_notes": ["Incorrect paths or retention settings can cause data loss or service interruption."],
+      "upgrade_notes": ["In an indexer cluster, manage common index configuration on the cluster manager rather than peers."],
+      "troubleshooting_notes": ["Validate filesystem ownership, capacity, and resolved volume paths."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/indexes.conf"
+    },
+    {
+      "id": "web-conf",
+      "filename": "web.conf",
+      "display_name": "Splunk Web Configuration",
+      "category": "Web interface",
+      "purpose": "Configures Splunk Web service and user-interface behaviour.",
+      "description": "Controls Splunk Web listener settings, TLS, session behaviour, proxy-related settings, and selected UI features.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "search-head", "cluster-manager", "deployment-server", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[settings]"],
+      "important_settings": ["startwebserver", "httpport", "enableSplunkWebSSL", "privKeyPath", "serverCert", "root_endpoint", "tools.proxy.on"],
+      "related_files": ["server.conf", "authentication.conf"],
+      "related_logs": ["web_service.log", "splunkd.log"],
+      "btool_type": "web",
+      "restart_guidance": "Splunk Web must generally be restarted for listener and TLS changes.",
+      "reload_guidance": "Do not assume web-service settings reload dynamically.",
+      "sensitive": true,
+      "security_notes": ["May reference private keys or certificates and controls externally exposed listener behaviour."],
+      "upgrade_notes": ["Keep site overrides outside default directories."],
+      "troubleshooting_notes": ["Review web_service.log and confirm port availability and certificate paths."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/web.conf"
+    },
+    {
+      "id": "authentication-conf",
+      "filename": "authentication.conf",
+      "display_name": "Authentication Configuration",
+      "category": "Identity and access",
+      "purpose": "Configures Splunk authentication, LDAP strategies, and related authentication settings.",
+      "description": "Selects the authentication type and defines LDAP integration and other platform authentication behaviour.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "search-head", "search-head-cluster-member", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[authentication]", "[LDAP]", "[<LDAP_strategy>]"],
+      "important_settings": ["authType", "authSettings", "host", "port", "SSLEnabled", "bindDN", "bindDNpassword", "userBaseDN", "groupBaseDN", "userNameAttribute", "groupMappingAttribute"],
+      "related_files": ["authorize.conf", "server.conf", "web.conf"],
+      "related_logs": ["splunkd.log", "audit.log"],
+      "btool_type": "authentication",
+      "restart_guidance": "Authentication changes should be planned and validated carefully; required reload or restart depends on the change and topology.",
+      "reload_guidance": "Use supported authentication reload or cluster deployment procedures.",
+      "sensitive": true,
+      "security_notes": ["Contains protected bind credentials and identity-provider configuration.", "Maintain a tested administrative recovery path before changing authentication."],
+      "upgrade_notes": ["Distribute search-head authentication configuration consistently in clustered environments."],
+      "troubleshooting_notes": ["Validate LDAP search bases, bind permissions, TLS trust, and role mappings."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/authentication.conf"
+    },
+    {
+      "id": "authorize-conf",
+      "filename": "authorize.conf",
+      "display_name": "Roles and Capabilities",
+      "category": "Identity and access",
+      "purpose": "Defines roles, capabilities, imported roles, and index access.",
+      "description": "Controls role-based authorization, search restrictions, default application, capability grants, and allowed or default indexes.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "search-head", "search-head-cluster-member", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[role_<role_name>]"],
+      "important_settings": ["importRoles", "capabilities", "srchIndexesAllowed", "srchIndexesDefault", "srchFilter", "srchTimeWin", "defaultApp"],
+      "related_files": ["authentication.conf", "default.meta", "server.conf"],
+      "related_logs": ["audit.log", "splunkd.log"],
+      "btool_type": "authorize",
+      "restart_guidance": "Role changes may be reflected without a full restart, but validate active sessions and topology-specific propagation.",
+      "reload_guidance": "Use supported role-management or search-head cluster procedures.",
+      "sensitive": true,
+      "security_notes": ["Misconfiguration can grant excessive capabilities or expose indexes.", "Treat role changes as privileged security configuration."],
+      "upgrade_notes": ["Custom roles should be maintained in local or managed app configuration."],
+      "troubleshooting_notes": ["Inspect inherited capabilities and index permissions as well as direct role settings."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/authorize.conf"
+    },
+    {
+      "id": "limits-conf",
+      "filename": "limits.conf",
+      "display_name": "Platform Limits",
+      "category": "Performance and safeguards",
+      "purpose": "Defines limits and safeguards for search commands and platform subsystems.",
+      "description": "Controls result sizes, concurrency, memory and processing limits, timeouts, workload safeguards, and subsystem-specific thresholds.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "search-head", "indexer", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global", "global-indexer-cluster-peer"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "manager-app-default", "manager-app-local", "peer-app-default", "peer-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[search]", "[subsearch]", "[lookup]", "[join]", "[restapi]", "[thruput]"],
+      "important_settings": ["maxresultrows", "maxtime", "maxout", "max_mem_usage_mb", "max_searches_per_cpu", "base_max_searches"],
+      "related_files": ["server.conf", "authorize.conf", "commands.conf"],
+      "related_logs": ["search.log", "splunkd.log", "scheduler.log"],
+      "btool_type": "limits",
+      "restart_guidance": "Reload behaviour varies by stanza; plan a restart when documentation does not explicitly state dynamic reload support.",
+      "reload_guidance": "Validate on the component that consumes the affected limit.",
+      "sensitive": false,
+      "security_notes": ["Excessive limits can create denial-of-service or stability risk."],
+      "upgrade_notes": ["Reassess custom limits after upgrades because defaults and workload characteristics can change."],
+      "troubleshooting_notes": ["Correlate the relevant stanza with warnings in search.log, scheduler.log, or splunkd.log."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/limits.conf"
+    },
+    {
+      "id": "distsearch-conf",
+      "filename": "distsearch.conf",
+      "display_name": "Distributed Search Configuration",
+      "category": "Distributed search",
+      "purpose": "Controls distributed-search behaviour and search-peer communication.",
+      "description": "Configures distributed search timeouts, bundle replication, peer communication, and related search-head behaviour.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "indexer", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[distributedSearch]", "[replicationSettings]", "[replicationBlacklist]", "[replicationAllowlist]"],
+      "important_settings": ["servers", "connectionTimeout", "sendTimeout", "receiveTimeout", "authTokenConnectionTimeout", "concerningReplicatedFileSize"],
+      "related_files": ["server.conf", "outputs.conf", "limits.conf"],
+      "related_logs": ["splunkd.log", "search.log"],
+      "btool_type": "distsearch",
+      "restart_guidance": "Depends on the affected distributed-search setting; follow the specification and cluster procedure.",
+      "reload_guidance": "Use supported search-head and cluster operations.",
+      "sensitive": true,
+      "security_notes": ["Can expose search-peer topology and authentication-related configuration."],
+      "upgrade_notes": ["Bundle replication exclusions should be reviewed when apps change."],
+      "troubleshooting_notes": ["Review distributed search and bundle replication messages in splunkd.log and search.log."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/distsearch.conf"
+    },
+    {
+      "id": "app-conf",
+      "filename": "app.conf",
+      "display_name": "Application Configuration",
+      "category": "Applications",
+      "purpose": "Defines an app's identity, state, packaging, visibility, and installation behaviour.",
+      "description": "Maintains the state and selected properties of an installed or packaged Splunk app.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["standalone-server", "search-head", "indexer", "deployment-server", "cluster-manager", "heavy-forwarder", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["app-default", "app-local", "deployment-app-default", "deployment-app-local", "manager-app-default", "manager-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[install]", "[ui]", "[launcher]", "[package]", "[triggers]"],
+      "important_settings": ["is_configured", "state", "is_visible", "label", "description", "id", "check_for_updates", "reload.<conf_file>"],
+      "related_files": ["default.meta", "restmap.conf", "serverclass.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "app",
+      "restart_guidance": "Manual changes to app.conf require a Splunk platform restart according to the file specification.",
+      "reload_guidance": "app.conf can define reload triggers for other configuration files, but manual app.conf changes themselves require restart.",
+      "sensitive": false,
+      "security_notes": ["Packaging and update settings affect app lifecycle and trust."],
+      "upgrade_notes": ["Use default for app-shipped properties and local for administrator state where supported."],
+      "troubleshooting_notes": ["Confirm the app directory name and package identifier are consistent."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.2/configuration-file-reference/10.2.0-configuration-file-reference/app.conf"
+    },
+    {
+      "id": "savedsearches-conf",
+      "filename": "savedsearches.conf",
+      "display_name": "Saved Searches and Alerts",
+      "category": "Knowledge objects",
+      "purpose": "Defines reports, scheduled searches, alerts, and their actions.",
+      "description": "Stores saved search SPL, scheduling, dispatch, alerting, action, and visibility settings.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "user-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<saved_search_name>]"],
+      "important_settings": ["search", "cron_schedule", "enableSched", "disabled", "alert_type", "alert_comparator", "alert_threshold", "action.<action>", "dispatch.earliest_time", "dispatch.latest_time"],
+      "related_files": ["alert_actions.conf", "macros.conf", "eventtypes.conf", "default.meta"],
+      "related_logs": ["scheduler.log", "search.log", "splunkd.log"],
+      "btool_type": "savedsearches",
+      "restart_guidance": "Saved-search changes generally do not require a full Splunk restart.",
+      "reload_guidance": "Use supported knowledge-object management and search-head cluster replication mechanisms.",
+      "sensitive": true,
+      "security_notes": ["Search text and action parameters can expose sensitive operational details or invoke privileged actions."],
+      "upgrade_notes": ["Preserve custom searches outside vendor app default directories."],
+      "troubleshooting_notes": ["Review scheduler.log for scheduling and dispatch failures and confirm object ownership and ACLs."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/savedsearches.conf"
+    },
+    {
+      "id": "macros-conf",
+      "filename": "macros.conf",
+      "display_name": "Search Macros",
+      "category": "Knowledge objects",
+      "purpose": "Defines reusable search macro expansions.",
+      "description": "Stores macro definitions, argument lists, validation expressions, and validation error messages.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "user-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<macro_name>]", "[<macro_name>(<argument_count>)]"],
+      "important_settings": ["definition", "args", "validation", "errormsg", "iseval"],
+      "related_files": ["savedsearches.conf", "eventtypes.conf", "default.meta"],
+      "related_logs": ["search.log"],
+      "btool_type": "macros",
+      "restart_guidance": "Search macro changes generally do not require a full restart.",
+      "reload_guidance": "Use supported knowledge-object management and cluster replication.",
+      "sensitive": true,
+      "security_notes": ["Macro expansion can alter search scope and may expose embedded identifiers or filters."],
+      "upgrade_notes": ["Use local app content for administrator overrides."],
+      "troubleshooting_notes": ["Verify argument counts, escaping, permissions, and app context."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/macros.conf"
+    },
+    {
+      "id": "eventtypes-conf",
+      "filename": "eventtypes.conf",
+      "display_name": "Event Types",
+      "category": "Knowledge objects",
+      "purpose": "Defines named event-type searches.",
+      "description": "Associates event type names with searches, priorities, tags, and colour metadata.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "user-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<event_type_name>]"],
+      "important_settings": ["search", "priority", "disabled", "color", "tags"],
+      "related_files": ["tags.conf", "savedsearches.conf", "default.meta"],
+      "related_logs": ["search.log"],
+      "btool_type": "eventtypes",
+      "restart_guidance": "Event type changes generally do not require a full restart.",
+      "reload_guidance": "Use supported knowledge-object management and cluster replication.",
+      "sensitive": false,
+      "security_notes": ["Broad or expensive event-type searches can affect search performance."],
+      "upgrade_notes": ["Keep custom event types in local app content."],
+      "troubleshooting_notes": ["Confirm app context, permissions, and search syntax."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/eventtypes.conf"
+    },
+    {
+      "id": "tags-conf",
+      "filename": "tags.conf",
+      "display_name": "Tags",
+      "category": "Knowledge objects",
+      "purpose": "Assigns tags to event types and field-value pairs.",
+      "description": "Stores tag enablement for event types and field-value associations used in search-time knowledge management.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["app-default", "app-local", "user-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[eventtype=<event_type>]", "[<field>=<value>]"],
+      "important_settings": ["<tag_name>"],
+      "related_files": ["eventtypes.conf", "default.meta"],
+      "related_logs": ["search.log"],
+      "btool_type": "tags",
+      "restart_guidance": "Tag changes generally do not require a full restart.",
+      "reload_guidance": "Use supported knowledge-object management and cluster replication.",
+      "sensitive": false,
+      "security_notes": ["Tags can affect data-model and detection semantics; control changes to security-relevant tags."],
+      "upgrade_notes": ["Keep custom tags in local app or user configuration."],
+      "troubleshooting_notes": ["Verify the event type or field-value association exists in the active app context."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/tags.conf"
+    },
+    {
+      "id": "fields-conf",
+      "filename": "fields.conf",
+      "display_name": "Field Properties",
+      "category": "Knowledge objects",
+      "purpose": "Defines search-time properties for fields, including indexed and multivalue behaviour.",
+      "description": "Describes field characteristics used by the search layer, including indexed-field and multivalue handling.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "user-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<field_name>]"],
+      "important_settings": ["INDEXED", "INDEXED_VALUE", "TOKENIZER"],
+      "related_files": ["props.conf", "transforms.conf", "default.meta"],
+      "related_logs": ["search.log"],
+      "btool_type": "fields",
+      "restart_guidance": "Search-time field property changes generally do not require a full restart.",
+      "reload_guidance": "Use supported knowledge-object and cluster deployment mechanisms.",
+      "sensitive": false,
+      "security_notes": ["Incorrect indexed-field declarations can cause misleading or incomplete search results."],
+      "upgrade_notes": ["Keep custom field definitions in managed app content."],
+      "troubleshooting_notes": ["Confirm corresponding extraction and indexing behaviour in props.conf and transforms.conf."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/fields.conf"
+    },
+    {
+      "id": "collections-conf",
+      "filename": "collections.conf",
+      "display_name": "KV Store Collections",
+      "category": "KV Store",
+      "purpose": "Defines KV Store collections and their schema-related properties for apps.",
+      "description": "Configures app-scoped KV Store collections, acceleration, replication, and field type declarations.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<collection_name>]"],
+      "important_settings": ["field.<field_name>", "accelerated_fields.<index_name>", "replicate", "enforceTypes"],
+      "related_files": ["transforms.conf", "commands.conf", "default.meta"],
+      "related_logs": ["mongod.log", "splunkd.log"],
+      "btool_type": "collections",
+      "restart_guidance": "Schema and collection changes can require KV Store or Splunk service actions; follow version-specific guidance.",
+      "reload_guidance": "Do not assume every collection schema change is dynamically applied.",
+      "sensitive": true,
+      "security_notes": ["Collection definitions can control stores containing credentials or sensitive operational data."],
+      "upgrade_notes": ["Back up and validate KV Store before structural changes."],
+      "troubleshooting_notes": ["Review mongod.log and splunkd.log and confirm collection ownership and app context."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/collections.conf"
+    },
+    {
+      "id": "commands-conf",
+      "filename": "commands.conf",
+      "display_name": "Custom Search Commands",
+      "category": "Search extensions",
+      "purpose": "Registers custom search commands supplied by an app.",
+      "description": "Defines command implementation, execution model, streaming behaviour, input/output handling, and related search command properties.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<command_name>]"],
+      "important_settings": ["filename", "chunked", "streaming", "local", "type", "python.version", "passauth", "enableheader"],
+      "related_files": ["restmap.conf", "app.conf", "authorize.conf"],
+      "related_logs": ["search.log", "splunkd.log"],
+      "btool_type": "commands",
+      "restart_guidance": "Registration or executable changes can require restart; follow the custom search command framework guidance.",
+      "reload_guidance": "Do not assume custom command definitions reload dynamically.",
+      "sensitive": true,
+      "security_notes": ["Custom commands execute code. Review source, permissions, interpreter selection, and passauth use."],
+      "upgrade_notes": ["Validate runtime and Python compatibility during platform upgrades."],
+      "troubleshooting_notes": ["Review search.log for command protocol and execution failures."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/commands.conf"
+    },
+    {
+      "id": "restmap-conf",
+      "filename": "restmap.conf",
+      "display_name": "Custom REST Endpoint Mapping",
+      "category": "Platform extensions",
+      "purpose": "Registers custom REST handlers and endpoint mappings for apps.",
+      "description": "Maps REST endpoint patterns to scripted or persistent handlers and defines handler execution properties.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "search-head", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[script:<name>]", "[admin:<name>]"],
+      "important_settings": ["match", "handler", "scripttype", "script", "handlerfile", "handlertype", "output_modes", "requireAuthentication"],
+      "related_files": ["commands.conf", "app.conf", "authorize.conf", "web.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "restmap",
+      "restart_guidance": "Custom REST endpoint registration generally requires a Splunk restart.",
+      "reload_guidance": "Treat endpoint registration changes as restart-required unless the relevant specification states otherwise.",
+      "sensitive": true,
+      "security_notes": ["Custom endpoints execute code and can expose privileged operations. Enforce authentication and capability checks."],
+      "upgrade_notes": ["Validate handler APIs and runtime compatibility after upgrades."],
+      "troubleshooting_notes": ["Review splunkd.log for REST handler import, routing, and authorization errors."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/restmap.conf"
+    },
+    {
+      "id": "alert-actions-conf",
+      "filename": "alert_actions.conf",
+      "display_name": "Alert Actions",
+      "category": "Alerting",
+      "purpose": "Defines alert action types, defaults, and app-provided custom alert actions.",
+      "description": "Configures built-in and custom alert action behaviour, parameters, execution, and presentation.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[email]", "[script]", "[<custom_action>]"],
+      "important_settings": ["is_custom", "label", "description", "icon_path", "payload_format", "param.<name>", "python.version"],
+      "related_files": ["savedsearches.conf", "commands.conf", "app.conf"],
+      "related_logs": ["scheduler.log", "splunkd.log"],
+      "btool_type": "alert_actions",
+      "restart_guidance": "Custom action registration or script changes can require restart; saved-search action selections generally do not.",
+      "reload_guidance": "Follow the custom alert action framework and cluster deployment procedure.",
+      "sensitive": true,
+      "security_notes": ["Actions can send data externally, execute scripts, or contain credentials and tokens."],
+      "upgrade_notes": ["Validate custom action runtime compatibility and dependencies after upgrades."],
+      "troubleshooting_notes": ["Review scheduler.log and splunkd.log for action execution errors."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/alert_actions.conf"
+    },
+    {
+      "id": "passwords-conf",
+      "filename": "passwords.conf",
+      "display_name": "Stored Credentials",
+      "category": "Secrets",
+      "purpose": "Maintains credential information used by apps and platform features.",
+      "description": "Stores credential records managed by Splunk's credential mechanisms. Values can be encrypted at rest but remain highly sensitive.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["standalone-server", "search-head", "indexer", "heavy-forwarder", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user", "global"],
+      "location_template_ids": ["system-local", "app-local", "user-app-local", "deployment-app-local", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[credential:<realm>:<username>:]"],
+      "important_settings": ["password", "clear_password", "username", "realm"],
+      "related_files": ["server.conf", "authentication.conf", "outputs.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "passwords",
+      "restart_guidance": "Depends on the consuming app or subsystem.",
+      "reload_guidance": "Use supported storage/password APIs or app-specific procedures where available.",
+      "sensitive": true,
+      "security_notes": ["Never display, export, log, or commit credential values.", "Restrict filesystem permissions and redact all value fields by default."],
+      "upgrade_notes": ["Do not move encrypted secrets between instances without understanding key dependencies."],
+      "troubleshooting_notes": ["Avoid exposing credential values during diagnostics; investigate the consuming component's logs."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/passwords.conf"
+    },
+    {
+      "id": "datamodels-conf",
+      "filename": "datamodels.conf",
+      "display_name": "Data Models",
+      "category": "Knowledge objects",
+      "purpose": "Configures data model definitions and acceleration properties.",
+      "description": "Stores data model JSON and configuration controlling acceleration, retention, and related model behaviour.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "app-user",
+      "precedence_profile_ids": ["app-user"],
+      "location_template_ids": ["app-default", "app-local", "user-app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[<data_model_name>]"],
+      "important_settings": ["objectModel", "acceleration", "acceleration.earliest_time", "acceleration.hunk.file_format"],
+      "related_files": ["props.conf", "eventtypes.conf", "tags.conf", "default.meta"],
+      "related_logs": ["search.log", "scheduler.log", "splunkd.log"],
+      "btool_type": "datamodels",
+      "restart_guidance": "Data model changes generally do not require a full restart.",
+      "reload_guidance": "Use supported knowledge-object management and search-head cluster replication.",
+      "sensitive": false,
+      "security_notes": ["Acceleration can consume substantial compute and storage; model constraints affect data exposure."],
+      "upgrade_notes": ["Preserve custom data models in local or custom app content."],
+      "troubleshooting_notes": ["Review acceleration status, scheduler activity, constraints, and object permissions."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/datamodels.conf"
+    },
+    {
+      "id": "federated-conf",
+      "filename": "federated.conf",
+      "display_name": "Federated Search Configuration",
+      "category": "Federated search",
+      "purpose": "Defines federated search providers and related settings.",
+      "description": "Configures access to external or remote datasets through supported federated search provider types.",
+      "applies_to": ["splunk-enterprise"],
+      "components": ["search-head", "search-head-cluster-member", "standalone-server"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local", "shcluster-app-default", "shcluster-app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[provider:<name>]"],
+      "important_settings": ["type", "serviceEndpoint", "port", "disabled"],
+      "related_files": ["distsearch.conf", "authentication.conf", "passwords.conf"],
+      "related_logs": ["splunkd.log", "search.log"],
+      "btool_type": "federated",
+      "restart_guidance": "Provider-specific behaviour varies; use the supported federated-search configuration workflow.",
+      "reload_guidance": "Follow version- and provider-specific documentation.",
+      "sensitive": true,
+      "security_notes": ["May expose provider endpoints and references to authentication material."],
+      "upgrade_notes": ["Federated provider capabilities and schemas are version-dependent."],
+      "troubleshooting_notes": ["Validate provider connectivity, authentication, permissions, and remote dataset definitions."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/federated.conf"
+    },
+    {
+      "id": "health-conf",
+      "filename": "health.conf",
+      "display_name": "Health Monitoring Configuration",
+      "category": "Monitoring",
+      "purpose": "Defines thresholds and behaviour for proactive Splunk component monitoring.",
+      "description": "Controls health-reporting indicators, thresholds, and related component monitoring behaviour.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder"],
+      "components": ["standalone-server", "search-head", "indexer", "cluster-manager", "monitoring-console", "heavy-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "global",
+      "precedence_profile_ids": ["global"],
+      "location_template_ids": ["system-default", "system-local", "app-default", "app-local"],
+      "valid_locations": [],
+      "common_stanzas": ["[feature:<feature_name>]", "[indicator:<indicator_name>]"],
+      "important_settings": ["disabled", "alert_level", "yellow", "red"],
+      "related_files": ["server.conf", "limits.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": "health",
+      "restart_guidance": "Threshold and feature behaviour varies; consult the file specification.",
+      "reload_guidance": "Use supported health-report configuration workflows.",
+      "sensitive": false,
+      "security_notes": ["Disabling health indicators can conceal operational degradation."],
+      "upgrade_notes": ["Review custom thresholds when component behaviour or scale changes."],
+      "troubleshooting_notes": ["Correlate health indicator state with the underlying component logs and metrics."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/admin-manual/10.0/configuration-file-reference/10.0.0-configuration-file-reference/health.conf"
+    },
+    {
+      "id": "logging-conf",
+      "filename": "log.cfg",
+      "display_name": "Splunk Logging Configuration",
+      "category": "Diagnostics",
+      "purpose": "Defines logging categories, levels, and appenders for Splunk services.",
+      "description": "Controls internal service logging. This is log.cfg rather than a .conf file and is included because it is important in the Splunk directory tree.",
+      "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"],
+      "components": ["standalone-server", "search-head", "indexer", "heavy-forwarder", "universal-forwarder"],
+      "operating_systems": ["linux", "windows"],
+      "context": "special",
+      "precedence_profile_ids": [],
+      "location_template_ids": [],
+      "valid_locations": [
+        {"path_pattern": "$SPLUNK_HOME/etc/log.cfg", "location_type": "product-logging-default", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"], "commonality": "standard", "editable": false, "description": "Product logging configuration baseline."},
+        {"path_pattern": "$SPLUNK_HOME/etc/log-local.cfg", "location_type": "product-logging-local", "applies_to": ["splunk-enterprise", "heavy-forwarder", "universal-forwarder"], "commonality": "administrator-override", "editable": true, "description": "Local logging-level override file where supported."}
+      ],
+      "common_stanzas": ["[rootCategory]", "[category.<logger_name>]"],
+      "important_settings": ["level", "appenders"],
+      "related_files": ["server.conf"],
+      "related_logs": ["splunkd.log"],
+      "btool_type": null,
+      "restart_guidance": "Logging-level handling varies; use supported logging controls and avoid persistent verbose logging without need.",
+      "reload_guidance": "This file is not handled as a normal btool configuration type.",
+      "sensitive": false,
+      "security_notes": ["Verbose logs can expose sensitive event or connection details and consume disk space."],
+      "upgrade_notes": ["Do not edit the product baseline when a local override mechanism is available."],
+      "troubleshooting_notes": ["Revert temporary debug logging after collecting required evidence."],
+      "documentation_url": "https://help.splunk.com/en/splunk-enterprise/administer/troubleshoot/10.0/first-steps/use-btool-to-troubleshoot-configurations"
+    }
+  ],
+  "search_aliases": {
+    "forwarding": ["outputs.conf", "inputs.conf", "deploymentclient.conf"],
+    "parsing": ["props.conf", "transforms.conf"],
+    "authentication": ["authentication.conf", "authorize.conf", "passwords.conf"],
+    "cluster": ["server.conf", "indexes.conf", "distsearch.conf"],
+    "knowledge": ["savedsearches.conf", "macros.conf", "eventtypes.conf", "tags.conf", "fields.conf", "datamodels.conf"],
+    "deployment": ["deploymentclient.conf", "serverclass.conf", "app.conf"]
+  },
+  "redaction": {
+    "enabled_by_default": true,
+    "case_insensitive_key_patterns": ["password", "passwd", "pass4SymmKey", "sslPassword", "token", "secret", "client_secret", "api_key", "authorization", "private_key", "bindDNpassword"],
+    "replacement": "********",
+    "export_sensitive_values": false
+  },
+  "source_references": [
+    {
+      "title": "List of configuration files",
+      "url": "https://help.splunk.com/en/data-management/splunk-enterprise-admin-manual/10.4/administer-splunk-enterprise-with-configuration-files/list-of-configuration-files",
+      "publisher": "Splunk"
+    },
+    {
+      "title": "Configuration file directories",
+      "url": "https://help.splunk.com/en/data-management/splunk-enterprise-admin-manual/10.4/administer-splunk-enterprise-with-configuration-files/configuration-file-directories",
+      "publisher": "Splunk"
+    },
+    {
+      "title": "Configuration file precedence",
+      "url": "https://help.splunk.com/en/data-management/splunk-enterprise-admin-manual/10.2/administer-splunk-enterprise-with-configuration-files/configuration-file-precedence",
+      "publisher": "Splunk"
+    },
+    {
+      "title": "Configure the universal forwarder using configuration files",
+      "url": "https://help.splunk.com/en/splunk-enterprise/forward-and-process-data/universal-forwarder-manual/9.4/configure-the-universal-forwarder/configure-the-universal-forwarder-using-configuration-files",
+      "publisher": "Splunk"
+    }
+  ]
+}
+</script><script>const state={data:null,files:[],selected:null,os:'linux',role:'splunk-enterprise',root:'',expanded:new Set(['root','etc','system','apps']),query:'',category:''};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const roleLabel=r=>({'splunk-enterprise':'Enterprise','heavy-forwarder':'Heavy Forwarder','universal-forwarder':'Universal Forwarder'}[r]||r);
+const title=s=>String(s||'').replaceAll('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
+let toastTimer;
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1500)}
+async function copy(text){try{await navigator.clipboard.writeText(text);toast('Copied to clipboard')}catch{toast('Copy unavailable')}}
+function profile(){return state.data.installation_profiles.find(p=>p.operating_system===state.os&&p.role===state.role)}
+function setDefaultRoot(){state.root=profile()?.default_root||'$SPLUNK_HOME';$('rootInput').value=state.root}
+function resolvedPath(path,filename){const value=path.replaceAll('{filename}',filename||'').replaceAll('$SPLUNK_HOME',state.root);return state.os==='windows'?value.replaceAll('/','\\'):value}
+function applicable(file){return file.applies_to.includes(state.role)&&file.operating_systems.includes(state.os)}
+function locations(file){if(!file||!applicable(file))return[];const templates=file.location_template_ids.map(id=>state.data.location_templates.find(t=>t.id===id)).filter(Boolean).filter(t=>t.applies_to.includes(state.role)).map(t=>({...t,path_pattern:t.path_pattern.replace('{filename}',file.filename)}));const explicit=file.valid_locations.filter(l=>l.applies_to.includes(state.role));const map=new Map();[...templates,...explicit].forEach(l=>map.set(l.path_pattern,l));return [...map.values()]}
+function searchable(f){return [f.filename,f.display_name,f.category,f.purpose,f.description,f.context,...f.common_stanzas,...f.important_settings,...f.related_files,...f.components].join(' ').toLowerCase()}
+function filteredFiles(){return state.files.filter(applicable).filter(f=>!state.category||f.category===state.category).filter(f=>!state.query||searchable(f).includes(state.query.toLowerCase()))}
+function renderCategories(){const cats=[...new Set(state.files.filter(applicable).map(f=>f.category))].sort();$('categorySelect').innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option ${c===state.category?'selected':''}>${esc(c)}</option>`).join('')}
+function renderFiles(){const files=filteredFiles();$('resultCount').textContent=`${files.length} of ${state.files.filter(applicable).length} applicable files`;$('fileList').innerHTML=files.length?files.map(f=>`<button class="file-row ${state.selected?.id===f.id?'selected':''}" data-id="${esc(f.id)}" role="option" aria-selected="${state.selected?.id===f.id}"><span class="mini-icon">≡</span><span class="file-main"><strong>${esc(f.filename)}</strong><span>${esc(f.purpose)}</span></span><span class="count-pill">${locations(f).length}</span></button>`).join(''):'<div class="empty"><strong>No matches</strong><span>Try a filename, stanza, setting or broader filter.</span></div>';$('fileList').querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>selectFile(b.dataset.id))}
+function pathParts(path){return path.replace('$SPLUNK_HOME','').split('/').filter(Boolean)}
+function treeModel(file){const root={name:state.root,path:'$SPLUNK_HOME',id:'root',children:new Map(),kind:'folder'};for(const loc of locations(file)){let node=root;let cumulative='$SPLUNK_HOME';for(const [i,part] of pathParts(loc.path_pattern).entries()){cumulative+='/'+part;const leaf=i===pathParts(loc.path_pattern).length-1;if(!node.children.has(part))node.children.set(part,{name:part,path:cumulative,id:cumulative,children:new Map(),kind:leaf?'file':'folder',loc:leaf?loc:null});node=node.children.get(part)}}return root}
+function renderNode(node,depth=0){const has=node.children.size>0;const open=state.expanded.has(node.id)||depth<2;const loc=node.loc;const classes=['node-line'];if(loc){classes.push('highlight');if(loc.editable===true)classes.push('admin');if(loc.editable===false)classes.push('noedit');if(loc.commonality==='role-dependent')classes.push('role-dependent')}const children=[...node.children.values()];return `<li class="tree-node" role="treeitem" aria-expanded="${has?open:false}"><div class="${classes.join(' ')}" data-path="${esc(node.path)}"><button class="tree-toggle ${has?'':'blank'}" data-toggle="${esc(node.id)}" aria-label="${open?'Collapse':'Expand'}">${open?'▾':'▸'}</button><span class="node-icon ${node.kind==='file'?'file':''}">${node.kind==='file'?'▤':'▰'}</span><span class="node-name">${esc(node.name)}</span>${loc?`<span class="path-meta">${esc(loc.layer||loc.location_type||'')}</span>`:''}</div>${has?`<ul style="display:${open?'block':'none'}">${children.map(n=>renderNode(n,depth+1)).join('')}</ul>`:''}</li>`}
+function renderTree(){const locs=locations(state.selected);$('locationSummary').textContent=state.selected?(locs.length?`${locs.length} possible locations for ${state.selected.filename}`:'Not applicable to this installation profile'):'Select a file to highlight its catalogue-defined paths';$('tree').classList.toggle('hidden',!locs.length);$('emptyTree').classList.toggle('hidden',!!locs.length||!state.selected);$('breadcrumbs').textContent=state.selected?state.root+'  /  '+state.selected.filename:state.root;if(!locs.length){$('tree').innerHTML='';return}const root=treeModel(state.selected);$('tree').innerHTML=`<ul class="tree-root">${renderNode(root)}</ul>`;$('tree').querySelectorAll('[data-toggle]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.expanded.has(b.dataset.toggle)?state.expanded.delete(b.dataset.toggle):state.expanded.add(b.dataset.toggle);renderTree()});$('tree').querySelectorAll('[data-path]').forEach(n=>n.onclick=()=>{$('breadcrumbs').textContent=resolvedPath(n.dataset.path,state.selected.filename);copy(resolvedPath(n.dataset.path,state.selected.filename))})}
+function command(file){if(!file?.btool_type)return'No btool command is defined for this special file type.';return profile().btool_command_template.replace('{btool_type}',file.btool_type)}
+function renderDetails(){const f=state.selected;$('emptyDetails').classList.toggle('hidden',!!f);$('details').classList.toggle('hidden',!f);if(!f)return;$('detailName').textContent=f.filename;$('detailDisplay').textContent=f.display_name;$('detailPurpose').textContent=f.purpose;$('detailDescription').textContent=f.description;$('badges').innerHTML=[f.category,roleLabel(state.role),state.os==='linux'?'Linux':'Windows',f.context].map(x=>`<span class="badge">${esc(title(x))}</span>`).join('');$('detailContext').textContent=title(f.context);$('detailComponents').textContent=f.components.map(title).join(', ');$('detailRestart').textContent=f.restart_guidance;$('detailSensitive').textContent=f.sensitive?'Yes — redact values by default':'No known credential fields, but review content before sharing';$('stanzas').innerHTML=f.common_stanzas.map(x=>`<code>${esc(x)}</code>`).join('');$('settings').innerHTML=f.important_settings.map(x=>`<code>${esc(x)}</code>`).join('');$('btoolCommand').textContent=command(f);const profiles=f.precedence_profile_ids.map(id=>state.data.precedence_profiles.find(p=>p.id===id)).filter(Boolean);$('precedence').innerHTML=profiles.length?profiles.map(p=>`<div class="precedence-group"><strong>${esc(p.label)}</strong>${p.highest_to_lowest.map((x,i)=>`<div class="precedence-step"><b>${i+1}</b><span>${esc(title(x))}</span></div>`).join('')}${p.notes.map(n=>`<p class="hint">${esc(n)}</p>`).join('')}</div>`).join(''):'<p class="hint">Special file: normal .conf precedence does not apply.</p>';const guides=[...f.security_notes.map(x=>({x,w:true})),...f.upgrade_notes.map(x=>({x,w:true})),...f.troubleshooting_notes.map(x=>({x,w:false}))];$('guidance').innerHTML=guides.map(g=>`<div class="guide ${g.w?'warn':''}">${esc(g.x)}</div>`).join('');$('related').innerHTML=f.related_files.map(x=>`<button data-related="${esc(x)}">${esc(x)}</button>`).join('');$('related').querySelectorAll('button').forEach(b=>b.onclick=()=>{const target=state.files.find(x=>x.filename===b.dataset.related);if(target&&applicable(target))selectFile(target.id);else toast('Not applicable to this profile')});$('docsLink').href=f.documentation_url;$('copyNameBtn').onclick=()=>copy(f.filename);$('copyCommandBtn').onclick=()=>copy(command(f));document.querySelector('.detail-panel').classList.add('open')}
+function selectFile(id){state.selected=state.files.find(f=>f.id===id)||null;state.expanded=new Set(['root']);locations(state.selected).forEach(l=>{let p='$SPLUNK_HOME';state.expanded.add(p);pathParts(l.path_pattern).slice(0,-1).forEach(x=>{p+='/'+x;state.expanded.add(p)})});renderFiles();renderTree();renderDetails();if(innerWidth<720)document.body.classList.add('tree-view')}
+function renderAll(){renderCategories();renderFiles();renderTree();renderDetails()}
+function bind(){ $('searchInput').oninput=e=>{state.query=e.target.value;renderFiles()};$('categorySelect').onchange=e=>{state.category=e.target.value;renderFiles()};$('osSelect').onchange=e=>{state.os=e.target.value;setDefaultRoot();if(state.selected&&!applicable(state.selected))state.selected=null;renderAll();persist()};$('roleSelect').onchange=e=>{state.role=e.target.value;setDefaultRoot();if(state.selected&&!applicable(state.selected))state.selected=null;renderAll();persist()};$('rootInput').onchange=e=>{state.root=e.target.value.trim()||profile().default_root;renderTree();persist()};$('resetBtn').onclick=()=>{state.query='';state.category='';$('searchInput').value='';$('categorySelect').value='';setDefaultRoot();renderAll()};$('expandBtn').onclick=()=>{$('tree').querySelectorAll('[data-toggle]').forEach(b=>state.expanded.add(b.dataset.toggle));renderTree()};$('collapseBtn').onclick=()=>{state.expanded=new Set(['root']);renderTree()};$('themeBtn').onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('sce-theme',document.documentElement.classList.contains('dark')?'dark':'light')};$('aboutBtn').onclick=()=>$('aboutDialog').showModal();$('closeAboutBtn').onclick=()=>$('aboutDialog').close();document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('searchInput').focus()}if(e.key==='Escape')document.querySelector('.detail-panel').classList.remove('open')})}
+function persist(){localStorage.setItem('sce-profile',JSON.stringify({os:state.os,role:state.role,root:state.root}))}
+async function init(){if(localStorage.getItem('sce-theme')==='dark'||(!localStorage.getItem('sce-theme')&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark');try{state.data=JSON.parse(document.getElementById('catalogueData').textContent);if(!state.data.configuration_files||!state.data.location_templates)throw new Error('Catalogue schema is incomplete');state.files=state.data.configuration_files;const saved=JSON.parse(localStorage.getItem('sce-profile')||'null');if(saved){state.os=saved.os||state.os;state.role=saved.role||state.role;state.root=saved.root||''}$('osSelect').value=state.os;$('roleSelect').value=state.role;if(!state.root)setDefaultRoot();else $('rootInput').value=state.root;bind();renderAll();const first=state.files.find(f=>f.filename==='inputs.conf'&&applicable(f));if(first)selectFile(first.id)}catch(err){$('resultCount').textContent='Catalogue could not be loaded';$('fileList').innerHTML=`<div class="empty"><strong>Unable to load data</strong><span>${esc(err.message)}. Serve these files from a static web server.</span></div>`}}
+init();
+</script>
+</body>
+</html>
