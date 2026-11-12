@@ -1,0 +1,197 @@
+SPLUNK CSV LOADER - WINDOWS POWERSHELL 5.1 / ISE
+
+Copy each numbered CODE block (not these instructions) into the ISE script pane.
+Select the WHOLE block and press F8, in order, in the same PowerShell tab.
+A function or try/finally block must be selected in full, not one interior line.
+No .ps1 invocation, execution-policy change, external module or custom compiled code.
+This uses the built-in .NET Framework Microsoft.VisualBasic CSV parser.
+It still requires your environment to permit those .NET operations.
+
+1. SETTINGS - edit path, endpoint and index, then select this block and press F8.
+Default is dry run: nothing is sent. HEC assigns event time unless you set TimeField.
+
+# BEGIN BLOCK 1
+$CsvPath = 'C:\Logs\logs.csv'
+$HecUrl = 'https://http-inputs-YOUR-STACK.splunkcloud.com:443/services/collector/event'
+$Index = 'security'
+$Sourcetype = '_json'
+$Source = ''                 # Blank = CSV filename
+$EventHost = ''              # Blank = HEC default
+$Delimiter = ','             # Use "`t" for a tab
+$TimeField = ''              # Optional CSV column containing UNIX EPOCH SECONDS
+$DryRun = $true
+$BatchBytes = 524288         # 512 KiB, measured as serialized UTF-8 bytes
+$BatchEvents = 500
+$TimeoutSeconds = 60
+# END BLOCK 1
+
+2. INITIALISE - select this whole block and press F8.
+This does not ask for a token or contact Splunk.
+
+# BEGIN BLOCK 2
+Add-Type -AssemblyName Microsoft.VisualBasic -ErrorAction Stop
+$Utf8 = New-Object System.Text.UTF8Encoding($false, $true)
+$HecToken = $null
+$HecHeaders = $null
+# END BLOCK 2
+
+3. DEFINE THE BATCH SENDER - select the ENTIRE function and press F8 once.
+It sends only when called by block 4 and DryRun is false.
+
+# BEGIN BLOCK 3
+function Send-IseHecBatch {
+    if ($Transfer.BatchRows -eq 0) { return }
+    if (-not $DryRun) {
+        $FirstRow = $Transfer.Rows - $Transfer.BatchRows + 1
+        $Transfer.InFlight = $true
+        try {
+            $BodyBytes = $Utf8.GetBytes($Batch.ToString())
+            $Response = Invoke-RestMethod -Uri $HecUrl -Method Post -Headers $HecHeaders -Body $BodyBytes -ContentType 'application/json; charset=utf-8' -TimeoutSec $TimeoutSeconds -MaximumRedirection 0 -ErrorAction Stop
+            if ($null -eq $Response -or $null -eq $Response.code -or $Response.code -ne 0) {
+                throw 'HEC did not return success code 0.'
+            }
+        }
+        catch {
+            throw "Batch rows $FirstRow-$($Transfer.Rows) failed or have uncertain delivery. Upload ID: $UploadId. Do not retry blindly: duplicates are possible. $($_.Exception.Message)"
+        }
+        $Transfer.InFlight = $false
+        $Transfer.Accepted += $Transfer.BatchRows
+    }
+    $Transfer.Batches++
+    $null = $Batch.Clear()
+    $Transfer.BatchRows = 0
+    $Transfer.BatchSize = 0
+    Write-Progress -Activity 'CSV to Splunk HEC' -Status "$($Transfer.Rows) rows processed; $($Transfer.Accepted) accepted; $($Transfer.Batches) batches" -PercentComplete -1
+}
+# END BLOCK 3
+
+4. PROCESS THE FILE - select this WHOLE block and press F8.
+Initially this is a full dry run. It parses, checks row widths and creates batches,
+but sends nothing. It prints only the first event as a preview in dry-run mode.
+For a large file, wait for the final summary. Use ISE's Stop button to interrupt.
+
+# BEGIN BLOCK 4
+$Transfer = @{ Rows = [long]0; Accepted = [long]0; Batches = 0; BatchRows = 0; BatchSize = 0; InFlight = $false }
+$UploadId = [guid]::NewGuid().ToString()
+$Batch = New-Object System.Text.StringBuilder
+$Parser = $null
+$OldTls = [Net.ServicePointManager]::SecurityProtocol
+Write-Host "Upload ID: $UploadId | Dry run: $DryRun"
+try {
+    $CsvFile = Get-Item -LiteralPath $CsvPath -ErrorAction Stop
+    if ($CsvFile.PSIsContainer) { throw 'CsvPath must identify a file.' }
+    if ($Delimiter.Length -ne 1 -or $Delimiter -in @('"', "`r", "`n")) { throw 'Choose a single delimiter other than a quote or newline.' }
+    if ($BatchBytes -lt 1024 -or $BatchBytes -gt 921600 -or $BatchEvents -lt 1) { throw 'Choose BatchBytes between 1024 and 921600, and BatchEvents above zero.' }
+    if (-not $DryRun) {
+        $Uri = [uri]$HecUrl
+        if (-not $Uri.IsAbsoluteUri -or $Uri.Scheme -ne 'https' -or $Uri.UserInfo -or $Uri.Query -or $Uri.Fragment -or $Uri.AbsolutePath -ne '/services/collector/event') { throw 'Use an HTTPS HEC URL ending /services/collector/event, with no credentials or query in the URL.' }
+        if (-not $HecToken) { throw 'Run block 5 to enter your token before sending.' }
+        $Credential = New-Object System.Net.NetworkCredential('', $HecToken)
+        $HecHeaders = @{ Authorization = 'Splunk ' + $Credential.Password }
+        $Credential = $null
+        # Enable TLS 1.2 for this operation. Certificate validation is not disabled.
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    }
+    $Parser = New-Object Microsoft.VisualBasic.FileIO.TextFieldParser($CsvFile.FullName, $Utf8, $true)
+    $Parser.TextFieldType = [Microsoft.VisualBasic.FileIO.FieldType]::Delimited
+    $Parser.SetDelimiters([string[]]@($Delimiter))
+    $Parser.HasFieldsEnclosedInQuotes = $true
+    $Parser.TrimWhiteSpace = $false
+    if ($Parser.EndOfData) { throw 'CSV is empty.' }
+    $ColumnNames = $Parser.ReadFields()
+    # BOM detection is enabled; defensively remove any remaining header BOM.
+    $ColumnNames[0] = $ColumnNames[0].TrimStart([char]0xFEFF)
+    $Seen = @{}
+    foreach ($Column in $ColumnNames) {
+        if ([string]::IsNullOrWhiteSpace($Column) -or $Seen.ContainsKey($Column)) { throw 'CSV headers must be nonempty and unique (case-insensitive).' }
+        if ($Column -in @('_csv_upload_id', '_csv_row')) { throw "Reserved CSV column: $Column" }
+        $Seen[$Column] = $true
+    }
+    if ($TimeField -and -not $Seen.ContainsKey($TimeField)) { throw "Timestamp column not found: $TimeField" }
+    while (-not $Parser.EndOfData) {
+        $Fields = $Parser.ReadFields()
+        if ($null -eq $Fields) { break }
+        $RowNumber = $Transfer.Rows + 1
+        if ($Fields.Length -ne $ColumnNames.Length) { throw "Row ${RowNumber}: expected $($ColumnNames.Length) columns; found $($Fields.Length)." }
+        $Event = [ordered]@{}
+        for ($i = 0; $i -lt $ColumnNames.Length; $i++) { $Event[$ColumnNames[$i]] = [string]$Fields[$i] }
+        $Event['_csv_upload_id'] = $UploadId
+        $Event['_csv_row'] = $RowNumber
+        $EventSource = $Source
+        if (-not $EventSource) { $EventSource = $CsvFile.Name }
+        $Envelope = [ordered]@{ event = $Event; sourcetype = $Sourcetype; source = $EventSource }
+        if ($Index) { $Envelope['index'] = $Index }
+        if ($EventHost) { $Envelope['host'] = $EventHost }
+        if ($TimeField) {
+            $Epoch = [double]0
+            if (-not [double]::TryParse([string]$Event[$TimeField], [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$Epoch) -or [double]::IsNaN($Epoch) -or [double]::IsInfinity($Epoch)) { throw "Row ${RowNumber}: invalid epoch seconds in $TimeField." }
+            $Envelope['time'] = $Epoch
+        }
+        $JsonLine = (ConvertTo-Json -InputObject $Envelope -Depth 8 -Compress) + "`n"
+        $EventBytes = $Utf8.GetByteCount($JsonLine)
+        if ($EventBytes -gt $BatchBytes) { throw "Row ${RowNumber}: one serialized event exceeds BatchBytes." }
+        if ($Transfer.BatchRows -gt 0 -and ($Transfer.BatchSize + $EventBytes) -gt $BatchBytes) { Send-IseHecBatch }
+        $null = $Batch.Append($JsonLine)
+        $Transfer.Rows++
+        $Transfer.BatchRows++
+        $Transfer.BatchSize += $EventBytes
+        if ($DryRun -and $Transfer.Rows -eq 1) { Write-Host "First event preview: $JsonLine" }
+        if ($Transfer.BatchRows -ge $BatchEvents) { Send-IseHecBatch }
+    }
+    Send-IseHecBatch
+    [pscustomobject]@{ UploadId = $UploadId; DryRun = $DryRun; RowsProcessed = $Transfer.Rows; RowsAccepted = $Transfer.Accepted; Batches = $Transfer.Batches; Completed = $true }
+}
+catch {
+    Write-Warning "Stopped. Upload ID: $UploadId. Confirmed accepted rows: $($Transfer.Accepted). Previously sent data remains in Splunk."
+    throw
+}
+finally {
+    if ($Transfer.InFlight) { Write-Warning 'The last request has an uncertain outcome. Check Splunk before restarting.' }
+    if ($null -ne $Parser) { $Parser.Close(); $Parser.Dispose() }
+    $HecHeaders = $null
+    [Net.ServicePointManager]::SecurityProtocol = $OldTls
+    Write-Progress -Activity 'CSV to Splunk HEC' -Completed
+}
+# END BLOCK 4
+
+5. SEND FOR REAL - after the dry run succeeds, select this block and press F8.
+It prompts for a token but does not send data yet. Then select and run BLOCK 4 AGAIN.
+Do not rerun block 1: that would switch back to dry run. Every block-4 run starts
+at the beginning with a new upload ID; it is not a resume operation.
+
+# BEGIN BLOCK 5
+$HecToken = Read-Host 'Enter HEC token' -AsSecureString
+$DryRun = $false
+# END BLOCK 5
+
+6. CLEAR THE TOKEN WHEN FINISHED - select and run these lines.
+
+# BEGIN BLOCK 6
+$HecToken = $null
+$HecHeaders = $null
+# END BLOCK 6
+
+BEHAVIOUR / LIMITS
+- Intended for 700 MB and larger ordinary CSVs: reads one record at a time and
+  holds one batch, rather than loading the whole file. A single unusually large
+  or unterminated record can still consume substantial memory in TextFieldParser.
+- UTF-8 CSV by default, with BOM-based encoding detection. Quoted commas,
+  escaped quotes and multiline values are supported.
+  Blank physical lines are skipped. Values stay strings (including leading zeros).
+- HEC token should have indexer acknowledgement DISABLED and allow your index.
+- HEC code 0 means accepted, not proven indexed. No automatic retries.
+- Byte size includes metadata and JSON escaping. At most 500 rows / 512 KiB by default.
+- No browser or CORS configuration required. HTTPS reachability and trusted TLS required.
+- The secure prompt avoids putting your token in source/history. The HTTP request
+  still needs the token in process memory. This file contains no real credentials.
+- This is for permitted interactive ISE use, not a policy or language-mode bypass.
+- Reviewed statically. Windows PowerShell 5.1 / ISE and live HEC were not available
+  in the authoring environment, so runtime and end-to-end testing remain outstanding.
+
+VERIFY IN SPLUNK (replace index and ID)
+index=security _csv_upload_id="YOUR-UPLOAD-ID"
+| stats count dc(_csv_row) AS unique_rows
+
+REFERENCES
+https://learn.microsoft.com/en-us/powershell/scripting/windows-powershell/ise/how-to-write-and-run-scripts-in-the-windows-powershell-ise
+https://help.splunk.com/en/splunk-cloud-platform/get-data-in/get-started-with-getting-data-in/10.0.2503/get-data-with-http-event-collector/format-events-for-http-event-collector

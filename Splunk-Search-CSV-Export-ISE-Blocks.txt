@@ -1,0 +1,345 @@
+SPLUNK SEARCH -> DAILY CSV FILES, MAXIMUM 400 MB EACH
+Windows PowerShell 5.1 / PowerShell ISE - select complete blocks and press F8.
+
+HOW TO USE
+1. Paste the CODE blocks into ISE's script pane (not the explanatory prose).
+2. Edit and run block 1 (settings), then block 2 (helpers).
+3. Run block 3 to inspect the exact daily date windows. No network requests yet.
+4. Run block 4 to enter your SEARCH API token, not a HEC token.
+5. Select ALL of block 5 and press F8 to export. Keep ISE running.
+6. Run block 6 to clear the token when finished.
+
+A function, loop or try/finally must be selected in full, not individual interior
+lines. This does not invoke a .ps1 or change execution policy. Normal permissions
+for interactive PowerShell and .NET are still required.
+
+Dates: start inclusive, end exclusive. To include 1-7 November, use 2026-11-01
+through 2026-11-08. Default timezone is Canberra/Sydney, with DST handled separately
+for each midnight. Set TimeZoneId='UTC' for UTC days.
+
+400 MB means 400,000,000 bytes including header and UTF-8 encoding. Files can be
+slightly smaller because complete records are preserved. Each day starts a new file.
+No whole-day response or whole 400 MB chunk is buffered in RAM.
+
+CSV includes exactly CsvColumns. JSON is streamed internally from the REST API so
+server warnings/errors and preview records can be handled before CSV is written.
+Use | fields in your query to reduce returned fields; avoid | table for massive raw
+exports because search-side result limits can apply. This tool cannot override
+Splunk's own limits or the semantics of your SPL.
+
+BLOCK 1 - SETTINGS (edit, select entire block, F8)
+# BEGIN BLOCK 1
+$SplunkOrigin = 'https://YOUR-STACK.splunkcloud.com:8089'
+$Search = 'search index=windows | fields _time, host, source, sourcetype, _raw'
+$StartDate = '2026-11-01'
+$EndDateExclusive = '2026-11-08'
+$TimeZoneId = 'AUS Eastern Standard Time'   # Canberra/Sydney; or 'UTC'
+$OutputFolder = 'C:\SplunkExports'
+$CsvColumns = @('_time', 'host', 'source', 'sourcetype', '_raw')
+$MaxFileBytes = [long]400000000
+$AuthScheme = 'Bearer'                    # 'Splunk' for an existing session key
+$NetworkTimeoutSeconds = 300              # Connect/response and per-read timeout
+# END BLOCK 1
+
+BLOCK 2 - HELPERS (select all functions together, F8)
+No requests or files are created by defining these functions.
+# BEGIN BLOCK 2
+function ConvertTo-ExportCsvCell {
+    param($Value)
+    if ($null -eq $Value) { $Text = '' }
+    elseif ($Value -is [string]) { $Text = $Value }
+    elseif ($Value -is [System.Collections.IEnumerable] -or $Value -is [pscustomobject]) {
+        $Text = ConvertTo-Json -InputObject $Value -Depth 20 -Compress
+    }
+    else { $Text = [string]$Value }
+    return '"' + $Text.Replace('"', '""') + '"'
+}
+function Close-ExportPart {
+    param($State)
+    if ($null -eq $State.Writer) { return }
+    $State.Writer.Flush()
+    $State.Writer.Dispose()
+    $State.Writer = $null
+    $ActualBytes = (Get-Item -LiteralPath $State.PartialPath -ErrorAction Stop).Length
+    if ($ActualBytes -ne $State.Bytes -or $ActualBytes -gt $MaxFileBytes) {
+        throw 'Written file size does not match the byte budget.'
+    }
+    $null = $State.Files.Add([pscustomobject]@{
+        PartialPath = $State.PartialPath
+        FinalPath = $State.FinalPath
+        Rows = $State.PartRows
+        Bytes = $ActualBytes
+    })
+}
+function Write-ExportRecord {
+    param([string]$CsvRecord, $State)
+    $Length = $ExportUtf8.GetByteCount($CsvRecord)
+    if (($Length + $HeaderBytes) -gt $MaxFileBytes) {
+        throw 'One CSV record plus the header exceeds the file-size limit.'
+    }
+    if ($null -ne $State.Writer -and ($State.Bytes + $Length) -gt $MaxFileBytes) {
+        Close-ExportPart $State
+    }
+    if ($null -eq $State.Writer) {
+        $State.Part++
+        $Name = '{0}_part{1:D4}.csv' -f $State.Date, $State.Part
+        $State.FinalPath = Join-Path $RunFolder $Name
+        $State.PartialPath = $State.FinalPath + '.partial'
+        $FileStream = [IO.File]::Open($State.PartialPath, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
+        try { $State.Writer = New-Object IO.StreamWriter($FileStream, $ExportUtf8, 65536) }
+        catch { $FileStream.Dispose(); throw }
+        $State.Writer.Write($CsvHeader)
+        $State.Bytes = $HeaderBytes
+        $State.PartRows = 0
+    }
+    $State.Writer.Write($CsvRecord)
+    $State.Bytes += $Length
+    $State.PartRows++
+    $State.Rows++
+}
+function Save-ExportManifest {
+    $Manifest.UpdatedUtc = [datetime]::UtcNow.ToString('o')
+    $ManifestText = ConvertTo-Json -InputObject $Manifest -Depth 12
+    [IO.File]::WriteAllText((Join-Path $RunFolder 'manifest.json'), $ManifestText, $ExportUtf8)
+}
+# END BLOCK 2
+
+BLOCK 3 - VALIDATE SETTINGS AND SHOW THE DAILY PLAN (select all, F8)
+This block is read-only. It validates dates and shows the UTC bounds sent to Splunk.
+# BEGIN BLOCK 3
+$Culture = [Globalization.CultureInfo]::InvariantCulture
+$Zone = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZoneId)
+$Start = [datetime]::SpecifyKind([datetime]::ParseExact($StartDate, 'yyyy-MM-dd', $Culture), [DateTimeKind]::Unspecified)
+$End = [datetime]::SpecifyKind([datetime]::ParseExact($EndDateExclusive, 'yyyy-MM-dd', $Culture), [DateTimeKind]::Unspecified)
+if ($End -le $Start) { throw 'EndDateExclusive must be after StartDate.' }
+$OriginUri = [uri]$SplunkOrigin
+if (-not $OriginUri.IsAbsoluteUri -or $OriginUri.Scheme -ne 'https' -or $OriginUri.UserInfo -or $OriginUri.Query -or $OriginUri.Fragment -or $OriginUri.AbsolutePath -ne '/') { throw 'SplunkOrigin must be a bare HTTPS management API origin.' }
+if ($AuthScheme -notin @('Bearer','Splunk')) { throw 'AuthScheme must be Bearer or Splunk.' }
+if ([string]::IsNullOrWhiteSpace($Search)) { throw 'Enter an SPL query.' }
+if ($MaxFileBytes -lt 1024 -or $MaxFileBytes -gt 2000000000) { throw 'MaxFileBytes must be between 1024 and 2000000000.' }
+if ($NetworkTimeoutSeconds -lt 1 -or $NetworkTimeoutSeconds -gt 3600) { throw 'NetworkTimeoutSeconds must be 1-3600.' }
+$ColumnSet = @{}
+foreach ($Column in $CsvColumns) {
+    if ([string]::IsNullOrWhiteSpace($Column) -or $ColumnSet.ContainsKey($Column)) { throw 'CsvColumns must be nonempty and unique.' }
+    $ColumnSet[$Column] = $true
+}
+if ($ColumnSet.Count -eq 0) { throw 'Specify at least one CSV column.' }
+$Plan = New-Object System.Collections.ArrayList
+$EpochStart = [datetime]::SpecifyKind([datetime]'1970-01-01', [DateTimeKind]::Utc)
+for ($Day = $Start; $Day -lt $End; $Day = $Day.AddDays(1)) {
+    $NextDay = $Day.AddDays(1)
+    if ($Zone.IsInvalidTime($Day) -or $Zone.IsInvalidTime($NextDay) -or $Zone.IsAmbiguousTime($Day) -or $Zone.IsAmbiguousTime($NextDay)) { throw 'A midnight is invalid/ambiguous in this timezone; use UTC or review the date range.' }
+    $FromUtc = [TimeZoneInfo]::ConvertTimeToUtc($Day, $Zone)
+    $ToUtc = [TimeZoneInfo]::ConvertTimeToUtc($NextDay, $Zone)
+    $null = $Plan.Add([pscustomobject]@{
+        Date = $Day.ToString('yyyy-MM-dd')
+        StartUtc = $FromUtc.ToString('o')
+        EndUtc = $ToUtc.ToString('o')
+        Earliest = ([long]($FromUtc - $EpochStart).TotalSeconds).ToString($Culture)
+        Latest = ([long]($ToUtc - $EpochStart).TotalSeconds).ToString($Culture)
+    })
+}
+$ExportUtf8 = New-Object Text.UTF8Encoding($false, $true)
+$CsvHeader = (($CsvColumns | ForEach-Object { ConvertTo-ExportCsvCell $_ }) -join ',') + "`r`n"
+$HeaderBytes = $ExportUtf8.GetByteCount($CsvHeader)
+if ($HeaderBytes -ge $MaxFileBytes) { throw 'CSV header exceeds the size budget.' }
+$Plan | Format-Table Date, StartUtc, EndUtc -AutoSize
+Write-Host "Plan: $($Plan.Count) days. Maximum file size: $MaxFileBytes bytes. No requests sent."
+# END BLOCK 3
+
+BLOCK 4 - TOKEN (select both lines, F8)
+Use a Splunk SEARCH authentication token, not an HTTP Event Collector token.
+For a session key, change AuthScheme in block 1 to 'Splunk' and rerun block 3.
+# BEGIN BLOCK 4
+$SearchToken = Read-Host 'Enter Splunk search API token / session key' -AsSecureString
+if ($SearchToken.Length -eq 0) { throw 'Token is empty.' }
+# END BLOCK 4
+
+BLOCK 5 - DOWNLOAD (select this ENTIRE block, F8)
+Creates a unique run directory and exports days sequentially. On any failure it
+stops; completed days remain usable. The failed day's files stay .csv.partial.
+Only trust a day marked complete (or complete_with_warnings after review) in the
+manifest. Cancellation may leave the manifest saying running: treat that day as
+incomplete. No automatic retry or resume. To retry, set StartDate to the failed
+calendar day, rerun blocks 1-3 as appropriate, then block 5 into a new run directory.
+Never combine an incomplete day's files with its replacement export.
+# BEGIN BLOCK 5
+$RunFolder = $null
+$Manifest = $null
+$Request = $null; $Response = $null; $Reader = $null; $State = $null
+$OldTls = [Net.ServicePointManager]::SecurityProtocol
+$RunId = (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8)
+try {
+    if (-not $SearchToken -or $SearchToken.Length -eq 0) { throw 'Run block 4 first.' }
+    if (-not $Plan -or $Plan.Count -eq 0) { throw 'Run block 3 first.' }
+    $RunFolder = Join-Path $OutputFolder ('splunk-export-' + $RunId)
+    $null = New-Item -ItemType Directory -Path $RunFolder -ErrorAction Stop
+    $Manifest = [ordered]@{
+        RunId = $RunId; Status = 'running'; UpdatedUtc = ''; Search = $Search
+        TimeZone = $TimeZoneId; StartDate = $StartDate; EndDateExclusive = $EndDateExclusive
+        Columns = $CsvColumns; MaximumFileBytes = $MaxFileBytes
+        Days = (New-Object System.Collections.ArrayList)
+    }
+    Save-ExportManifest
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $DayIndex = 0
+    foreach ($Window in $Plan) {
+        $DayIndex++
+        $State = @{ Date = $Window.Date; Rows = [long]0; Part = 0; Bytes = [long]0; PartRows = [long]0; Writer = $null; PartialPath = ''; FinalPath = ''; Files = (New-Object System.Collections.ArrayList) }
+        $DayLog = [ordered]@{ Date = $Window.Date; StartUtc = $Window.StartUtc; EndUtc = $Window.EndUtc; Status = 'running'; Rows = 0; Files = @(); Warnings = (New-Object System.Collections.ArrayList); Error = '' }
+        $null = $Manifest.Days.Add($DayLog)
+        Save-ExportManifest
+        Write-Host "Downloading $($Window.Date) [$DayIndex/$($Plan.Count)]..."
+        $Form = 'search=' + [uri]::EscapeDataString($Search) + '&earliest_time=' + $Window.Earliest + '&latest_time=' + $Window.Latest + '&output_mode=json&preview=false'
+        $Body = $ExportUtf8.GetBytes($Form)
+        $Request = [Net.HttpWebRequest]::Create($OriginUri.GetLeftPart([UriPartial]::Authority) + '/services/search/v2/jobs/export')
+        $Request.Method = 'POST'
+        $Request.ContentType = 'application/x-www-form-urlencoded'
+        $Request.Accept = 'application/json'
+        $Request.AllowAutoRedirect = $false
+        $Request.Timeout = $NetworkTimeoutSeconds * 1000
+        $Request.ReadWriteTimeout = $NetworkTimeoutSeconds * 1000
+        $Credential = New-Object Net.NetworkCredential('', $SearchToken)
+        $Request.Headers['Authorization'] = $AuthScheme + ' ' + $Credential.Password
+        $Credential = $null
+        $Request.ContentLength = $Body.Length
+        $RequestStream = $Request.GetRequestStream()
+        try { $RequestStream.Write($Body, 0, $Body.Length) } finally { $RequestStream.Dispose() }
+        $Response = $Request.GetResponse()
+        if ([int]$Response.StatusCode -ne 200) { throw "Unexpected HTTP status $([int]$Response.StatusCode)." }
+        if ($Response.ContentType -notmatch '(?i)json') { throw 'Expected JSON results; check the REST endpoint, proxy or sign-in redirection.' }
+        $Reader = New-Object IO.StreamReader($Response.GetResponseStream(), $ExportUtf8, $true, 65536)
+        $SawFinal = $false
+        while ($null -ne ($Line = $Reader.ReadLine())) {
+            if ([string]::IsNullOrWhiteSpace($Line)) { continue }
+            if ($Line.Length -gt 16000000) { throw 'One streaming JSON record exceeds the 16-million-character limit.' }
+            $Record = ConvertFrom-Json -InputObject $Line -ErrorAction Stop
+            foreach ($Message in @($Record.messages)) {
+                if ($null -ne $Message) {
+                    if ($Message.type -in @('ERROR','FATAL')) { throw ('Splunk: ' + $Message.text) }
+                    $null = $DayLog.Warnings.Add([string]$Message.text)
+                    Write-Warning ([string]$Message.text)
+                }
+            }
+            if ($Record.type -and $Record.text) {
+                if ($Record.type -in @('ERROR','FATAL')) { throw ('Splunk: ' + $Record.text) }
+                $null = $DayLog.Warnings.Add([string]$Record.text)
+                Write-Warning ([string]$Record.text)
+            }
+            if ($Record.preview -eq $true -or $Record.preview -eq 'true') { continue }
+            if ($null -eq $Record.result) { continue }
+            if ($SawFinal) { throw 'Unexpected results after final-result marker.' }
+            $Cells = foreach ($Column in $CsvColumns) {
+                $Property = $Record.result.PSObject.Properties[$Column]
+                $Value = $null
+                if ($null -ne $Property) { $Value = $Property.Value }
+                ConvertTo-ExportCsvCell $Value
+            }
+            $CsvRecord = ($Cells -join ',') + "`r`n"
+            Write-ExportRecord $CsvRecord $State
+            $SawFinal = ($Record.lastrow -eq $true -or $Record.lastrow -eq 'true')
+            if (($State.Rows % 1000) -eq 0) {
+                Write-Progress -Activity 'Daily Splunk CSV export' -Status "$($Window.Date): $($State.Rows) rows; part $($State.Part)" -PercentComplete ([int](100 * ($DayIndex - 1) / $Plan.Count))
+            }
+        }
+        if ($State.Rows -gt 0 -and -not $SawFinal) { throw 'Stream ended without the final-result marker. This day is incomplete.' }
+        Close-ExportPart $State
+        $Reader.Dispose(); $Reader = $null
+        $Response.Dispose(); $Response = $null
+        $Request.Abort(); $Request = $null
+        # Rename only after the complete daily stream has been validated.
+        foreach ($PartFile in $State.Files) { [IO.File]::Move($PartFile.PartialPath, $PartFile.FinalPath) }
+        $DayLog.Rows = $State.Rows
+        $DayLog.Files = @($State.Files | Select-Object FinalPath, Rows, Bytes)
+        $DayLog.Status = 'complete'
+        if ($DayLog.Warnings.Count -gt 0) { $DayLog.Status = 'complete_with_warnings' }
+        if ($State.Rows -eq 0) {
+            $DayLog.Status = 'empty_response_verify'
+            $null = $DayLog.Warnings.Add('No final result records received. Verify this day has zero matches in Splunk; no CSV created.')
+        }
+        Save-ExportManifest
+        Write-Host "$($Window.Date): $($State.Rows) rows, $($State.Files.Count) files, status $($DayLog.Status)."
+    }
+    $Manifest.Status = 'complete'
+    if (@($Manifest.Days | Where-Object { $_.Status -ne 'complete' }).Count -gt 0) { $Manifest.Status = 'finished_review_required' }
+    Save-ExportManifest
+    Write-Host "Finished. Output: $RunFolder"
+    $Manifest.Days | Select-Object Date, Status, Rows | Format-Table -AutoSize
+}
+catch {
+    if ($RunFolder -and (Test-Path -LiteralPath $RunFolder)) {
+        if ($Manifest) {
+            $Manifest.Status = 'incomplete'
+            if ($Manifest.Days.Count -gt 0) {
+                $FailedDay = $Manifest.Days[$Manifest.Days.Count - 1]
+                if ($FailedDay.Status -eq 'running') {
+                    $FailedDay.Status = 'incomplete'; $FailedDay.Error = $_.Exception.Message
+                    if ($State) { $FailedDay.Rows = $State.Rows; $FailedDay.Files = @($State.Files) }
+                }
+            }
+            try { Save-ExportManifest } catch { Write-Warning 'Could not update manifest; treat the current day as incomplete.' }
+        }
+    }
+    Write-Warning 'Export stopped. Keep completed days; rerun the incomplete day into a new run directory.'
+    throw
+}
+finally {
+    if ($State -and $null -ne $State.Writer) { $State.Writer.Dispose(); $State.Writer = $null }
+    if ($Reader) { $Reader.Dispose() }
+    if ($Response) { $Response.Dispose() }
+    if ($Request) { $Request.Abort() }
+    $Credential = $null
+    [Net.ServicePointManager]::SecurityProtocol = $OldTls
+    Write-Progress -Activity 'Daily Splunk CSV export' -Completed
+}
+# END BLOCK 5
+
+BLOCK 6 - CLEAR TOKEN (select, F8)
+# BEGIN BLOCK 6
+$SearchToken = $null
+$Credential = $null
+$Request = $null
+# END BLOCK 6
+
+EXAMPLE OUTPUT
+C:\SplunkExports\splunk-export-20261113-080000-a1b2c3d4\
+  2026-11-01_part0001.csv        <= 400,000,000 bytes, includes header
+  2026-11-01_part0002.csv        <= 400,000,000 bytes, includes header
+  2026-11-02_part0001.csv
+  manifest.json
+
+IMPORTANT BEHAVIOUR
+- The date range is EVENT TIME (_time) as selected by earliest_time/latest_time.
+  Remove inline earliest/latest modifiers from SPL. Subsearches and macros may
+  carry their own time settings. Daily stats/dedup/transaction results differ
+  from running one query across the entire range.
+- Explicit CSV column selection prevents columns from changing mid-file. Fields
+  not in CsvColumns are not exported. Missing fields are blank; multivalue fields
+  become JSON text within a properly quoted CSV cell. Preserve values as data:
+  spreadsheet apps may interpret formula-like log strings when opening CSV.
+- Filenames restart part numbering per day. Headers, CRLF, multibyte characters
+  and escaping all count towards the limit. UTF-8 without BOM; no event is split.
+- A record larger than the file budget stops the export. JSON ReadLine buffers one
+  full record before its size check; unusually huge records can use extra memory.
+- Empty responses are flagged for verification rather than silently certified.
+  Warnings are kept in the manifest. Successful transport/final marker does not
+  guarantee all possible events: Splunk role limits, query limits, search head
+  resources and timeouts may restrict what the search returns. Compare daily counts.
+- No whole-response Invoke-RestMethod or OutFile download is used. HttpWebRequest
+  reads the response stream; a buffered StreamWriter writes directly to disk.
+- API is the Splunk management/search API (often port 8089), not Splunk Web or HEC.
+  Account needs search permissions and API access; Splunk Cloud may need allowlisting.
+- Tokens are prompted and held in memory, not written to source or manifest.
+  TLS validation stays enabled. Configure trusted enterprise CAs if needed.
+- Stop/cancel aborts the HTTP request; Splunk may not cancel its search immediately.
+  Open files are closed in finally, but process termination can prevent cleanup.
+- Each run makes a new directory. It never overwrites or automatically resumes an
+  existing export. If a failure occurs during renaming, some .csv files may exist
+  for an incomplete day: the manifest day status remains the authority.
+- This is intended for permitted interactive ISE use. No execution-policy changes
+  or language-mode bypass. If .NET calls are blocked, use your approved tooling.
+- Validation: statically reviewed. Windows PowerShell 5.1/ISE and a live Splunk
+  endpoint were not available for runtime testing. Test one small day first.
+
+REFERENCE
+https://help.splunk.com/en/splunk-enterprise/rest-api-reference/10.2/search-endpoints/search-endpoint-descriptions
